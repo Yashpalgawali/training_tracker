@@ -1,14 +1,22 @@
 package com.example.demo.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.validation.annotation.Validated;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinColumns;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -34,18 +42,26 @@ public class Employee {
 	@SequenceGenerator(name = "emp_seq", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "emp_seq")
 	Long emp_id;
-	
+
 	String emp_code;
-	
+ 
 	String emp_name;
-	
+ 
 	String joining_date;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "dept_id")
 	Department department;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "desig_id")
 	Designation designation;
+ 
+	@ManyToMany
+	@JoinTable(
+			joinColumns = @JoinColumn(name = "emp_id"),
+			inverseJoinColumns = @JoinColumn(name = "traninig_id")
+		)
+	@JsonManagedReference
+	private List<Training> training = new ArrayList<>();
 }

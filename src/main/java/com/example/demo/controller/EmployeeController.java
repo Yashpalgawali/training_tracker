@@ -2,8 +2,11 @@ package com.example.demo.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +21,7 @@ import com.example.demo.service.IEmployeeService;
 
 @RestController
 @RequestMapping("employee")
+@CrossOrigin("*")
 public class EmployeeController {
 
 	private final IEmployeeService empserv;
@@ -26,6 +30,7 @@ public class EmployeeController {
 		super();
 		this.empserv = empserv;
 	}
+	private Logger logger = LoggerFactory.getLogger(getClass());
 	
 	@PostMapping("/")
 	public ResponseEntity<ResponseDto> saveEmployee(@RequestBody Employee employee) {
@@ -38,9 +43,10 @@ public class EmployeeController {
 	public ResponseEntity<List<Employee>> getAllEmployees() {
 		
 		var emp = empserv.getAllEmployees();
+		logger.info("EMPLISt {} ",emp);
 		return ResponseEntity.status(HttpStatus.OK).body(emp);
 	}
-	
+
 	@GetMapping("/{id}")
 	public ResponseEntity<Employee> getEmployeebyEmployeeId(@PathVariable("id") Long empid) {
 		

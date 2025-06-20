@@ -9,11 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.demo.entity.Company;
 
 @Repository("comprepo")
+@Transactional
 public interface CompanyRepository extends JpaRepository<Company, Long> {
 
 	
-	@Query("UPDATE Company c SET c.comp_name=:compname WHERE c.company_id=:compid")
-	@Transactional
+	@Query("UPDATE Company c SET c.comp_name=:compname WHERE c.company_id=:compid")	
 	@Modifying
 	public int updateCompany(Long compid,String compname);
 }

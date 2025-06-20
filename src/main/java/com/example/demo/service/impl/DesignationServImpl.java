@@ -48,6 +48,7 @@ public class DesignationServImpl implements IDesignationService {
 			return dlist;
 		}
 		else {
+			//return null;
 			throw new ResourceNotFoundException("No Designations found");
 		}
 	}

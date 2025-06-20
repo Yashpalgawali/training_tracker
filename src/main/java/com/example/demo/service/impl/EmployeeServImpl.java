@@ -13,16 +13,16 @@ import com.example.demo.service.IEmployeeService;
 
 import lombok.AllArgsConstructor;
 
-
 @Service("empserv")
 @AllArgsConstructor
 public class EmployeeServImpl implements IEmployeeService {
 
 	private final EmployeeRepository emprepo;
 
-	
 	@Override
 	public Employee saveEmployee(Employee emp) {
+
+//		Employee employee = null;
 		var employee = emprepo.save(emp);
 		if (employee != null) {
 			return employee;
@@ -53,7 +53,7 @@ public class EmployeeServImpl implements IEmployeeService {
 	@Override
 	public List<Employee> getAllEmployees() {
 		var elist = emprepo.findAll();
-		if (elist.size() > 0) { 
+		if (elist.size() > 0) {
 			return elist;
 		} else {
 			throw new ResourceNotFoundException("No Employees found!!!");
@@ -63,10 +63,9 @@ public class EmployeeServImpl implements IEmployeeService {
 	@Override
 	public Employee getEmployeeByEmployeeCode(String empcode) {
 		var emp = emprepo.getEmployeeByCode(empcode);
-		if(emp!=null) {
+		if (emp != null) {
 			return emp;
-		}
-		else {
+		} else {
 			throw new ResourceNotFoundException("No Employee found for given Employee Code " + empcode);
 		}
 	}
