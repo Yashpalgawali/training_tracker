@@ -19,6 +19,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -48,7 +49,10 @@ public class Employee {
 	String emp_name;
  
 	String joining_date;
-
+	
+	@Transient
+	String training_ids;
+	
 	@ManyToOne
 	@JoinColumn(name = "dept_id")
 	Department department;
@@ -62,6 +66,6 @@ public class Employee {
 			joinColumns = @JoinColumn(name = "emp_id"),
 			inverseJoinColumns = @JoinColumn(name = "traninig_id")
 		)
-	@JsonManagedReference
+ 
 	private List<Training> training = new ArrayList<>();
 }

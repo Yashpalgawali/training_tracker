@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.EmployeeDTO;
 import com.example.demo.dto.ResponseDto;
 import com.example.demo.entity.Employee;
+import com.example.demo.mapper.EmployeeMapper;
 import com.example.demo.service.IEmployeeService;
 
 @RestController
@@ -33,8 +35,10 @@ public class EmployeeController {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
 	@PostMapping("/")
-	public ResponseEntity<ResponseDto> saveEmployee(@RequestBody Employee employee) {
+	public ResponseEntity<ResponseDto> saveEmployee(@RequestBody EmployeeDTO empdto) {
 		
+		Employee employee = EmployeeMapper.EmployeeDtoToEmployee(empdto, new Employee());
+		//employee.setTraining(empdto.getTrainingIds());
 		empserv.saveEmployee(employee);
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto(HttpStatus.CREATED.toString(), "Employee "+employee.getEmp_name()+" is saved successfully"));
 	}
@@ -43,7 +47,7 @@ public class EmployeeController {
 	public ResponseEntity<List<Employee>> getAllEmployees() {
 		
 		var emp = empserv.getAllEmployees();
-		logger.info("EMPLISt {} ",emp);
+		logger.info("EMPLIST {} ",emp);
 		return ResponseEntity.status(HttpStatus.OK).body(emp);
 	}
 

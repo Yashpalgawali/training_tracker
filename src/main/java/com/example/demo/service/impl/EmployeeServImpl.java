@@ -1,11 +1,12 @@
 package com.example.demo.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.Employee;
-import com.example.demo.exception.GlobalException;
+import com.example.demo.entity.Training;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.exception.ResourceNotModifiedException;
 import com.example.demo.repository.EmployeeRepository;
@@ -21,14 +22,28 @@ public class EmployeeServImpl implements IEmployeeService {
 
 	@Override
 	public Employee saveEmployee(Employee emp) {
-
-//		Employee employee = null;
-		var employee = emprepo.save(emp);
-		if (employee != null) {
-			return employee;
-		} else {
-			throw new GlobalException("Employee " + emp.getEmp_name() + " is not saved");
-		}
+		
+		//System.err.println("EMployee OBJECT "+emp.toString());
+		
+		String[] tids = emp.getTraining_ids().split(",");
+		
+		List<Training> tlist = new ArrayList<>();
+		
+		for(int i=0;i<tids.length;i++)
+		{
+			Training training = new Training();
+			training.setTraining_id(Long.valueOf(tids[i]));
+			tlist.add(training);
+		}	
+		emp.setTraining(tlist);
+		System.err.println("EMP "+emp.toString());
+		return null;
+//		var employee = emprepo.save(emp);
+//		if (employee != null) {
+//			return employee;
+//		} else {
+//			throw new GlobalException("Employee " + emp.getEmp_name() + " is not saved");
+//		}
 	}
 
 	@Override
