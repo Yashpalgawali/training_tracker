@@ -40,7 +40,12 @@ public class DepartmentServImpl implements IDepartmentService {
 	@Override
 	public List<Department> getAllDepartments() {
 		 
-		return deptrepo.findAll();
+		List<Department> deptList = deptrepo.findAll();
+		if(deptList.size()>0)
+			return deptList;
+		else {
+			throw new ResourceNotFoundException("No Departments Found");
+		}
 	}
 
 	@Override
