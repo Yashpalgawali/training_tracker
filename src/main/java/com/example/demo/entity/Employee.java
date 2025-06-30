@@ -51,7 +51,7 @@ public class Employee {
 	String joining_date;
 	
 	@Transient
-	String training_ids;
+	List<Long> training_ids;
 	
 	@ManyToOne
 	@JoinColumn(name = "dept_id")
@@ -65,7 +65,6 @@ public class Employee {
 	@JoinTable(
 			joinColumns = @JoinColumn(name = "emp_id"),
 			inverseJoinColumns = @JoinColumn(name = "traninig_id")
-		)
- 
+		) 
 	private List<Training> training = new ArrayList<>();
 }

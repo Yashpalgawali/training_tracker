@@ -11,7 +11,8 @@
 	<groupId>com.example</groupId>
 	<artifactId>employee-performance-tracker</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>employee-performance-tracker</name>
+	<packaging>war</packaging>
+	<name>training-tracker</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
@@ -73,10 +74,19 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
-	<finalName>trainingtracker</finalName>
+	<finalName>trainingtrackerrest</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

@@ -2,11 +2,12 @@ package com.example.demo.service;
 
 import java.util.List;
 
+import com.example.demo.dto.EmployeeDTO;
 import com.example.demo.entity.Employee;
 
 public interface IEmployeeService {
 
-	public Employee saveEmployee(Employee emp);
+	public Employee saveEmployee(EmployeeDTO empDto);
 	
 	public Employee getEmployeeByEmployeeId(Long empid);
 	

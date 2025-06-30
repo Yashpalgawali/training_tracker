@@ -1,6 +1,9 @@
 package com.example.demo.controller;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.dto.EmployeeDTO;
 import com.example.demo.dto.ResponseDto;
 import com.example.demo.entity.Employee;
+import com.example.demo.entity.Training;
 import com.example.demo.mapper.EmployeeMapper;
 import com.example.demo.service.IEmployeeService;
 
@@ -36,20 +40,48 @@ public class EmployeeController {
 	
 	@PostMapping("/")
 	public ResponseEntity<ResponseDto> saveEmployee(@RequestBody EmployeeDTO empdto) {
-		
-		Employee employee = EmployeeMapper.EmployeeDtoToEmployee(empdto, new Employee());
-		//employee.setTraining(empdto.getTrainingIds());
-		empserv.saveEmployee(employee);
-		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto(HttpStatus.CREATED.toString(), "Employee "+employee.getEmp_name()+" is saved successfully"));
+		System.err.println("EMployee "+empdto.toString());
+		//return null;
+//		List<String> tidslist = empdto.getTrainingIds();
+//		List<Training> tlist = new ArrayList<>();
+//		tidslist.stream().map(train->{
+//			Training training = new Training();
+//			training.setTraining_id(Long.valueOf(train));
+//			return training;
+//		}).collect(Collectors.toList());
+//		
+//		Employee employee = EmployeeMapper.EmployeeDtoToEmployee(empdto, new Employee());
+//		employee.setTraining(tlist);
+		empserv.saveEmployee(empdto);
+		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto(HttpStatus.CREATED.toString(), "Employee "+empdto.getEmp_name()+" is saved successfully"));
 	}
 	
 	@GetMapping("/")
-	public ResponseEntity<List<Employee>> getAllEmployees() {
+	public ResponseEntity<List<EmployeeDTO>> getAllEmployees() {
 		
 		var emp = empserv.getAllEmployees();
-		logger.info("EMPLIST {} ",emp);
-		return ResponseEntity.status(HttpStatus.OK).body(emp);
-	}
+		
+		StringBuilder sb = new StringBuilder();
+		StringJoiner sj = new StringJoiner(",");
+		
+		List<EmployeeDTO> empDtoList = emp.stream().map(employee -> {
+			EmployeeDTO empdto = new EmployeeDTO();
+			empdto.setEmp_id(employee.getEmp_id());
+			empdto.setEmp_name(employee.getEmp_name());
+			empdto.setEmp_code(employee.getEmp_code());
+			empdto.setJoining_date(employee.getJoining_date());
+			empdto.setDesignation(employee.getDesignation().getDesig_name());
+			empdto.setDepartment(employee.getDepartment().getDept_name());
+			empdto.setCompany(employee.getDepartment().getCompany().getComp_name());
+			empdto.setTrainings( employee.getTraining().stream().map(Training::getTraining_name).collect(Collectors.joining(","))); 
+			
+			 
+			return empdto;
+		}).collect(Collectors.toList());
+		
+		logger.info("EMP Dto List {} ",empDtoList);
+		return ResponseEntity.status(HttpStatus.OK).body(empDtoList);
+	} 
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Employee> getEmployeebyEmployeeId(@PathVariable("id") Long empid) {
@@ -67,7 +99,7 @@ public class EmployeeController {
 	
 	@PutMapping("/")
 	public ResponseEntity<ResponseDto> updateEmployee(@RequestBody Employee employee) {
-		
+		logger.info("Employee Object to be updated {} ",employee);
 		empserv.updateEmployee(employee);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(), "Employee "+employee.getEmp_name()+" is UPDATED successfully"));
 	}
