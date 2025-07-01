@@ -39,19 +39,8 @@ public class EmployeeController {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
 	@PostMapping("/")
-	public ResponseEntity<ResponseDto> saveEmployee(@RequestBody EmployeeDTO empdto) {
-		System.err.println("EMployee "+empdto.toString());
-		//return null;
-//		List<String> tidslist = empdto.getTrainingIds();
-//		List<Training> tlist = new ArrayList<>();
-//		tidslist.stream().map(train->{
-//			Training training = new Training();
-//			training.setTraining_id(Long.valueOf(train));
-//			return training;
-//		}).collect(Collectors.toList());
-//		
-//		Employee employee = EmployeeMapper.EmployeeDtoToEmployee(empdto, new Employee());
-//		employee.setTraining(tlist);
+	public ResponseEntity<ResponseDto> saveEmployee(@RequestBody Employee empdto) {
+		 
 		empserv.saveEmployee(empdto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto(HttpStatus.CREATED.toString(), "Employee "+empdto.getEmp_name()+" is saved successfully"));
 	}
@@ -64,23 +53,24 @@ public class EmployeeController {
 		StringBuilder sb = new StringBuilder();
 		StringJoiner sj = new StringJoiner(",");
 		
-		List<EmployeeDTO> empDtoList = emp.stream().map(employee -> {
-			EmployeeDTO empdto = new EmployeeDTO();
-			empdto.setEmp_id(employee.getEmp_id());
-			empdto.setEmp_name(employee.getEmp_name());
-			empdto.setEmp_code(employee.getEmp_code());
-			empdto.setJoining_date(employee.getJoining_date());
-			empdto.setDesignation(employee.getDesignation().getDesig_name());
-			empdto.setDepartment(employee.getDepartment().getDept_name());
-			empdto.setCompany(employee.getDepartment().getCompany().getComp_name());
-			empdto.setTrainings( employee.getTraining().stream().map(Training::getTraining_name).collect(Collectors.joining(","))); 
-			
-			 
-			return empdto;
-		}).collect(Collectors.toList());
+//		List<EmployeeDTO> empDtoList = emp.stream().map(employee -> {
+//			EmployeeDTO empdto = new EmployeeDTO();
+//			empdto.setEmp_id(employee.getEmp_id());
+//			empdto.setEmp_name(employee.getEmp_name());
+//			empdto.setEmp_code(employee.getEmp_code());
+//			empdto.setJoining_date(employee.getJoining_date());
+//			empdto.setDesignation(employee.getDesignation().getDesig_name());
+//			empdto.setDepartment(employee.getDepartment().getDept_name());
+//			empdto.setCompany(employee.getDepartment().getCompany().getComp_name());
+//			empdto.setTrainings( employee.getTraining().stream().map(Training::getTraining_name).collect(Collectors.joining(","))); 
+//			
+//			 
+//			return empdto;
+//		}).collect(Collectors.toList());
 		
-		logger.info("EMP Dto List {} ",empDtoList);
-		return ResponseEntity.status(HttpStatus.OK).body(empDtoList);
+		
+//		return ResponseEntity.status(HttpStatus.OK).body(empDtoList);
+		return ResponseEntity.status(HttpStatus.OK).body(null);
 	} 
 
 	@GetMapping("/{id}")
@@ -102,6 +92,14 @@ public class EmployeeController {
 		logger.info("Employee Object to be updated {} ",employee);
 		empserv.updateEmployee(employee);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(), "Employee "+employee.getEmp_name()+" is UPDATED successfully"));
+	}
+	
+	@GetMapping("/training/employee/{empid}")
+	public ResponseEntity<List<Training>> getAllTrainingsByEmployeeId(@PathVariable Long empid) {
+		
+		List<Training> trainList = empserv.getAllTrainingsByEmployeeId(empid);
+		return ResponseEntity.status(HttpStatus.OK).body(trainList);
+				
 	}
 	
 }

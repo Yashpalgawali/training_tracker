@@ -62,4 +62,6 @@ public class TrainingServImpl implements ITrainingService {
 		}
 	}
 
+ 
+
 }

@@ -22,5 +22,5 @@ public class EmployeeDTO {
 	String designation;
 	String company;	
 	String trainings;
-	List<Training> training_ids = new ArrayList<>();
+	List<Long> training_ids = new ArrayList<>();
 }

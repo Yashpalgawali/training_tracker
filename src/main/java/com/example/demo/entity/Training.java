@@ -13,6 +13,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -41,9 +42,13 @@ public class Training {
 
 	String training_name;
 
-	@ManyToMany(mappedBy = "training")
-	@JsonBackReference
-	@ToString.Exclude
-	List<Employee> employee = new ArrayList<>();
+//	@ManyToMany(mappedBy = "training")
+//	@JsonBackReference
+//	@ToString.Exclude
+//	List<Employee> employee = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "training")	
+	List<EmployeeTraining> employeeTrainings = new ArrayList<>();
+	
 }
  

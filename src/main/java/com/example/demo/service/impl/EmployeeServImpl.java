@@ -1,9 +1,9 @@
 package com.example.demo.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.EmployeeDTO;
@@ -21,45 +21,46 @@ import com.example.demo.repository.EmployeeRepository;
 import com.example.demo.repository.TrainingRepository;
 import com.example.demo.service.IEmployeeService;
 
-import lombok.AllArgsConstructor;
-
 @Service("empserv")
-@AllArgsConstructor
 public class EmployeeServImpl implements IEmployeeService {
 
 	private final EmployeeRepository emprepo;
 	private final DesignationRepository desigrepo;
 	private final DepartmentRepository deptrepo;
 	private final TrainingRepository trainRepository;
-	
+
+	/**
+	 * @param emprepo
+	 * @param desigrepo
+	 * @param deptrepo
+	 * @param trainRepository
+	 */
+	public EmployeeServImpl(EmployeeRepository emprepo, DesignationRepository desigrepo, DepartmentRepository deptrepo,
+			TrainingRepository trainRepository) {
+		super();
+		this.emprepo = emprepo;
+		this.desigrepo = desigrepo;
+		this.deptrepo = deptrepo;
+		this.trainRepository = trainRepository;
+	}
+
+	private Logger logger = LoggerFactory.getLogger(getClass());
+
 	@Override
-	public Employee saveEmployee(EmployeeDTO empdto) {
-				 
-		System.err.println("EMP "+empdto.toString());
-//		 
-//		List<String> tidslist = empdto.getTrainingIds();
-//		List<Training> tlist = new ArrayList<>();
-//		tidslist.stream().map(train->{
-//			Training training = new Training();
-//			training.setTraining_id(Long.valueOf(train));
-//			return training;
-//		}).collect(Collectors.toList());
-//		
-//		Employee employee = EmployeeMapper.EmployeeDtoToEmployee(empdto, new Employee());
-//		employee.setTraining(tlist);
-//		if(empdto.getTraining_ids()!= null && !empdto.getTraining_ids().isEmpty()) {
-//			List<Training> trains = trainRepository.findAllById(empdto.getTraining_ids());
-//			employee.setTraining(trains);
+	public Employee saveEmployee(Employee emp) {
+
+//		if (emp.getTraining_ids() != null && !emp.getTraining_ids().isEmpty()) {
+//			List<Training> trains = trainRepository.findAllById(emp.getTraining_ids());
+//			emp.setTraining(trains);
 //		}
-//		
-//		var employee = emprepo.save(emp);
-//		if (employee != null) {
-//			return employee;
-//		} else {
-//			throw new GlobalException("Employee " + emp.getEmp_name() + " is not saved");
-//		}
-		
-		return null;
+
+		Employee savedEmp = emprepo.save(emp);
+		if (savedEmp != null) {
+			return savedEmp;
+		} else {
+			throw new GlobalException("Employee " + emp.getEmp_name() + " is not saved");
+		}
+
 	}
 
 	@Override
@@ -71,15 +72,23 @@ public class EmployeeServImpl implements IEmployeeService {
 
 	@Override
 	public int updateEmployee(Employee emp) {
-		Long dept_id = emp.getDepartment().getDept_id();
-		Department dept = deptrepo.findById(dept_id).get();
-		
-		Designation desig = desigrepo.findById(emp.getDesignation().getDesig_id()).get();
-//		emp.setDepartment(dept);
-//		emp.setDesignation(desig);
-		
+
+		Employee foundEmp = getEmployeeByEmployeeId(emp.getEmp_id());
+
+		logger.info("Found Employee Object is {} ", foundEmp);
+
+//		if (emp.getTraining_ids() != null || emp.getTraining_ids().size() > 0) {
+//			List<Training> training = trainRepository.findAllById(emp.getTraining_ids());
+//			if (foundEmp.getTraining() != null || emp.getTraining().size() > 0) {
+//
+//			}
+//
+//			emp.setTraining(training);
+//		}
+		logger.info("EMPloyee updation Object is {} ", emp);
 		int res = emprepo.updateEmployee(emp.getEmp_id(), emp.getEmp_name(), emp.getEmp_code(), emp.getJoining_date(),
-				dept.getDept_id(), desig.getDesig_id());
+				emp.getDepartment().getDept_id(), emp.getDesignation().getDesig_id() );
+
 		if (res > 0) {
 			return res;
 		} else {
@@ -91,7 +100,7 @@ public class EmployeeServImpl implements IEmployeeService {
 	@Override
 	public List<Employee> getAllEmployees() {
 		var elist = emprepo.findAll();
-		 
+
 		if (elist.size() > 0) {
 			return elist;
 		} else {
@@ -108,5 +117,13 @@ public class EmployeeServImpl implements IEmployeeService {
 			throw new ResourceNotFoundException("No Employee found for given Employee Code " + empcode);
 		}
 	}
+
+	@Override
+	public List<Training> getAllTrainingsByEmployeeId(Long empid) {
+
+//		List<Training> trainList = emprepo.getAllTrainingsByEmployeeId(empid);
+//		return trainList;
+		return null;
+	} 
 
 }

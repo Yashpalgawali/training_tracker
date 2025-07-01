@@ -4,10 +4,11 @@ import java.util.List;
 
 import com.example.demo.dto.EmployeeDTO;
 import com.example.demo.entity.Employee;
+import com.example.demo.entity.Training;
 
 public interface IEmployeeService {
 
-	public Employee saveEmployee(EmployeeDTO empDto);
+	public Employee saveEmployee(Employee empDto);
 	
 	public Employee getEmployeeByEmployeeId(Long empid);
 	
@@ -17,4 +18,6 @@ public interface IEmployeeService {
 	
 	public List<Employee> getAllEmployees();
 	
+	public List<Training> getAllTrainingsByEmployeeId(Long empid);
+		
 }

@@ -5,16 +5,11 @@ import java.util.List;
 
 import org.springframework.validation.annotation.Validated;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinColumns;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
@@ -61,10 +56,12 @@ public class Employee {
 	@JoinColumn(name = "desig_id")
 	Designation designation;
  
-	@ManyToMany
-	@JoinTable(
-			joinColumns = @JoinColumn(name = "emp_id"),
-			inverseJoinColumns = @JoinColumn(name = "traninig_id")
-		) 
-	private List<Training> training = new ArrayList<>();
+//	@ManyToMany
+//	@JoinTable(
+//			joinColumns = @JoinColumn(name = "emp_id"),
+//			inverseJoinColumns = @JoinColumn(name = "traninig_id")
+//		) 
+//	private List<Training> training = new ArrayList<>();
+	@OneToMany(mappedBy = "employee")
+	private List<EmployeeTraining> employeeTrainings = new ArrayList<>();
 }

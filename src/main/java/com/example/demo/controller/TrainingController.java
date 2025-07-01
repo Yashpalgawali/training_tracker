@@ -51,7 +51,6 @@ public class TrainingController {
 	public ResponseEntity<List<Training>> getAllTrainings() {
 
 		var train = trainserv.getAllTrainings();
-		logger.info("training List {} ",train);
 		return ResponseEntity.status(HttpStatus.OK).body(train);
 	}
 
@@ -62,4 +61,12 @@ public class TrainingController {
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
 				"Training " + training.getTraining_name() + " is UPDATED successfully"));
 	}
+	
+	@GetMapping("/empid/{id}")
+	public List<Training> getAllTrainingsByEmpId(@PathVariable Long id){
+		
+//		List<Training> trainList = trainserv.getAllTrainingsByEmpId(id);
+		return null;
+	}
+	
 }
