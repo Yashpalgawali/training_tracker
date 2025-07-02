@@ -47,8 +47,10 @@ public class Training {
 //	@ToString.Exclude
 //	List<Employee> employee = new ArrayList<>();
 	
-	@OneToMany(mappedBy = "training")	
-	List<EmployeeTraining> employeeTrainings = new ArrayList<>();
+	/*
+	 * @OneToMany(mappedBy = "training") List<EmployeeTraining> employeeTrainings =
+	 * new ArrayList<>();
+	 */
 	
 }
  

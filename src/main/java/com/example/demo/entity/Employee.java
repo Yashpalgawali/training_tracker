@@ -40,14 +40,14 @@ public class Employee {
 	Long emp_id;
 
 	String emp_code;
- 
+
 	String emp_name;
- 
+
 	String joining_date;
-	
+
 	@Transient
 	List<Long> training_ids;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "dept_id")
 	Department department;
@@ -55,13 +55,16 @@ public class Employee {
 	@ManyToOne
 	@JoinColumn(name = "desig_id")
 	Designation designation;
- 
+ 	
+	@Transient
+	List<String> training_name;
+	
 //	@ManyToMany
 //	@JoinTable(
 //			joinColumns = @JoinColumn(name = "emp_id"),
 //			inverseJoinColumns = @JoinColumn(name = "traninig_id")
 //		) 
 //	private List<Training> training = new ArrayList<>();
-	@OneToMany(mappedBy = "employee")
-	private List<EmployeeTraining> employeeTrainings = new ArrayList<>();
-}
+//	@OneToMany(mappedBy = "employee")
+//	private List<EmployeeTraining> employeeTrainings = new ArrayList<>();
+} 
