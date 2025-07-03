@@ -61,7 +61,5 @@ public class TrainingServImpl implements ITrainingService {
 			throw new ResourceNotFoundException("No Training found for given ID "+training.getTraining_id());
 		}
 	}
-
- 
-
+	
 }

@@ -1,3 +1,4 @@
+
 package com.example.demo.service.impl;
 
 import java.time.LocalDateTime;
@@ -69,24 +70,25 @@ public class EmployeeServImpl implements IEmployeeService {
 			 System.err.println("EMPLOYEE "+savedEmployee.getEmp_name()+" is saved successfully");
 			 logger.info("SAVED EMPLOYEE {} ",savedEmployee);
 			 
-			 List<EmployeeTrainingHistory> trainlist = trainingList.stream().map(id-> {
-
-				EmployeeTrainingHistory hist = new EmployeeTrainingHistory();
-				hist.setEmployee(savedEmployee);
-				hist.setTraining(trainRepository.findById(id).get());
-				hist.setTraining_date(dday.format(LocalDateTime.now()));
-				
-				emptrainhistrepo.save(hist);
-				return hist;
-
-			}).collect(Collectors.toList());
-			 
-			if(trainlist.size()>0) {
-				return savedEmployee;
-			}
-			else {
-				throw new GlobalException("Employee " + emp.getEmp_name() + " is saved but No trainings are provided");
-			}
+//			 List<EmployeeTrainingHistory> trainlist = trainingList.stream().map(id-> {
+//
+//				EmployeeTrainingHistory hist = new EmployeeTrainingHistory();
+//				hist.setEmployee(savedEmployee);
+//				hist.setTraining(trainRepository.findById(id).get());
+//				hist.setTraining_date(dday.format(LocalDateTime.now()));
+//				
+//				emptrainhistrepo.save(hist);
+//				return hist;
+//
+//			}).collect(Collectors.toList());
+//			 
+//			if(trainlist.size()>0) {
+//				return savedEmployee;
+//			}
+//			else {
+//				throw new GlobalException("Employee " + emp.getEmp_name() + " is saved but No trainings are provided");
+//			}
+			 return savedEmployee;
 		}
 		else {
 			throw new GlobalException("Employee " + emp.getEmp_name() + " is not saved and No trainings are provided");

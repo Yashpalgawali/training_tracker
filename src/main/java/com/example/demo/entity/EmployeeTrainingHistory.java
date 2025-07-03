@@ -1,6 +1,6 @@
 package com.example.demo.entity;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.validation.annotation.Validated;
 
@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -45,4 +46,9 @@ public class EmployeeTrainingHistory {
 	Training training;
 	
 	String training_date;
+	
+	String completion_date;
+	
+	@Transient
+	List<Long> training_ids;
 }

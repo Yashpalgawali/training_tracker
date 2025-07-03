@@ -13,5 +13,5 @@ public interface ITrainingService {
 	public List<Training> getAllTrainings();
 
 	public int updateTraining(Training training);
-
+		
 }

@@ -6,7 +6,7 @@ import com.example.demo.entity.EmployeeTrainingHistory;
 
 public interface IEmployeeTrainingHistoryService {
 
-	public EmployeeTrainingHistory saveEmployeeTrainingHistory(EmployeeTrainingHistory history);
+	public int saveEmployeeTrainingHistory(EmployeeTrainingHistory history);
 	
 	public List<EmployeeTrainingHistory> getAllEmployeesTrainingHistory();
 	

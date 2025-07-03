@@ -19,4 +19,5 @@ public interface TrainingRepository extends JpaRepository<Training, Long> {
 	public int updateTraining(Long tid,String tname);
 	
 	
+	
 }

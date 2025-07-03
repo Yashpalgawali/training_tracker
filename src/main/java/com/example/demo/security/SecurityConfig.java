@@ -21,7 +21,7 @@ public class SecurityConfig {
 			cors.configurationSource(request-> {
 				CorsConfiguration config = new CorsConfiguration();
 				config.setAllowedMethods(Arrays.asList("OPTIONS","PUT","POST","GET","PATCH","DELETE"));
-				config.setAllowedOrigins(Arrays.asList("http://localhost:3000","http://localhost:8080"));
+				config.setAllowedOrigins(Arrays.asList("http://localhost:3000","http://localhost:8080","http://192.168.0.219:3000"));
 				config.setAllowedHeaders(Arrays.asList("Authorization","Content-Type","Cache-Control"));
 				return config;
 			});

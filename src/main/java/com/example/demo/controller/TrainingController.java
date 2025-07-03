@@ -65,7 +65,7 @@ public class TrainingController {
 	@GetMapping("/empid/{id}")
 	public List<Training> getAllTrainingsByEmpId(@PathVariable Long id){
 		
-//		List<Training> trainList = trainserv.getAllTrainingsByEmpId(id);
+		//List<Training> trainList = trainserv.getAllTrainingsByEmpId(id);
 		return null;
 	}
 	
