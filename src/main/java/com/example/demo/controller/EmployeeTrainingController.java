@@ -42,16 +42,14 @@ public class EmployeeTrainingController {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<List<EmployeeTrainingHistory>> getAllTrainingListByEmployeeId(@PathVariable Long id) {
-		System.err.println("ID IS " + id);
+		
 		List<EmployeeTrainingHistory> trainingHistory = emptrainhistserv.getEmployeesTrainingHistoryByEmployeeId(id);
-		trainingHistory.forEach(System.err::println);
 		return ResponseEntity.status(HttpStatus.OK).body(trainingHistory);
 	}
 
 	@PostMapping("/")
 	public ResponseEntity<ResponseDto> saveEmployeeTraining(@RequestBody EmployeeTrainingHistory emptraining) {
 		emptrainhistserv.saveEmployeeTrainingHistory(emptraining);
-
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto(HttpStatus.CREATED.toString(), "Training is started of the Employee"));
 	}
 
@@ -60,8 +58,6 @@ public class EmployeeTrainingController {
 			@RequestBody Map<String, String> body) {
 		EmployeeTrainingHistory employeeTrainingHistory = emptrainhistserv.getEmployeeTrainingHistoryByID(id);
 
-		System.err.println("HISTORY OBJECT FOUND " + employeeTrainingHistory.toString());
-		
 		Employee employee = empserv.getEmployeeByEmployeeId(employeeTrainingHistory.getEmployee().getEmp_id());
 		
 		String comp_date = body.get("completion_date");
