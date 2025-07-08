@@ -50,6 +50,7 @@ public class EmployeeTrainingHistoryServImpl implements IEmployeeTrainingHistory
 			hist.setEmployee(history.getEmployee());
 			hist.setTraining(training);
 			hist.setTraining_date((history.getTraining_date()));
+			hist.setCompletion_date(history.getCompletion_date());
 			
 			emptrainhistrepo.save(hist); 
 			return hist;

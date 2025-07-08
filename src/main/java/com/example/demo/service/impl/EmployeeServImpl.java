@@ -67,28 +67,7 @@ public class EmployeeServImpl implements IEmployeeService {
 		Employee savedEmployee = emprepo.save(emp);
 		if(savedEmployee!=null)
 		{
-			 System.err.println("EMPLOYEE "+savedEmployee.getEmp_name()+" is saved successfully");
-			 logger.info("SAVED EMPLOYEE {} ",savedEmployee);
-			 
-//			 List<EmployeeTrainingHistory> trainlist = trainingList.stream().map(id-> {
-//
-//				EmployeeTrainingHistory hist = new EmployeeTrainingHistory();
-//				hist.setEmployee(savedEmployee);
-//				hist.setTraining(trainRepository.findById(id).get());
-//				hist.setTraining_date(dday.format(LocalDateTime.now()));
-//				
-//				emptrainhistrepo.save(hist);
-//				return hist;
-//
-//			}).collect(Collectors.toList());
-//			 
-//			if(trainlist.size()>0) {
-//				return savedEmployee;
-//			}
-//			else {
-//				throw new GlobalException("Employee " + emp.getEmp_name() + " is saved but No trainings are provided");
-//			}
-			 return savedEmployee;
+			return savedEmployee;
 		}
 		else {
 			throw new GlobalException("Employee " + emp.getEmp_name() + " is not saved and No trainings are provided");
@@ -106,8 +85,6 @@ public class EmployeeServImpl implements IEmployeeService {
 	public int updateEmployee(Employee emp) {
 
 		Employee foundEmp = getEmployeeByEmployeeId(emp.getEmp_id());
-
-		logger.info("Found Employee Object is {} ", foundEmp);
 
 		int result = emprepo.updateEmployee(emp.getEmp_id(), emp.getEmp_name(), emp.getEmp_code(), emp.getJoining_date(), emp.getDepartment().getDept_id(), emp.getDesignation().getDesig_id());
  
@@ -130,15 +107,6 @@ public class EmployeeServImpl implements IEmployeeService {
 		else {
 			throw new ResourceNotModifiedException("Employee " + emp.getEmp_name() + " is not updated");
 		}
-		
-//		int res = emprepo.updateEmployee(emp.getEmp_id(), emp.getEmp_name(), emp.getEmp_code(), emp.getJoining_date(),
-//				emp.getDepartment().getDept_id(), emp.getDesignation().getDesig_id() );
-
-//		if (res > 0) {
-//			return res;
-//		} else {
-//			throw new ResourceNotModifiedException("Employee " + emp.getEmp_name() + " is not updated");
-//		}
 
 	}
 

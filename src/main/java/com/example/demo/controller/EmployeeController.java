@@ -40,7 +40,7 @@ public class EmployeeController {
 
 	private final IEmployeeService empserv;
 	private final IEmployeeTrainingHistoryService emptrainhistserv;
-		
+
 	/**
 	 * @param empserv
 	 * @param emptrainhistserv
@@ -51,30 +51,30 @@ public class EmployeeController {
 		this.emptrainhistserv = emptrainhistserv;
 	}
 
-	
 	private Logger logger = LoggerFactory.getLogger(getClass());
-	
+
 	@PostMapping("/")
 	public ResponseEntity<ResponseDto> saveEmployee(@RequestBody Employee empdto) {
-		 
+
 		empserv.saveEmployee(empdto);
-		//logger.info("Employee to be saved is {} ",empdto);
-		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto(HttpStatus.CREATED.toString(), "Employee "+empdto.getEmp_name()+" is saved successfully"));
+		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto(HttpStatus.CREATED.toString(),
+				"Employee " + empdto.getEmp_name() + " is saved successfully"));
 	}
-	
+
 	@GetMapping("/")
 	public ResponseEntity<List<EmployeeDTO>> getAllEmployees() {
-		
+
 		List<Employee> empList = empserv.getAllEmployees();
-		
+
 		empList.forEach(System.err::println);
+
+		List<EmployeeDTO> collect = empList.stream().map(emp -> {
+			String training_names = emptrainhistserv.getEmployeesTrainingHistoryByEmployeeId(emp.getEmp_id()).stream()
+					.map(hist -> hist.getTraining().getTraining_name()).filter(Objects::nonNull)
+					.collect(Collectors.joining(","));
 		
-		List<EmployeeDTO> collect = empList.stream().map(emp->{
-			String training_names = emptrainhistserv.getEmployeesTrainingHistoryByEmployeeId(emp.getEmp_id()).stream().map(hist -> hist.getTraining().getTraining_name()).filter(Objects::nonNull).collect(Collectors.joining(","));
-			System.err.println("Trainings for emp ID "+emp.getEmp_id()+" are "+training_names);
-			
 			EmployeeDTO empdto = new EmployeeDTO();
-			
+
 			empdto.setEmp_id(emp.getEmp_id());
 			empdto.setEmp_name(emp.getEmp_name());
 			empdto.setEmp_code(emp.getEmp_code());
@@ -84,43 +84,42 @@ public class EmployeeController {
 			empdto.setDesignation(emp.getDesignation().getDesig_name());
 			empdto.setTrainings(training_names);
 			return empdto;
-			
+
 		}).collect(Collectors.toList());
-		
-		System.err.println("EMPloyee DTO is "+collect);
-		
+
 		collect.stream().forEach(System.err::println);
-		
+
 		return ResponseEntity.status(HttpStatus.OK).body(collect);
 
-	} 
+	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Employee> getEmployeebyEmployeeId(@PathVariable("id") Long empid) {
-		
+
 		var emp = empserv.getEmployeeByEmployeeId(empid);
 		return ResponseEntity.status(HttpStatus.OK).body(emp);
 	}
-	
+
 	@GetMapping("/code/{empcode}")
 	public ResponseEntity<Employee> getEmployeebyEmployeeCode(@PathVariable String empcode) {
-		
+
 		var emp = empserv.getEmployeeByEmployeeCode(empcode);
 		return ResponseEntity.status(HttpStatus.OK).body(emp);
 	}
-	
+
 	@PutMapping("/")
 	public ResponseEntity<ResponseDto> updateEmployee(@RequestBody Employee employee) {
 		empserv.updateEmployee(employee);
-		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(), "Employee "+employee.getEmp_name()+" is UPDATED successfully"));
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
+				"Employee " + employee.getEmp_name() + " is UPDATED successfully"));
 	}
-	
+
 	@GetMapping("/training/employee/{empid}")
 	public ResponseEntity<List<Training>> getAllTrainingsByEmployeeId(@PathVariable Long empid) {
-		
+
 		List<Training> trainList = empserv.getAllTrainingsByEmployeeId(empid);
 		return ResponseEntity.status(HttpStatus.OK).body(trainList);
-				
+
 	}
-	
+
 }

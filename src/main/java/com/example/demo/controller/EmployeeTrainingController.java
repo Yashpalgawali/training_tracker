@@ -59,7 +59,7 @@ public class EmployeeTrainingController {
 		EmployeeTrainingHistory employeeTrainingHistory = emptrainhistserv.getEmployeeTrainingHistoryByID(id);
 
 		Employee employee = empserv.getEmployeeByEmployeeId(employeeTrainingHistory.getEmployee().getEmp_id());
-		
+		  
 		String comp_date = body.get("completion_date");
 		emptrainhistserv.updateCompletionTime(id, comp_date);
 		Training training = emptrainhistserv.getTrainingByHistId(id);
