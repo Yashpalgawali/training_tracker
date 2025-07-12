@@ -60,7 +60,7 @@ public class JwtAuthentication {
 	 			 CorsConfiguration config = new CorsConfiguration();
 	 			
 	             config.setAllowedOrigins(Arrays.asList("http://localhost:4200","http://localhost:3000")); // Your Angular app's URL
-	             config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+	             config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS","PATCH"));
 	             config.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
 	             config.setAllowCredentials(true); // Allow cookies
 	             return config;

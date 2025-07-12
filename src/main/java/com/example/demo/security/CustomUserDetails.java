@@ -8,33 +8,33 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.example.demo.entity.Users;
- 
+
 public class CustomUserDetails implements UserDetails {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 3424937922493333153L;
-	private Users user ;
-	
+	private Users user;
+
 	public CustomUserDetails(Users user) {
 		super();
 		this.user = user;
 	}
-	
+
 	public Long getUserId() {
 		return user.getUser_id();
 	}
-	
+
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		 
+
 		return List.of(new SimpleGrantedAuthority(user.getRole()));
 	}
 
 	@Override
 	public String getPassword() {
-	 
+
 		return user.getPassword();
 	}
 
@@ -46,7 +46,7 @@ public class CustomUserDetails implements UserDetails {
 
 	@Override
 	public boolean isAccountNonExpired() {
-		 
+
 		return true;
 	}
 
@@ -58,7 +58,7 @@ public class CustomUserDetails implements UserDetails {
 
 	@Override
 	public boolean isCredentialsNonExpired() {
-	
+
 		return true;
 	}
 

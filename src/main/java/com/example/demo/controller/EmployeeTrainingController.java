@@ -1,9 +1,15 @@
 package com.example.demo.controller;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -17,8 +23,11 @@ import com.example.demo.dto.ResponseDto;
 import com.example.demo.entity.Employee;
 import com.example.demo.entity.EmployeeTrainingHistory;
 import com.example.demo.entity.Training;
+import com.example.demo.export.ExportEmployeeTrainingHistory;
 import com.example.demo.service.IEmployeeService;
 import com.example.demo.service.IEmployeeTrainingHistoryService;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("employee-training")
@@ -65,5 +74,26 @@ public class EmployeeTrainingController {
 		Training training = emptrainhistserv.getTrainingByHistId(id);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
 				"Training " + training.getTraining_name() + " is completed Successfully of "+employee.getEmp_name()));
+	}
+	
+	@RequestMapping("/exporttrainingshistory/excel/{id}")
+	public ResponseEntity<InputStreamResource> exportToExcel(HttpServletResponse response,
+			@PathVariable("id") Long empid) throws IOException{
+
+		List<EmployeeTrainingHistory> alist = emptrainhistserv.getEmployeesTrainingHistoryByEmployeeId(empid);
+		alist.forEach(System.err::println);
+		// Set headers
+		HttpHeaders headers = new HttpHeaders();
+		String fname = "Training_History_" + alist.get(0).getEmployee().getEmp_name() + ".xlsx";
+		headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fname);
+
+		ExportEmployeeTrainingHistory ahist = new ExportEmployeeTrainingHistory(alist);
+		byte[] excelContent = ahist.export(response);
+
+		// Return the file as a ResponseEntity
+		return ResponseEntity.ok().headers(headers)
+				.contentType(
+						MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+				.body(new InputStreamResource(new ByteArrayInputStream(excelContent)));
 	}
 }
