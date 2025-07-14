@@ -11,7 +11,7 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.example.demo.entity.EmployeeTrainingHistory;
+import com.example.demo.dto.EmployeeTrainingDto;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -19,16 +19,16 @@ public class ExportAllTrainings {
 
 	private XSSFWorkbook workbook;
 	private XSSFSheet sheet;
-	private List<EmployeeTrainingHistory> EmployeeTrainingHistory;
+	private List<EmployeeTrainingDto> EmployeeTrainingHistory;
 	
-	public ExportAllTrainings(List<EmployeeTrainingHistory> EmployeeTrainingHistory) {
-		this.EmployeeTrainingHistory = EmployeeTrainingHistory;
+	public ExportAllTrainings(List<EmployeeTrainingDto> alist) {
+		this.EmployeeTrainingHistory = alist;
 		workbook = new XSSFWorkbook();
 	}
 	
 	private void writeHeaderLine()
 	{
-		sheet = workbook.createSheet("EmployeeTrainingHistory");
+		sheet = workbook.createSheet("AllEmployeeTrainingHistory");
 		Row row = sheet.createRow(0);
 		
 		CellStyle style = workbook.createCellStyle();
@@ -43,6 +43,9 @@ public class ExportAllTrainings {
 		createCell(row,2,"Training",style);
 		createCell(row,3,"Training Date",style);
 		createCell(row,4,"Completion Date",style);
+		createCell(row,5,"Designation",style);
+		createCell(row,6,"Department",style);
+		createCell(row,7,"Company",style);
 		 
 	}
 	
@@ -72,27 +75,40 @@ public class ExportAllTrainings {
 		font.setBold(true);
 		font.setFontHeight(16);
 		int sr=1;
-		for(EmployeeTrainingHistory asset : EmployeeTrainingHistory)
+		
+		if(EmployeeTrainingHistory.size() > 0 ) {
+		for(EmployeeTrainingDto training : EmployeeTrainingHistory)
 		{
 			Row row = sheet.createRow(rowCount++);
 			
 			int columnCount = 0;
 			
 			createCell(row,columnCount++, sr++ ,style);
-			createCell(row,columnCount++, asset.getEmployee().getEmp_name() ,style);
-			createCell(row,columnCount++, asset.getTraining().getTraining_name() ,style);
-//			createCell(row,columnCount++, asset.getAssigned_types() ,style);
-//			createCell(row,columnCount++, asset.getModel_numbers() ,style);
-//			createCell(row,columnCount++, asset.getAssign_date() ,style);
-//			createCell(row,columnCount++, asset.getAssign_time() ,style);
-//			createCell(row,columnCount++, asset.getEmployee().getEmp_email() ,style);
-			createCell(row,columnCount++, asset.getTraining_date(), style);
-			if(asset.getCompletion_date()!=null) {
-				createCell(row,columnCount++, asset.getCompletion_date(), style);
+			createCell(row,columnCount++, training.getEmp_name() ,style);
+			createCell(row,columnCount++, training.getTraining_name() ,style);
+			createCell(row,columnCount++, training.getTraining_date() ,style);
+			if(training.getCompletion_date()!=null) {
+				if(!training.getCompletion_date().equals("")) {
+					createCell(row,columnCount++, training.getCompletion_date(), style);
+				}
+				else {
+					createCell(row,columnCount++, "Not Completed", style);
+				}
 			}
 			else {
 				createCell(row,columnCount++, "Not Completed", style);
 			}
+			createCell(row,columnCount++, training.getDesig_name() ,style);
+			createCell(row,columnCount++, training.getDept_name() ,style);
+			createCell(row,columnCount++, training.getComp_name() ,style);
+		  }
+	    }
+		else {
+			Row row = sheet.createRow(rowCount++);
+			
+			int columnCount = 0;
+			
+			createCell(row,columnCount++, "No Data Found " ,style);
 		}
 	}
 	

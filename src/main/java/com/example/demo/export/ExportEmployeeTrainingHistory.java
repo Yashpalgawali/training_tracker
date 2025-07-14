@@ -55,11 +55,11 @@ public class ExportEmployeeTrainingHistory {
 			style.setFont(font);
 		
 			createCell(row,0,"Sr No.",style);
+
 			createCell(row,1,"Training",style);
-//			createCell(row,2,"Employee",style);
 			createCell(row,2,"Training Date",style);
 			createCell(row,3,"Completion Date",style);
-			
+			createCell(row,4,"Employee",style);
 	
 	}
 	
@@ -84,32 +84,30 @@ public class ExportEmployeeTrainingHistory {
 	public void writeDataLines() {
 		int rowCount = 1;
 		CellStyle style = workbook.createCellStyle();
+		 
 		XSSFFont font = workbook.createFont();
 		font.setBold(true);
 		font.setFontHeight(16);
-		int sr=1,cn=1;
-		
-		
-		for(EmployeeTrainingHistory hist : ahist)
+		int sr=1,cn=1;		
+//        
+      	for(EmployeeTrainingHistory hist : ahist)
 		{
 			Row row = sheet.createRow(rowCount++);
 			
 			int columnCount = 0;
 			
 			createCell(row,columnCount++, sr++ ,style);
-			createCell(row,columnCount++, hist.getTraining().getTraining_name() ,style);
-//			createCell(row,columnCount++, hist.getEmployee().getEmp_name() ,style);
+			createCell(row,columnCount++, hist.getTraining().getTraining_name() ,style);			
 			createCell(row,columnCount++, hist.getTraining_date() ,style);
-			if(hist.getCompletion_date()!=null)
-			{
+		
+			if(!hist.getCompletion_date().equals("")) {				 
 				createCell(row,columnCount++, hist.getCompletion_date() ,style);
 			}
 			else {
-				createCell(row,columnCount++, "Not Completed" ,style);
+				createCell(row,columnCount++, "Not Completed" , style );
 			}
-			
-			if(cn==1)
-			{
+
+			if(cn==1) {
 				createCell(row,columnCount++, hist.getEmployee().getEmp_name() ,style);
 				cn++;
 			}
@@ -119,8 +117,7 @@ public class ExportEmployeeTrainingHistory {
 	public byte[] export(HttpServletResponse response)throws IOException {
 		writeHeaderLine();
 		writeDataLines();
-		
-	//	ServletOutputStream outputStream = response.getOutputStream();
+
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		workbook.write(outputStream);
 		workbook.close();

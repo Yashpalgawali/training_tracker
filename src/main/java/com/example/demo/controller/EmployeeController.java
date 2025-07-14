@@ -1,15 +1,12 @@
 package com.example.demo.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,13 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.dto.EmployeeDTO;
 import com.example.demo.dto.ResponseDto;
 import com.example.demo.entity.Employee;
-import com.example.demo.entity.EmployeeTrainingHistory;
 import com.example.demo.entity.Training;
-import com.example.demo.mapper.EmployeeMapper;
 import com.example.demo.service.IEmployeeService;
 import com.example.demo.service.IEmployeeTrainingHistoryService;
-
-import lombok.AllArgsConstructor;
 
 @RestController
 @RequestMapping("employee")
@@ -51,7 +44,7 @@ public class EmployeeController {
 		this.emptrainhistserv = emptrainhistserv;
 	}
 
-	private Logger logger = LoggerFactory.getLogger(getClass());
+//	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@PostMapping("/")
 	public ResponseEntity<ResponseDto> saveEmployee(@RequestBody Employee empdto) {
@@ -65,9 +58,6 @@ public class EmployeeController {
 	public ResponseEntity<List<EmployeeDTO>> getAllEmployees() {
 
 		List<Employee> empList = empserv.getAllEmployees();
-
-		empList.forEach(System.err::println);
-
 		List<EmployeeDTO> collect = empList.stream().map(emp -> {
 			String training_names = emptrainhistserv.getEmployeesTrainingHistoryByEmployeeId(emp.getEmp_id()).stream()
 					.map(hist -> hist.getTraining().getTraining_name()).filter(Objects::nonNull)
@@ -86,8 +76,6 @@ public class EmployeeController {
 			return empdto;
 
 		}).collect(Collectors.toList());
-
-		collect.stream().forEach(System.err::println);
 
 		return ResponseEntity.status(HttpStatus.OK).body(collect);
 

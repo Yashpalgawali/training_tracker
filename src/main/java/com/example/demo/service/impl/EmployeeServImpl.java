@@ -62,11 +62,10 @@ public class EmployeeServImpl implements IEmployeeService {
 	@Override
 	public Employee saveEmployee(Employee emp) {
 
-		List<Long> trainingList = emp.getTraining_ids();
-		logger.info("TRAINIG ID's are {} ",trainingList);
+//		List<Long> trainingList = emp.getTraining_ids();
+//		logger.info("TRAINIG ID's are {} ",trainingList);
 		Employee savedEmployee = emprepo.save(emp);
-		if(savedEmployee!=null)
-		{
+		if(savedEmployee!=null) {
 			return savedEmployee;
 		}
 		else {
@@ -84,24 +83,24 @@ public class EmployeeServImpl implements IEmployeeService {
 	@Override
 	public int updateEmployee(Employee emp) {
 
-		Employee foundEmp = getEmployeeByEmployeeId(emp.getEmp_id());
+//		Employee foundEmp = getEmployeeByEmployeeId(emp.getEmp_id());
 
 		int result = emprepo.updateEmployee(emp.getEmp_id(), emp.getEmp_name(), emp.getEmp_code(), emp.getJoining_date(), emp.getDepartment().getDept_id(), emp.getDesignation().getDesig_id());
  
 		if(result > 0) {
-			emp.getTraining_ids().stream().map( training-> {
-				
-				EmployeeTrainingHistory history = new EmployeeTrainingHistory();
-				
-				history.setEmployee(emp);
-				history.setTraining(trainRepository.findById(training).get());
-				history.setTraining_date(dday.format(LocalDateTime.now()));
-				
-				emptrainhistrepo.save(history);
-				
-				return history;
-				
-			});
+//			emp.getTraining_ids().stream().map( training-> {
+//				
+//				EmployeeTrainingHistory history = new EmployeeTrainingHistory();
+//				
+//				history.setEmployee(emp);
+//				history.setTraining(trainRepository.findById(training).get());
+//				history.setTraining_date(dday.format(LocalDateTime.now()));
+//				
+//				emptrainhistrepo.save(history);
+//				
+//				return history;
+//				
+//			});
 			return result;
 		}
 		else {

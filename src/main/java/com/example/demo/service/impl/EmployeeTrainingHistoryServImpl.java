@@ -1,6 +1,7 @@
 package com.example.demo.service.impl;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -8,14 +9,13 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.example.demo.dto.ErrorResponseDto;
+import com.example.demo.dto.EmployeeTrainingDto;
 import com.example.demo.entity.EmployeeTrainingHistory;
 import com.example.demo.entity.Training;
 import com.example.demo.exception.GlobalException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.exception.ResourceNotModifiedException;
 import com.example.demo.repository.EmployeeTrainingHistoryRepository;
-import com.example.demo.service.IEmployeeService;
 import com.example.demo.service.IEmployeeTrainingHistoryService;
 import com.example.demo.service.ITrainingService;
 
@@ -73,17 +73,11 @@ public class EmployeeTrainingHistoryServImpl implements IEmployeeTrainingHistory
 
 	@Override
 	public List<EmployeeTrainingHistory> getEmployeesTrainingHistoryByEmployeeId(Long empid) {
-//		 Employee emp = empserv.getEmployeeByEmployeeId(empid);
 		 
 		 List<EmployeeTrainingHistory> empHistList = Optional.ofNullable(
 				    emptrainhistrepo.findByEmployeeId(empid)
 				).orElse(Collections.emptyList());
-//		 List<EmployeeTrainingHistory> empHistList = emptrainhistrepo.findByEmployeeId(empid);
-//		 if(empHistList.size()>0)
-//			 return empHistList;
-//		 else {
-//			 throw new ResourceNotFoundException("No Training(s) are given  ");
-//		 }
+
 		 return empHistList;
 	}
 
@@ -94,23 +88,50 @@ public class EmployeeTrainingHistoryServImpl implements IEmployeeTrainingHistory
 			return result;
 		}
 		else {			
-			throw new ResourceNotModifiedException("Completion Time is not updated");
+			throw new ResourceNotModifiedException("Completion Time is not Updated");
 		}
 	}
 
 	@Override
-	public Training getTrainingByHistId(Long histid) {
-		 
-		EmployeeTrainingHistory employeeTrainHistoryById = emptrainhistrepo.getEmployeeTrainHistoryById(histid);
-		 
-		return trainserv.getTrainingById(employeeTrainHistoryById.getTraining().getTraining_id());
-		 	
-	} 
+	public Training getTrainingByHistId(Long histid) {		 
+		EmployeeTrainingHistory employeeTrainHistoryById = emptrainhistrepo.getEmployeeTrainHistoryById(histid);		 
+		return trainserv.getTrainingById(employeeTrainHistoryById.getTraining().getTraining_id());		 	
+	}
  
 	@Override
 	public EmployeeTrainingHistory getEmployeeTrainingHistoryByID(Long emptrainhist_id) {
 		
 		return emptrainhistrepo.findById(emptrainhist_id).orElseThrow(() -> new ResourceNotFoundException("No Employee Training history Found "));		
+	}
+
+	@Override
+	public List<EmployeeTrainingDto> getAllTrainingListOfAllEmployees() {
+		
+		  List<EmployeeTrainingDto> trainList = new ArrayList<>();
+			  
+		  List<Object[]> objList = emptrainhistrepo.getAllTrainingsOfAllEmployees();
+		  
+		  if(objList.size() > 0 ) {
+			  objList.forEach(train -> {
+				  EmployeeTrainingDto dto = new EmployeeTrainingDto();				  
+
+				  dto.setEmp_name(train[0].toString());
+				  dto.setTraining_name(train[1].toString());
+				  dto.setTraining_date(train[2].toString());
+				  if(train[3]==null) {
+					  dto.setCompletion_date(null);
+				  }
+				  else {
+					  dto.setCompletion_date(train[3].toString());
+				  }
+				  dto.setDesig_name(train[4].toString());
+				  dto.setDept_name(train[5].toString());
+				  dto.setComp_name(train[6].toString());
+				  trainList.add(dto);
+			  });
+		  }
+
+		return trainList;
 	}
 
 }
