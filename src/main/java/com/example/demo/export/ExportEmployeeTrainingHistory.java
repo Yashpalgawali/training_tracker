@@ -89,28 +89,33 @@ public class ExportEmployeeTrainingHistory {
 		font.setBold(true);
 		font.setFontHeight(16);
 		int sr=1,cn=1;		
-//        
+		if(ahist.size() > 0) {
       	for(EmployeeTrainingHistory hist : ahist)
-		{
-			Row row = sheet.createRow(rowCount++);
+			{
+				Row row = sheet.createRow(rowCount++);				
+				int columnCount = 0;
+				
+				createCell(row,columnCount++, sr++ ,style);
+				createCell(row,columnCount++, hist.getTraining().getTraining_name() ,style);			
+				createCell(row,columnCount++, hist.getTraining_date() ,style);
 			
-			int columnCount = 0;
-			
-			createCell(row,columnCount++, sr++ ,style);
-			createCell(row,columnCount++, hist.getTraining().getTraining_name() ,style);			
-			createCell(row,columnCount++, hist.getTraining_date() ,style);
-		
-			if(!hist.getCompletion_date().equals("")) {				 
-				createCell(row,columnCount++, hist.getCompletion_date() ,style);
+				if(!hist.getCompletion_date().equals("")) {				 
+					createCell(row,columnCount++, hist.getCompletion_date() ,style);
+				}
+				else {
+					createCell(row,columnCount++, "Not Completed" , style );
+				}
+	
+				if(cn==1) {
+					createCell(row,columnCount++, hist.getEmployee().getEmp_name() ,style);
+					cn++;
+				}
 			}
-			else {
-				createCell(row,columnCount++, "Not Completed" , style );
-			}
-
-			if(cn==1) {
-				createCell(row,columnCount++, hist.getEmployee().getEmp_name() ,style);
-				cn++;
-			}
+		}
+		else {
+			Row row = sheet.createRow(rowCount++);			
+			int columnCount = 0;			
+			createCell(row,columnCount++, "No Data Found of the Employee" ,style);
 		}
 	}
 	

@@ -73,7 +73,7 @@ public class EmployeeTrainingHistoryServImpl implements IEmployeeTrainingHistory
 
 	@Override
 	public List<EmployeeTrainingHistory> getEmployeesTrainingHistoryByEmployeeId(Long empid) {
-		 
+
 		 List<EmployeeTrainingHistory> empHistList = Optional.ofNullable(
 				    emptrainhistrepo.findByEmployeeId(empid)
 				).orElse(Collections.emptyList());

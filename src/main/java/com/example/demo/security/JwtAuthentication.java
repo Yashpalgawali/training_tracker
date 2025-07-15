@@ -58,8 +58,9 @@ public class JwtAuthentication {
 	 	http.cors(cors->{
 	 		cors.configurationSource(request->{
 	 			 CorsConfiguration config = new CorsConfiguration();
-	 			
-	             config.setAllowedOrigins(Arrays.asList("http://localhost:4200","http://localhost:3000")); // Your Angular app's URL
+
+//	 			config.setAllowedOrigins(Arrays.asList("http://localhost:4200","http://localhost:3000","http://192.168.0.219:3000/trainingtracker")); // Your Angular app's URL
+	 			 config.setAllowedOrigins(Arrays.asList("http://192.168.0.219:3000","http://43.204.219.216:8080")); // Your Angular app's URL
 	             config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS","PATCH"));
 	             config.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
 	             config.setAllowCredentials(true); // Allow cookies
@@ -78,7 +79,7 @@ public class JwtAuthentication {
 				});
 			});
 		http.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);	
-		
+
 		return http.build();
 	}
 	
