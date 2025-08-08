@@ -16,13 +16,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class JWTAuthenticationResource {
+public class JwtAuthenticationResource {
 
 
 	   private final JwtEncoder jwtEncoder;
 	    private final AuthenticationManager authenticationManager;
 
-	    public JWTAuthenticationResource(JwtEncoder jwtEncoder, AuthenticationManager authenticationManager) {
+	    public JwtAuthenticationResource(JwtEncoder jwtEncoder, AuthenticationManager authenticationManager) {
 	        this.jwtEncoder = jwtEncoder;
 	        this.authenticationManager = authenticationManager;
 	    }
