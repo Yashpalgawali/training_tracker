@@ -1,11 +1,10 @@
 package com.example.demo.controller;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -110,4 +109,34 @@ public class EmployeeController {
 
 	}
 
+}
+
+
+//Model
+class Competency {
+ private String name;
+ private int score; // 0-100
+
+ public Competency(String name, int score) {
+     this.name = name;
+     this.score = score;
+ }
+
+ public String getName() { return name; }
+ public int getScore() { return score; }
+}
+
+@RestController
+class CompetencyController {
+
+    @GetMapping("/api/competencies")
+    public List<Competency> getCompetencies() {
+        return Arrays.asList(
+            new Competency("Java", 85),
+            new Competency("Spring Boot", 80),
+            new Competency("React", 70),
+            new Competency("SQL", 90),
+            new Competency("DevOps", 60)
+        );
+    }
 }

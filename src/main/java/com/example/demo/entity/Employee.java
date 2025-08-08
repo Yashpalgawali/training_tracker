@@ -43,6 +43,8 @@ public class Employee {
 
 	String joining_date;
 
+	String contractor_name;
+
 	@Transient
 	List<Long> training_ids;
 
@@ -57,12 +59,8 @@ public class Employee {
 	@Transient
 	List<String> training_name;
 	
-//	@ManyToMany
-//	@JoinTable(
-//			joinColumns = @JoinColumn(name = "emp_id"),
-//			inverseJoinColumns = @JoinColumn(name = "traninig_id")
-//		) 
-//	private List<Training> training = new ArrayList<>();
-//	@OneToMany(mappedBy = "employee")
-//	private List<EmployeeTraining> employeeTrainings = new ArrayList<>();
+	@ManyToOne
+	@JoinColumn(name= "category_id")
+	Category category;
+ 
 } 
