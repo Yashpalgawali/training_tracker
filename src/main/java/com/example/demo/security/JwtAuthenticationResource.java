@@ -42,12 +42,11 @@ public class JWTAuthenticationResource {
 	        Authentication authentication = authenticationManager.authenticate(
 	                new UsernamePasswordAuthenticationToken(request.username(), request.password()));
 
-	        System.err.println("Inside authenticate () "+authentication.toString());
+	        //System.err.println("Inside authenticate () "+authentication.toString());
 	        // 2. Generate JWT
 	        return new JwtResponse(createToken(authentication));
 	      
 	    }
-
 
 	private String createToken(Authentication auth) {
 		
@@ -62,7 +61,7 @@ public class JWTAuthenticationResource {
 								.expiresAt(Instant.now().plusSeconds(60*30))
 								.subject(auth.getName()).claim("scope", createScope(auth))
 								.claim("userId", user.getUserId()) // 👈 Custom claim: adds user_id to the payload of the token.
-								   
+
 								.build() ;
 								
 		return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
