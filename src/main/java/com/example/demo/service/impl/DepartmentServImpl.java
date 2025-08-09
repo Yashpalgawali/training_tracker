@@ -78,4 +78,16 @@ public class DepartmentServImpl implements IDepartmentService {
 		}
 	}
 
+	@Override
+	public Department getDepartmentByDeptName(String dname) {
+		
+		return deptrepo.getDepartmentByDeptName(dname);
+	}
+
+	@Override
+	public Department getDepartmentByDeptNameAndCompName(String dname, String cname) {
+		 
+		return getDepartmentByDeptNameAndCompName(dname, cname);
+	}
+
 }

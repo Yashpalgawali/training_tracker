@@ -20,4 +20,10 @@ public interface DepartmentRepository extends JpaRepository<Department, Long> {
 	@Transactional
 	@Modifying
 	public int updateDepartment(Long did, String dname, Long compid);
+	
+	@Query("SELECT d FROM Department d WHERE d.dept_name=:dname")
+	public Department getDepartmentByDeptName(String dname);
+	
+	@Query("SELECT d FROM Department d WHERE d.dept_name=:dname AND d.company.comp_name=:cname")
+	public Department getDepartmentByDeptNameAndCompName(String dname,String cname);
 }

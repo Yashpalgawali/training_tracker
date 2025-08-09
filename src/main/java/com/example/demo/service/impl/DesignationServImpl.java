@@ -65,4 +65,9 @@ public class DesignationServImpl implements IDesignationService {
 		}
 	}
 
+	@Override
+	public Object getDesignationByDesignation(String desig_name) {
+		return desigrepo.findByDesig_name(desig_name);		
+	}
+
 }

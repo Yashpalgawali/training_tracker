@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -7,9 +9,11 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,14 +26,14 @@ import com.example.demo.dto.EmployeeDTO;
 import com.example.demo.dto.ResponseDto;
 import com.example.demo.entity.Employee;
 import com.example.demo.entity.Training;
+import com.example.demo.export.ExportAllEmployees;
 import com.example.demo.service.IEmployeeService;
 import com.example.demo.service.IEmployeeTrainingHistoryService;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 @RestController
 @RequestMapping("employee")
-@CrossOrigin("*")
-//@AllArgsConstructor
-
 public class EmployeeController {
 
 	private final IEmployeeService empserv;
@@ -108,6 +112,44 @@ public class EmployeeController {
 
 		List<Training> trainList = empserv.getAllTrainingsByEmployeeId(empid);
 		return ResponseEntity.status(HttpStatus.OK).body(trainList);
+
+	}
+	
+	@GetMapping("/export/employee/list")
+//	@Operation(description = "This end point will Export the All assigned assets to excel file ", summary ="Export All Assigned Assets to the Excel")
+//	@ApiResponse(description = "This will export assigned assets to the Employee ", responseCode = "200" )		
+	public ResponseEntity<InputStreamResource> exportToExcel(HttpServletResponse response) throws IOException {
+		
+		// Set headers
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Employee_List.xlsx");
+
+		List<EmployeeDTO> empDtoList = empserv.getAllEmployees().stream().map(emp -> {			 
+		
+			EmployeeDTO empdto = new EmployeeDTO();
+
+			empdto.setEmp_id(emp.getEmp_id());
+			empdto.setEmp_name(emp.getEmp_name());
+			empdto.setEmp_code(emp.getEmp_code());
+			empdto.setJoining_date(emp.getJoining_date());
+			empdto.setCompany(emp.getDepartment().getCompany().getComp_name());
+			empdto.setDepartment(emp.getDepartment().getDept_name());
+			empdto.setDesignation(emp.getDesignation().getDesig_name());
+			 
+			return empdto;
+
+		}).collect(Collectors.toList());;		 
+		 
+		logger.info("EMPLDTO LIST is {} ",empDtoList);
+		
+		ExportAllEmployees excelExporter = new ExportAllEmployees(empDtoList);
+		byte[] excelContent = excelExporter.export(response);
+
+		// Return the file as a ResponseEntity
+		return ResponseEntity.ok().headers(headers)
+				.contentType(
+						MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+				.body(new InputStreamResource(new ByteArrayInputStream(excelContent)));
 
 	}
 

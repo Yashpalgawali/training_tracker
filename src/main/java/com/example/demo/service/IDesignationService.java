@@ -14,4 +14,5 @@ public interface IDesignationService {
 	
 	public int updateDesignation(Designation designation);
 	
+	public Object getDesignationByDesignation(String desig_name);
 }
