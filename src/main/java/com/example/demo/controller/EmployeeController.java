@@ -132,6 +132,7 @@ public class EmployeeController {
 			empdto.setEmp_name(emp.getEmp_name());
 			empdto.setEmp_code(emp.getEmp_code());
 			empdto.setJoining_date(emp.getJoining_date());
+			empdto.setContractor_name(emp.getContractor_name());
 			empdto.setCompany(emp.getDepartment().getCompany().getComp_name());
 			empdto.setDepartment(emp.getDepartment().getDept_name());
 			empdto.setDesignation(emp.getDesignation().getDesig_name());

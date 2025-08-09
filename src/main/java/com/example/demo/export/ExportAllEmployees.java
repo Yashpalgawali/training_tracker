@@ -44,6 +44,8 @@ public class ExportAllEmployees {
 		createCell(row,2,"Designation",style);
 		createCell(row,3,"Department",style);
 		createCell(row,4,"Company",style);
+		createCell(row,5,"Joining Date",style);
+		createCell(row,6,"Contractor",style);
 		 
 	}
 	
@@ -82,10 +84,12 @@ public class ExportAllEmployees {
 			int columnCount = 0;
 			
 			createCell(row,columnCount++, sr++ ,style);
-			createCell(row,columnCount++, employee.getEmp_name() ,style);		 
-			createCell(row,columnCount++, employee.getDesignation() ,style);
-			createCell(row,columnCount++, employee.getDepartment() ,style);
-			createCell(row,columnCount++, employee.getCompany() ,style);
+			createCell(row,columnCount++, employee.getEmp_name() , style);		 
+			createCell(row,columnCount++, employee.getDesignation() , style);
+			createCell(row,columnCount++, employee.getDepartment() , style);
+			createCell(row,columnCount++, employee.getCompany() , style);
+			createCell(row,columnCount++, employee.getJoining_date(), style);
+			createCell(row,columnCount++, employee.getContractor_name() ,style);
 		  }
 	    }
 		else {
