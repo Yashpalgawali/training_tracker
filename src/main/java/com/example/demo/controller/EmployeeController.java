@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -43,12 +45,12 @@ public class EmployeeController {
 		this.emptrainhistserv = emptrainhistserv;
 	}
 
-//	private Logger logger = LoggerFactory.getLogger(getClass());
+	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@PostMapping("/")
 	public ResponseEntity<ResponseDto> saveEmployee(@RequestBody Employee empdto) {
-
-		empserv.saveEmployee(empdto);
+		logger.info("Employee Object {} ",empdto);
+		//empserv.saveEmployee(empdto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto(HttpStatus.CREATED.toString(),
 				"Employee " + empdto.getEmp_name() + " is saved successfully"));
 	}
