@@ -16,8 +16,9 @@ public interface EmployeeTrainingHistoryRepository extends JpaRepository<Employe
 	@Query(value= "SELECT et.* FROM tbl_employee_training_history et "
 			+ " JOIN tbl_employee e ON et.emp_id=e.emp_id "
 			+ " JOIN tbl_training t ON t.training_id=et.training_id "
+			+"  JOIN tbl_training_time_slot sl ON sl.training_time_slot_id=et.training_time_slot_id"
 			+ " WHERE et.emp_id=:empid",nativeQuery = true)
-//	@Query("SELECT et FROM EmployeeTrainingHistory et JOIN et.employee JOIN et.training WHERE et.employee.emp_id=:empid")
+//	@Query("SELECT et FROM EmployeeTrainingHistory et JOIN et.employee JOIN et.training JOIN et.trainingTimeSlot WHERE et.employee.emp_id=:empid")
 	List<EmployeeTrainingHistory> findByEmployeeId(Long empid);
 	
 	

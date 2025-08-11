@@ -31,24 +31,28 @@ import lombok.experimental.FieldDefaults;
 @Validated
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class EmployeeTrainingHistory {
- 
+
 	@Id
 	@SequenceGenerator(name = "emp_train_hist_seq", allocationSize = 1,initialValue = 1)
 	@GeneratedValue(generator = "emp_train_hist_seq" ,strategy = GenerationType.AUTO )
 	Long emp_train_hist_id;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "emp_id")
 	Employee employee;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "training_id")
 	Training training;
-	
+
 	String training_date;
-	
+
 	String completion_date;
-	
+
+	@ManyToOne
+	@JoinColumn(name="training_time_slot_id")
+	TrainingTimeSlot trainingTimeSlot;
+
 	@Transient
 	List<Long> training_ids;
 }
