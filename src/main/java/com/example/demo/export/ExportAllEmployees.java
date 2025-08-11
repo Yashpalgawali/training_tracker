@@ -46,6 +46,7 @@ public class ExportAllEmployees {
 		createCell(row,4,"Company",style);
 		createCell(row,5,"Joining Date",style);
 		createCell(row,6,"Contractor",style);
+		createCell(row,7,"Category",style);
 		 
 	}
 	
@@ -90,6 +91,7 @@ public class ExportAllEmployees {
 			createCell(row,columnCount++, employee.getCompany() , style);
 			createCell(row,columnCount++, employee.getJoining_date(), style);
 			createCell(row,columnCount++, employee.getContractor_name() ,style);
+			createCell(row,columnCount++, employee.getCategory() ,style);
 		  }
 	    }
 		else {

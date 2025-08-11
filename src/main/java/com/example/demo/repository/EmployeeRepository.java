@@ -14,10 +14,11 @@ import com.example.demo.entity.Training;
 @Repository("emprepo")
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
-	@Query("UPDATE Employee e SET e.emp_name=:empname,e.emp_code=:empcode,e.joining_date=:doj,e.department.dept_id=:deptid,e.designation.desig_id=:desigid  WHERE e.emp_id=:eid")
+	@Query("UPDATE Employee e SET e.emp_name=:empname,e.emp_code=:empcode,e.joining_date=:doj,e.department.dept_id=:deptid,"
+			+ "e.contractor_name=:contractor,e.category.category_id=:category_id,e.designation.desig_id=:desigid  WHERE e.emp_id=:eid")
 	@Modifying
-	@Transactional
-	public int updateEmployee(Long eid,String empname,String empcode,String doj,Long deptid,Long desigid);
+	
+	public int updateEmployee(Long eid,String empname,String empcode,String contractor,Long category_id,String doj,Long deptid,Long desigid);
 	
 	@Query("SELECT e FROM Employee e JOIN e.department JOIN e.designation WHERE e.emp_code=:emp_code")
 	public Employee getEmployeeByCode(String emp_code);

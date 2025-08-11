@@ -20,7 +20,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dto.EmployeeDTO;
 import com.example.demo.dto.ResponseDto;
@@ -102,6 +104,7 @@ public class EmployeeController {
 
 	@PutMapping("/")
 	public ResponseEntity<ResponseDto> updateEmployee(@RequestBody Employee employee) {
+		
 		empserv.updateEmployee(employee);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
 				"Employee " + employee.getEmp_name() + " is UPDATED successfully"));
@@ -136,6 +139,12 @@ public class EmployeeController {
 			empdto.setCompany(emp.getDepartment().getCompany().getComp_name());
 			empdto.setDepartment(emp.getDepartment().getDept_name());
 			empdto.setDesignation(emp.getDesignation().getDesig_name());
+			if(emp.getCategory()==null) {
+				empdto.setCategory(null);							
+			}
+			else {
+				empdto.setCategory(emp.getCategory().getCategory());
+			}
 			 
 			return empdto;
 
@@ -151,7 +160,17 @@ public class EmployeeController {
 				.contentType(
 						MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
 				.body(new InputStreamResource(new ByteArrayInputStream(excelContent)));
-
+	}
+	
+	@PostMapping("/upload")
+	public ResponseEntity<String> uploadEmployeeList(@RequestParam MultipartFile empListExcel) {
+		
+		if(empListExcel.isEmpty())
+		{ return ResponseEntity.badRequest().body("Please get a file to upload"); }
+		
+		empserv.uploadEmployeeList(empListExcel);
+		return ResponseEntity.status(HttpStatus.OK).body("File Uploaded successfully");
+		
 	}
 
 }

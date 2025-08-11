@@ -13,8 +13,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.demo.entity.Category;
 import com.example.demo.entity.Company;
 import com.example.demo.entity.Department;
 import com.example.demo.entity.Designation;
@@ -29,6 +31,7 @@ import com.example.demo.repository.DesignationRepository;
 import com.example.demo.repository.EmployeeRepository;
 import com.example.demo.repository.EmployeeTrainingHistoryRepository;
 import com.example.demo.repository.TrainingRepository;
+import com.example.demo.service.ICategoryService;
 import com.example.demo.service.IEmployeeService;
 import com.example.demo.service.IEmployeeTrainingHistoryService;
 
@@ -41,14 +44,13 @@ public class EmployeeServImpl implements IEmployeeService {
 	private final TrainingRepository trainRepository;
 	private final CompanyRepository comprepo;
 	private final EmployeeTrainingHistoryRepository emptrainhistrepo;
-	private final IEmployeeTrainingHistoryService emptrainhistserv; 
-
-	 
+	private final IEmployeeTrainingHistoryService emptrainhistserv;
+	private final ICategoryService categoryserv;
 
 	public EmployeeServImpl(EmployeeRepository emprepo, DesignationRepository desigrepo, DepartmentRepository deptrepo,
 			TrainingRepository trainRepository, CompanyRepository comprepo,
-			EmployeeTrainingHistoryRepository emptrainhistrepo, IEmployeeTrainingHistoryService emptrainhistserv
-			 ) {
+			EmployeeTrainingHistoryRepository emptrainhistrepo, IEmployeeTrainingHistoryService emptrainhistserv,
+			ICategoryService categoryserv) {
 		super();
 		this.emprepo = emprepo;
 		this.desigrepo = desigrepo;
@@ -57,24 +59,23 @@ public class EmployeeServImpl implements IEmployeeService {
 		this.comprepo = comprepo;
 		this.emptrainhistrepo = emptrainhistrepo;
 		this.emptrainhistserv = emptrainhistserv;
-	 
+		this.categoryserv = categoryserv;
 	}
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	private DateTimeFormatter dday = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-	private DateTimeFormatter ttime = DateTimeFormatter.ofPattern("HH:mm:ss");	
-	
+	private DateTimeFormatter ttime = DateTimeFormatter.ofPattern("HH:mm:ss");
+
 	@Override
 	public Employee saveEmployee(Employee emp) {
 
 //		List<Long> trainingList = emp.getTraining_ids();
 //		logger.info("TRAINIG ID's are {} ",trainingList);
 		Employee savedEmployee = emprepo.save(emp);
-		if(savedEmployee!=null) {
+		if (savedEmployee != null) {
 			return savedEmployee;
-		}
-		else {
+		} else {
 			throw new GlobalException("Employee " + emp.getEmp_name() + " is not saved and No trainings are provided");
 		}
 	}
@@ -87,29 +88,15 @@ public class EmployeeServImpl implements IEmployeeService {
 	}
 
 	@Override
+	@Transactional
 	public int updateEmployee(Employee emp) {
 
-//		Employee foundEmp = getEmployeeByEmployeeId(emp.getEmp_id());
+		int result = emprepo.updateEmployee(emp.getEmp_id(), emp.getEmp_name(), emp.getEmp_code(),emp.getContractor_name(),
+				emp.getCategory().getCategory_id(),emp.getJoining_date(), emp.getDepartment().getDept_id(), emp.getDesignation().getDesig_id());
 
-		int result = emprepo.updateEmployee(emp.getEmp_id(), emp.getEmp_name(), emp.getEmp_code(), emp.getJoining_date(), emp.getDepartment().getDept_id(), emp.getDesignation().getDesig_id());
- 
-		if(result > 0) {
-//			emp.getTraining_ids().stream().map( training-> {
-//				
-//				EmployeeTrainingHistory history = new EmployeeTrainingHistory();
-//				
-//				history.setEmployee(emp);
-//				history.setTraining(trainRepository.findById(training).get());
-//				history.setTraining_date(dday.format(LocalDateTime.now()));
-//				
-//				emptrainhistrepo.save(history);
-//				
-//				return history;
-//				
-//			});
+		if (result > 0) { 
 			return result;
-		}
-		else {
+		} else {
 			throw new ResourceNotModifiedException("Employee " + emp.getEmp_name() + " is not updated");
 		}
 
@@ -118,7 +105,7 @@ public class EmployeeServImpl implements IEmployeeService {
 	@Override
 	public List<Employee> getAllEmployees() {
 		var elist = emprepo.findAll();
-		
+
 		if (elist.size() > 0) {
 			return elist;
 		} else {
@@ -141,52 +128,71 @@ public class EmployeeServImpl implements IEmployeeService {
 
 //		List<Training> trainList = emprepo.getAllTrainingsByEmployeeId(empid);
 //		return trainList;
-		return null;		
+		return null;
 	}
 
 	@Override
 	public void uploadEmployeeList(MultipartFile empListExcel) {
-		 
-		try(InputStream is = empListExcel.getInputStream();
-				Workbook  workbook = new XSSFWorkbook(is)) {
-				Sheet sheet = workbook.getSheetAt(0);
+
+		  try (InputStream is = empListExcel.getInputStream();
+				  Workbook workbook = new XSSFWorkbook(is)) {
+			  Sheet sheet = workbook.getSheetAt(0);
 			List<Employee> empList = new ArrayList<>();
-			
-			for(int i=1;i<sheet.getLastRowNum();i++) {
+
+			  for (int i = 1; i <= sheet.getLastRowNum(); i++) { // start from row 1 (skip header)
+				System.err.println("i= "+i);
 				Row row = sheet.getRow(i);
-				if(row !=null ) continue;
-				
-				Employee employee = new Employee();
-				employee.setEmp_name(row.getCell(0).getStringCellValue());
-				
-				String dname = row.getCell(1).getStringCellValue();
-				String dept_name = row.getCell(2).getStringCellValue();
-				String compname = row.getCell(3).getStringCellValue();
-				
-				Designation desigObj = desigrepo.findByDesig_name(dname);
-				
-				Company comp = comprepo.findByComp_name(compname);
-				
-				Department dept = null;
-				if(comp!=null) {
-					dept = deptrepo.getDepartmentByDeptNameAndCompName(dept_name,comp.getComp_name());
-				}else {
-					dept = deptrepo.getDepartmentByDeptNameAndCompName(dept_name,"");
-				}
-				
-				dept.setCompany(comp);
-				
-				employee.setDepartment(dept);
-				employee.setDesignation(desigObj);				 
-				
+                if (row == null) {System.err.println("Row is NULL"); continue; }
+                else {
+                	System.err.println("Row is not null");
+                	System.err.println("name is "+row.getCell(1).getStringCellValue());
+                }
+
+//				System.err.println("name is "+row.getCell(1).getStringCellValue());
+//				Employee employee = new Employee();
+//				employee.setEmp_name(row.getCell(1).getStringCellValue());
+//
+//				String dname = row.getCell(2).getStringCellValue();
+//				String dept_name = row.getCell(3).getStringCellValue();
+//				String compname = row.getCell(4).getStringCellValue();
+//				String joining_date = row.getCell(5).getStringCellValue();
+//				String contractor_name = row.getCell(6).getStringCellValue();
+//				String category = row.getCell(7).getStringCellValue();
+//
+//				Designation desigObj = desigrepo.findByDesig_name(dname);
+//				Category category_object = categoryserv.getCategoryByCategoryName(category);
+//				
+//				if(category_object!=null) {
+//					employee.setCategory(category_object);
+//				}
+//				else {
+//					employee.setCategory(new Category(""));
+//				}		 
+//
+//				Company comp = comprepo.findByComp_name(compname);
+//
+//				Department dept = null;
+//				if (comp != null) {
+//					dept = deptrepo.getDepartmentByDeptNameAndCompName(dept_name, comp.getComp_name());
+//				} else {
+//					dept = deptrepo.getDepartmentByDeptNameAndCompName(dept_name, "");
+//				}
+//
+//				employee.setJoining_date(joining_date);
+//				employee.setContractor_name(contractor_name);
+//				
+//				dept.setCompany(comp);
+//				employee.setDepartment(dept);
+//				employee.setDesignation(desigObj);
+//				logger.info("Employee onject is ",employee);
+//				empList.add(employee);
 			}
+			logger.info("All EMPLOYEES LIST {} ",empList);
+			emprepo.saveAll(empList);
+		} catch (Exception e) {
+			throw new RuntimeException("FILE IS NOT UPLOADED");
 		}
-		catch(Exception e) {
-			throw new RuntimeException("");
-		}
-				
-		 
-		
-	} 
+
+	}
 
 }

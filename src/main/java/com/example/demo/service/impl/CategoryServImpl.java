@@ -61,4 +61,10 @@ public class CategoryServImpl implements ICategoryService {
 		}		
 	}
 
+	@Override
+	public Category getCategoryByCategoryName(String category_name) {
+	 
+		return categoryrepo.findByCategory(category_name).get(); 
+	}
+
 }
