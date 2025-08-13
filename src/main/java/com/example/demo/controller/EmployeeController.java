@@ -55,8 +55,8 @@ public class EmployeeController {
 
 	@PostMapping("/")
 	public ResponseEntity<ResponseDto> saveEmployee(@RequestBody Employee empdto) {
-		logger.info("Employee Object {} ",empdto);
-		//empserv.saveEmployee(empdto);
+		
+		empserv.saveEmployee(empdto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto(HttpStatus.CREATED.toString(),
 				"Employee " + empdto.getEmp_name() + " is saved successfully"));
 	}

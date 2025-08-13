@@ -3,7 +3,6 @@ package com.example.demo.dto;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.demo.entity.Training;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -71,7 +71,7 @@ public class EmployeeServImpl implements IEmployeeService {
 	public Employee saveEmployee(Employee emp) {
 
 //		List<Long> trainingList = emp.getTraining_ids();
-//		logger.info("TRAINIG ID's are {} ",trainingList);
+		logger.info("Employee Object {} ",emp);
 		Employee savedEmployee = emprepo.save(emp);
 		if (savedEmployee != null) {
 			return savedEmployee;

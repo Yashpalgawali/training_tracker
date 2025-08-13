@@ -29,14 +29,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("company")
 @CrossOrigin("*")
 @Tag(name = "Company Controller",description = "This controller handles endpoints to perform operations like Save Company,Find, Update the company")
-public class ComanyController {
+public class CompanyController {
 
 	private final ICompanyService compserv;
 
 	/**
 	 * @param compserv
 	 */
-	public ComanyController(ICompanyService compserv) {
+	public CompanyController(ICompanyService compserv) {
 		super(); 
 		this.compserv = compserv;
 	}
