@@ -23,8 +23,7 @@ public class TrainingTimeSlotServImpl implements ITrainingTimeSlotService {
 	@Override
 	public TrainingTimeSlot saveTrainingTimeSlot(TrainingTimeSlot timeSlot) {
 		var savedSlot = traintimeslotrepo.save(timeSlot);
-		if(savedSlot!=null)
-		{
+		if(savedSlot!=null) {
 			return savedSlot;
 		}
 		else {
@@ -33,7 +32,7 @@ public class TrainingTimeSlotServImpl implements ITrainingTimeSlotService {
 	}
 
 	@Override
-	public List<TrainingTimeSlot> getAllCompanies() {
+	public List<TrainingTimeSlot> getAllTimeSlots() {
 		
 		return traintimeslotrepo.findAll();
 	}

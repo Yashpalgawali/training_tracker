@@ -35,13 +35,5 @@ public class Competency {
 	Long competency_id;
 	
 	Long score;
-	
-	@ManyToOne
-	@JoinColumn(name="training_id")
-	Training training;
-	
-	@ManyToOne
-	@JoinColumn(name="emp_id")
-	Employee employee;
-	
+	 
 }

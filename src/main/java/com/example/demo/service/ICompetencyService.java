@@ -10,6 +10,6 @@ public interface ICompetencyService {
 
 	public List<Competency> getAllCompetencyList();
 
-	public List<Competency> getAllCompetenciesbyEmpId(Long empid);
+	public  Competency getCompetencyById(Long competencyid);
 	
 }

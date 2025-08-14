@@ -68,14 +68,14 @@ public class CompetencyController1 {
 	}
 	
 	@GetMapping("/{id}")	 
-	@Operation(summary = "Find List of Competencies By EMployee", description = "This endpoint finds the List of Competencies from the database" )
+	@Operation(summary = "Find List of Competencies By ID", description = "This endpoint finds the List of Competencies from the database" )
 	@ApiResponses(
 			value = {
 					@ApiResponse(responseCode = "200" ,description = "The companies are found Successfully "),
 					@ApiResponse(responseCode = "404" ,description = "No companies are found")
 			})
-	public ResponseEntity<List<Competency>> getCompetencyByEmpId(@PathVariable Long id) {
-		var competency = competencyserv.getAllCompetenciesbyEmpId(id);
+	public ResponseEntity<Competency> getCompetencyById(@PathVariable Long id) {
+		var competency = competencyserv.getCompetencyById(id);
 		return ResponseEntity.status(HttpStatus.OK).body(competency);
 	}
 	

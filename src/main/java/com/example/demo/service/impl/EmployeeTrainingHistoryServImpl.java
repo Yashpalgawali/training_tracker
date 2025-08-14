@@ -10,14 +10,17 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.EmployeeTrainingDto;
+import com.example.demo.entity.Competency;
 import com.example.demo.entity.Employee;
 import com.example.demo.entity.EmployeeTrainingHistory;
 import com.example.demo.entity.Training;
 import com.example.demo.exception.GlobalException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.exception.ResourceNotModifiedException;
+import com.example.demo.repository.CompetencyRepository;
 import com.example.demo.repository.EmployeeRepository;
 import com.example.demo.repository.EmployeeTrainingHistoryRepository;
+import com.example.demo.service.ICompetencyService;
 import com.example.demo.service.IEmployeeService;
 import com.example.demo.service.IEmployeeTrainingHistoryService;
 import com.example.demo.service.ITrainingService;
@@ -31,12 +34,15 @@ public class EmployeeTrainingHistoryServImpl implements IEmployeeTrainingHistory
 
 	private final EmployeeRepository emprepo;
 
+	private final CompetencyRepository competencyrepo;
+
 	public EmployeeTrainingHistoryServImpl(EmployeeTrainingHistoryRepository emptrainhistrepo,
-			ITrainingService trainserv, EmployeeRepository emprepo) {
+			ITrainingService trainserv, EmployeeRepository emprepo, CompetencyRepository competencyrepo) {
 		super();
 		this.emptrainhistrepo = emptrainhistrepo;
 		this.trainserv = trainserv;
 		this.emprepo = emprepo;
+		this.competencyrepo = competencyrepo;
 	}
 
 	private DateTimeFormatter dday = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -53,13 +59,21 @@ public class EmployeeTrainingHistoryServImpl implements IEmployeeTrainingHistory
 			EmployeeTrainingHistory hist = new EmployeeTrainingHistory();
 
 			Employee emp = emprepo.findById(history.getEmployee().getEmp_id()).get();
-
+			
+			Competency competency = competencyrepo.findById(history.getCompetency().getCompetency_id()).get();
+			
+			hist.setCompetency(competency);
 			hist.setEmployee(emp);
 			hist.setTraining(training);
 			hist.setTraining_date((history.getTraining_date()));
 			hist.setCompletion_date(history.getCompletion_date());
 			hist.setTrainingTimeSlot(history.getTrainingTimeSlot());
+			
+			System.err.println("OBJECT TO BE SAVED "+hist.toString());
+			
+			
 			emptrainhistrepo.save(hist);
+			
 			return hist;
 
 		}).collect(Collectors.toList());
@@ -131,6 +145,7 @@ public class EmployeeTrainingHistoryServImpl implements IEmployeeTrainingHistory
 				dto.setDesig_name(train[4].toString());
 				dto.setDept_name(train[5].toString());
 				dto.setComp_name(train[6].toString());
+				dto.setScore(String.valueOf(train[7]));
 				trainList.add(dto);
 			});
 		}

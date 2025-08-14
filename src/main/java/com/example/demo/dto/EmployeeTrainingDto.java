@@ -21,4 +21,6 @@ public class EmployeeTrainingDto {
 	String desig_name;	
 	String dept_name;
 	String comp_name;
+	String time_slot;
+	String score;
 }

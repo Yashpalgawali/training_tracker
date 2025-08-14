@@ -55,4 +55,8 @@ public class EmployeeTrainingHistory {
 
 	@Transient
 	List<Long> training_ids;
+	
+	@ManyToOne
+	@JoinColumn(name="competency_id")
+	Competency competency;
 }

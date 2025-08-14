@@ -8,7 +8,7 @@ public interface ITrainingTimeSlotService {
 
 	public TrainingTimeSlot saveTrainingTimeSlot(TrainingTimeSlot timeSlot);
 	
-	public List<TrainingTimeSlot> getAllCompanies();
+	public List<TrainingTimeSlot> getAllTimeSlots();
 	
 	public TrainingTimeSlot getTrainingTimeSlotById(Long time_slot_id);
 	

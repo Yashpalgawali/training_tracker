@@ -39,8 +39,7 @@ public class TrainingTimeSlotController {
 	}
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
-	@PostMapping("/")
- 
+	@PostMapping("/") 
 	@Operation(summary = "Save TrainingTimeSlot", description = "This endpoint saves the TrainingTimeSlot object to the database" )
 	@ApiResponses(
 			value = {
@@ -72,9 +71,9 @@ public class TrainingTimeSlotController {
 					@ApiResponse(responseCode = "200" ,description = "The companies are found Successfully "),
 					@ApiResponse(responseCode = "404" ,description = "No companies are found")
 			})
-	public ResponseEntity<List<TrainingTimeSlot>> getAllCompanies() {
-		var trainingtimeslot = traintimeslotserv.getAllCompanies();
-		return ResponseEntity.status(HttpStatus.OK).body(trainingtimeslot);
+	public ResponseEntity<List<TrainingTimeSlot>> getAllTimeSlots() {
+		var trainingtimeslot = traintimeslotserv.getAllTimeSlots();
+				return ResponseEntity.status(HttpStatus.OK).body(trainingtimeslot);
 	}
 	
 	

@@ -11,6 +11,5 @@ import com.example.demo.entity.Employee;
 @Repository("competencyrepo")
 public interface CompetencyRepository extends JpaRepository<Competency, Long> {
 
-	
-	List<Competency> findByEmployee(Employee employee);	
+	 
 }

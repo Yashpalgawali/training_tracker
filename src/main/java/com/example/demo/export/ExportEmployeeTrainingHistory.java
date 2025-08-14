@@ -59,7 +59,9 @@ public class ExportEmployeeTrainingHistory {
 			createCell(row,1,"Training",style);
 			createCell(row,2,"Training Date",style);
 			createCell(row,3,"Completion Date",style);
-			createCell(row,4,"Employee",style);
+			createCell(row,4,"Competency Score",style);
+			createCell(row,5,"Employee",style);
+			
 	
 	}
 	
@@ -98,7 +100,8 @@ public class ExportEmployeeTrainingHistory {
 				createCell(row,columnCount++, sr++ ,style);
 				createCell(row,columnCount++, hist.getTraining().getTraining_name() ,style);			
 				createCell(row,columnCount++, hist.getTraining_date() ,style);
-			
+				createCell(row,columnCount++, hist.getCompetency().getScore() ,style);
+				
 				if(!hist.getCompletion_date().equals("")) {				 
 					createCell(row,columnCount++, hist.getCompletion_date() ,style);
 				}
@@ -109,7 +112,7 @@ public class ExportEmployeeTrainingHistory {
 				if(cn==1) {
 					createCell(row,columnCount++, hist.getEmployee().getEmp_name() ,style);
 					cn++;
-				}
+				}				
 			}
 		}
 		else {

@@ -46,6 +46,7 @@ public class ExportAllTrainings {
 		createCell(row,5,"Designation",style);
 		createCell(row,6,"Department",style);
 		createCell(row,7,"Company",style);
+		createCell(row,8,"Competency",style);
 		 
 	}
 	
@@ -101,6 +102,7 @@ public class ExportAllTrainings {
 			createCell(row,columnCount++, training.getDesig_name() ,style);
 			createCell(row,columnCount++, training.getDept_name() ,style);
 			createCell(row,columnCount++, training.getComp_name() ,style);
+			createCell(row,columnCount++, training.getScore() ,style);
 		  }
 	    }
 		else {

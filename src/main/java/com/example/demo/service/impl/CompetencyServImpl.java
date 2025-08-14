@@ -8,6 +8,7 @@ import com.example.demo.entity.Competency;
 import com.example.demo.entity.Employee;
 import com.example.demo.entity.Training;
 import com.example.demo.exception.GlobalException;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.CompetencyRepository;
 import com.example.demo.service.ICompetencyService;
 import com.example.demo.service.IEmployeeService;
@@ -32,13 +33,7 @@ public class CompetencyServImpl implements ICompetencyService {
 
 	@Override
 	public Competency saveCompetency(Competency competency) {
-		Employee emp = empserv.getEmployeeByEmployeeId(competency.getEmployee().getEmp_id());
-		
-		competency.setEmployee(emp);
-
-		Training training = trainserv.getTrainingById(competency.getTraining().getTraining_id());
-		competency.setTraining(training);
-		
+		 
 		var comp = competencyrepo.save(competency);
 		if (comp != null) {
 			return comp;
@@ -54,10 +49,9 @@ public class CompetencyServImpl implements ICompetencyService {
 	}
 
 	@Override
-	public List<Competency> getAllCompetenciesbyEmpId(Long empid) {
-		Employee emp = empserv.getEmployeeByEmployeeId(empid);
-		return competencyrepo.findByEmployee(emp);
-			
+	public Competency getCompetencyById(Long competencyid) {
+	 
+		return competencyrepo.findById(competencyid).orElseThrow(()-> new ResourceNotFoundException("No Competency found for gicen ID "+competencyid));
 	}
 
 }

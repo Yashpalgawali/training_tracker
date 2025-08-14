@@ -28,6 +28,7 @@ import com.example.demo.export.ExportEmployeeTrainingHistory;
 import com.example.demo.service.IEmployeeService;
 import com.example.demo.service.IEmployeeTrainingHistoryService;
 
+import ch.qos.logback.classic.Logger;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
@@ -59,6 +60,9 @@ public class EmployeeTrainingController {
 
 	@PostMapping("/")
 	public ResponseEntity<ResponseDto> saveEmployeeTraining(@RequestBody EmployeeTrainingHistory emptraining) {
+		
+		System.err.println("In Employee Controller Training save Object "+emptraining.toString());
+		
 		emptrainhistserv.saveEmployeeTrainingHistory(emptraining);
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto(HttpStatus.CREATED.toString(), "Training is started of the Employee"));
 	}
