@@ -17,7 +17,7 @@ public interface EmployeeTrainingHistoryRepository extends JpaRepository<Employe
 			+ " JOIN tbl_employee e ON et.emp_id=e.emp_id "
 			+ " JOIN tbl_training t ON t.training_id=et.training_id "
 			+"  JOIN tbl_training_time_slot sl ON sl.training_time_slot_id=et.training_time_slot_id"
-			+ " JOIN tbl_employee_training_history eth ON eth.training_time_slot_id=et.training_time_slot_id"
+		 
 			+ " WHERE et.emp_id=:empid",nativeQuery = true)
 //	@Query("SELECT et FROM EmployeeTrainingHistory et JOIN et.employee JOIN et.training JOIN et.trainingTimeSlot WHERE et.employee.emp_id=:empid")
 	List<EmployeeTrainingHistory> findByEmployeeId(Long empid);
@@ -42,4 +42,8 @@ public interface EmployeeTrainingHistoryRepository extends JpaRepository<Employe
 			+ "JOIN tbl_company AS company ON company.company_id=dept.company_id "
 			+ "JOIN tbl_competency AS competency ON competency.competency_id=emptrain.competency_id ",nativeQuery = true)
 	List<Object[]> getAllTrainingsOfAllEmployees();
+	
+	 
+	@Query("SELECT eth.training,eth.competency FROM EmployeeTrainingHistory eth WHERE eth.employee.emp_id=:empid")
+	List<EmployeeTrainingHistory> getTrainingAndScoreByEmployeeId(Long empid);
 }	

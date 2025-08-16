@@ -178,35 +178,5 @@ public class EmployeeController {
 //		return ResponseEntity.status(HttpStatus.OK).body("File Uploaded successfully");
 		
 	}
-
 }
 
-
-//Model
-class Competency {
- private String name;
- private int score; // 0-100
-
- public Competency(String name, int score) {
-     this.name = name;
-     this.score = score;
- }
-
- public String getName() { return name; }
- public int getScore() { return score; }
-}
-
-@RestController
-class CompetencyController {
-
-    @GetMapping("/api/competencies")
-    public List<Competency> getCompetencies() {
-        return Arrays.asList(
-            new Competency("Java", 85),
-            new Competency("Spring Boot", 80),
-            new Competency("React", 70),
-            new Competency("SQL", 90),
-            new Competency("DevOps", 60)
-        );
-    }
-}

@@ -100,7 +100,6 @@ public class ExportEmployeeTrainingHistory {
 				createCell(row,columnCount++, sr++ ,style);
 				createCell(row,columnCount++, hist.getTraining().getTraining_name() ,style);			
 				createCell(row,columnCount++, hist.getTraining_date() ,style);
-				createCell(row,columnCount++, hist.getCompetency().getScore() ,style);
 				
 				if(!hist.getCompletion_date().equals("")) {				 
 					createCell(row,columnCount++, hist.getCompletion_date() ,style);
@@ -108,7 +107,8 @@ public class ExportEmployeeTrainingHistory {
 				else {
 					createCell(row,columnCount++, "Not Completed" , style );
 				}
-	
+				createCell(row,columnCount++, hist.getCompetency().getScore() ,style);
+				
 				if(cn==1) {
 					createCell(row,columnCount++, hist.getEmployee().getEmp_name() ,style);
 					cn++;

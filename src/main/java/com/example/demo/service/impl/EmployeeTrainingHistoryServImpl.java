@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.EmployeeTrainingDto;
 import com.example.demo.entity.Competency;
+import com.example.demo.entity.CompetencyScore;
 import com.example.demo.entity.Employee;
 import com.example.demo.entity.EmployeeTrainingHistory;
 import com.example.demo.entity.Training;
@@ -151,6 +152,20 @@ public class EmployeeTrainingHistoryServImpl implements IEmployeeTrainingHistory
 		}
 
 		return trainList;
+	}
+
+	@Override
+	public List<CompetencyScore> getAllTrainingCompetenciesBuyEmpId(Long emp_id) {
+		
+		List<EmployeeTrainingHistory> empTrainHistory = emptrainhistrepo.getTrainingAndScoreByEmployeeId(emp_id);
+		List<CompetencyScore> collect = empTrainHistory.stream().map(history -> {
+			CompetencyScore dto = new CompetencyScore();
+			 dto.setName(history.getTraining().getTraining_name());
+			 dto.setScore(history.getCompetency().getScore());
+			return dto;
+		}).collect(Collectors.toList());
+		return collect;
+		 
 	}
 
 }

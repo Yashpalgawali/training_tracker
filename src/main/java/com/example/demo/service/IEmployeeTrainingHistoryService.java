@@ -3,6 +3,7 @@ package com.example.demo.service;
 import java.util.List;
 
 import com.example.demo.dto.EmployeeTrainingDto;
+import com.example.demo.entity.CompetencyScore;
 import com.example.demo.entity.EmployeeTrainingHistory;
 import com.example.demo.entity.Training;
 
@@ -21,4 +22,6 @@ public interface IEmployeeTrainingHistoryService {
 	public EmployeeTrainingHistory getEmployeeTrainingHistoryByID(Long emptrainhist_id);
 	
 	public List<EmployeeTrainingDto> getAllTrainingListOfAllEmployees();
+	
+	public List<CompetencyScore> getAllTrainingCompetenciesBuyEmpId(Long emp_id);
 }
