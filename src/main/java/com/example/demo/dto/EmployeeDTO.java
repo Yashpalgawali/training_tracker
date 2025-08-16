@@ -23,5 +23,7 @@ public class EmployeeDTO {
 	String contractor_name;	
 	String trainings;
 	String category;
+	String training_date;
+	String completion_date;
 	List<Long> training_ids = new ArrayList<>();
 }

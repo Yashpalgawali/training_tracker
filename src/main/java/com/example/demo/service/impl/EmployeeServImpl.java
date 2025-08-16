@@ -6,6 +6,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -14,10 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.entity.Category;
-import com.example.demo.entity.Company;
 import com.example.demo.entity.Department;
 import com.example.demo.entity.Designation;
 import com.example.demo.entity.Employee;
@@ -71,7 +71,7 @@ public class EmployeeServImpl implements IEmployeeService {
 	public Employee saveEmployee(Employee emp) {
 
 //		List<Long> trainingList = emp.getTraining_ids();
-		logger.info("Employee Object {} ",emp);
+		logger.info("Employee Object {} ", emp);
 		Employee savedEmployee = emprepo.save(emp);
 		if (savedEmployee != null) {
 			return savedEmployee;
@@ -91,10 +91,11 @@ public class EmployeeServImpl implements IEmployeeService {
 	@Transactional
 	public int updateEmployee(Employee emp) {
 
-		int result = emprepo.updateEmployee(emp.getEmp_id(), emp.getEmp_name(), emp.getEmp_code(),emp.getContractor_name(),
-				emp.getCategory().getCategory_id(),emp.getJoining_date(), emp.getDepartment().getDept_id(), emp.getDesignation().getDesig_id());
+		int result = emprepo.updateEmployee(emp.getEmp_id(), emp.getEmp_name(), emp.getEmp_code(),
+				emp.getContractor_name(), emp.getCategory().getCategory_id(), emp.getJoining_date(),
+				emp.getDepartment().getDept_id(), emp.getDesignation().getDesig_id());
 
-		if (result > 0) { 
+		if (result > 0) {
 			return result;
 		} else {
 			throw new ResourceNotModifiedException("Employee " + emp.getEmp_name() + " is not updated");
@@ -132,67 +133,62 @@ public class EmployeeServImpl implements IEmployeeService {
 	}
 
 	@Override
-	public void uploadEmployeeList(MultipartFile empListExcel) {
+	public void uploadEmployeeList(InputStream is) {
 
-		  try (InputStream is = empListExcel.getInputStream();
-				  Workbook workbook = new XSSFWorkbook(is)) {
-			  Sheet sheet = workbook.getSheetAt(0);
-			List<Employee> empList = new ArrayList<>();
+		List<Employee> employees = new ArrayList<>();
+		try (Workbook workbook = new XSSFWorkbook(is)) {
+			Sheet sheet = workbook.getSheetAt(0);
 
-			  for (int i = 1; i <= sheet.getLastRowNum(); i++) { // start from row 1 (skip header)
-				System.err.println("i= "+i);
+			for (int i = 1; i <= sheet.getLastRowNum(); i++) {
 				Row row = sheet.getRow(i);
-                if (row == null) {System.err.println("Row is NULL"); continue; }
-                else {
-                	System.err.println("Row is not null");
-                	System.err.println("name is "+row.getCell(1).getStringCellValue());
-                }
 
-//				System.err.println("name is "+row.getCell(1).getStringCellValue());
-//				Employee employee = new Employee();
-//				employee.setEmp_name(row.getCell(1).getStringCellValue());
-//
-//				String dname = row.getCell(2).getStringCellValue();
-//				String dept_name = row.getCell(3).getStringCellValue();
-//				String compname = row.getCell(4).getStringCellValue();
-//				String joining_date = row.getCell(5).getStringCellValue();
-//				String contractor_name = row.getCell(6).getStringCellValue();
-//				String category = row.getCell(7).getStringCellValue();
-//
-//				Designation desigObj = desigrepo.findByDesig_name(dname);
-//				Category category_object = categoryserv.getCategoryByCategoryName(category);
-//				
-//				if(category_object!=null) {
-//					employee.setCategory(category_object);
-//				}
-//				else {
-//					employee.setCategory(new Category(""));
-//				}		 
-//
-//				Company comp = comprepo.findByComp_name(compname);
-//
-//				Department dept = null;
-//				if (comp != null) {
-//					dept = deptrepo.getDepartmentByDeptNameAndCompName(dept_name, comp.getComp_name());
-//				} else {
-//					dept = deptrepo.getDepartmentByDeptNameAndCompName(dept_name, "");
-//				}
-//
-//				employee.setJoining_date(joining_date);
-//				employee.setContractor_name(contractor_name);
-//				
-//				dept.setCompany(comp);
-//				employee.setDepartment(dept);
-//				employee.setDesignation(desigObj);
-//				logger.info("Employee onject is ",employee);
-//				empList.add(employee);
+				Employee emp = new Employee();
+
+				emp.setEmp_name(getCellValue(row.getCell(0)));
+				emp.setEmp_code(getCellValue(row.getCell(1)));
+
+				Designation desig = desigrepo.findByDesig_name(getCellValue(row.getCell(2)));
+				emp.setDesignation(desig);
+
+				String dept_name = getCellValue(row.getCell(3));
+				String comp_name = getCellValue(row.getCell(4));
+				Department dept = deptrepo.getDepartmentByDeptNameAndCompName(dept_name, comp_name);
+
+				emp.setDepartment(dept);
+				emp.setJoining_date(getCellValue(row.getCell(5)));
+				emp.setContractor_name(getCellValue(row.getCell(6)));
+
+				Category category = categoryserv.getCategoryByCategoryName(getCellValue(row.getCell(7)));
+
+				emp.setCategory(category);
+
+				emprepo.save(emp);
 			}
-			logger.info("All EMPLOYEES LIST {} ",empList);
-			emprepo.saveAll(empList);
 		} catch (Exception e) {
-			throw new RuntimeException("FILE IS NOT UPLOADED");
+			throw new RuntimeException("Fail to parse Excel file: " + e.getMessage(), e);
 		}
-
 	}
 
+	// Helper method to handle null/empty cells safely
+	private static String getCellValue(Cell cell) {
+		if (cell == null)
+			return "";
+		switch (cell.getCellType()) {
+		case STRING:
+			return cell.getStringCellValue().trim();
+		case NUMERIC:
+			if (DateUtil.isCellDateFormatted(cell)) {
+				return cell.getDateCellValue().toString();
+			} else {
+				return String.valueOf((long) cell.getNumericCellValue());
+			}
+		case BOOLEAN:
+			return String.valueOf(cell.getBooleanCellValue());
+		case FORMULA:
+			return cell.getCellFormula();
+		case BLANK:
+		default:
+			return "";
+		}
+	}
 }

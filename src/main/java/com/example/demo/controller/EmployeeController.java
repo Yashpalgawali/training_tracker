@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -163,13 +164,18 @@ public class EmployeeController {
 	}
 	
 	@PostMapping("/upload")
-	public ResponseEntity<String> uploadEmployeeList(@RequestParam MultipartFile empListExcel) {
+	public ResponseEntity<String> uploadEmployeeList(@RequestParam MultipartFile empListExcel) throws IOException {
 		
-		if(empListExcel.isEmpty())
-		{ return ResponseEntity.badRequest().body("Please get a file to upload"); }
+		InputStream inputStream = empListExcel.getInputStream();
+		empserv.uploadEmployeeList(inputStream);
 		
-		empserv.uploadEmployeeList(empListExcel);
-		return ResponseEntity.status(HttpStatus.OK).body("File Uploaded successfully");
+		return ResponseEntity.status(HttpStatus.OK).body("uploaded");
+		
+//		if(empListExcel.isEmpty())
+//		{ return ResponseEntity.badRequest().body("Please get a file to upload"); }
+//		
+//		empserv.uploadEmployeeList(empListExcel);
+//		return ResponseEntity.status(HttpStatus.OK).body("File Uploaded successfully");
 		
 	}
 

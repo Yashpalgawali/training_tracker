@@ -1,8 +1,7 @@
 package com.example.demo.service;
 
+import java.io.InputStream;
 import java.util.List;
-
-import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.entity.Employee;
 import com.example.demo.entity.Training;
@@ -21,6 +20,6 @@ public interface IEmployeeService {
 	
 	public List<Training> getAllTrainingsByEmployeeId(Long empid);
 	
-	public void uploadEmployeeList(MultipartFile empListExcel);
+	public void uploadEmployeeList(InputStream is);
 		
 }

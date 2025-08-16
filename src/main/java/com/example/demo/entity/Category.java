@@ -27,9 +27,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Category {
 
-	public Category(String string) {
-		// TODO Auto-generated constructor stub
-	}
+	 
 
 	@Id
 	@SequenceGenerator(name = "emp_category_seq", initialValue = 1, allocationSize = 1)
