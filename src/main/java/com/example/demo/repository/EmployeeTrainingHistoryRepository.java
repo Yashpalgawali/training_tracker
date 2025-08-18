@@ -44,6 +44,6 @@ public interface EmployeeTrainingHistoryRepository extends JpaRepository<Employe
 	List<Object[]> getAllTrainingsOfAllEmployees();
 	
 	 
-	@Query("SELECT eth.training,eth.competency FROM EmployeeTrainingHistory eth WHERE eth.employee.emp_id=:empid")
+	@Query("SELECT eth FROM EmployeeTrainingHistory eth WHERE eth.employee.emp_id=:empid")
 	List<EmployeeTrainingHistory> getTrainingAndScoreByEmployeeId(Long empid);
 }	

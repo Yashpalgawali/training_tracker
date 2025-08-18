@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 public class CompetencyScore {
 
 	private String name;
-	
+
 	private Long score;
 }

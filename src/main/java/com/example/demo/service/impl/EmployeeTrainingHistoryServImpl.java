@@ -60,21 +60,20 @@ public class EmployeeTrainingHistoryServImpl implements IEmployeeTrainingHistory
 			EmployeeTrainingHistory hist = new EmployeeTrainingHistory();
 
 			Employee emp = emprepo.findById(history.getEmployee().getEmp_id()).get();
-			
+
 			Competency competency = competencyrepo.findById(history.getCompetency().getCompetency_id()).get();
-			
+
 			hist.setCompetency(competency);
 			hist.setEmployee(emp);
 			hist.setTraining(training);
 			hist.setTraining_date((history.getTraining_date()));
 			hist.setCompletion_date(history.getCompletion_date());
 			hist.setTrainingTimeSlot(history.getTrainingTimeSlot());
-			
-			System.err.println("OBJECT TO BE SAVED "+hist.toString());
-			
-			
+
+			System.err.println("OBJECT TO BE SAVED " + hist.toString());
+
 			emptrainhistrepo.save(hist);
-			
+
 			return hist;
 
 		}).collect(Collectors.toList());
@@ -156,16 +155,21 @@ public class EmployeeTrainingHistoryServImpl implements IEmployeeTrainingHistory
 
 	@Override
 	public List<CompetencyScore> getAllTrainingCompetenciesBuyEmpId(Long emp_id) {
+
+		List<CompetencyScore> result = emptrainhistrepo.getTrainingAndScoreByEmployeeId(emp_id).stream()
+				.map(emptrain -> {
+					CompetencyScore scores = new CompetencyScore();
+
+					scores.setName(emptrain.getTraining().getTraining_name());
+					scores.setScore(emptrain.getCompetency().getScore());
+
+					return scores;
+
+				}).collect(Collectors.toList());
 		
-		List<EmployeeTrainingHistory> empTrainHistory = emptrainhistrepo.getTrainingAndScoreByEmployeeId(emp_id);
-		List<CompetencyScore> collect = empTrainHistory.stream().map(history -> {
-			CompetencyScore dto = new CompetencyScore();
-			 dto.setName(history.getTraining().getTraining_name());
-			 dto.setScore(history.getCompetency().getScore());
-			return dto;
-		}).collect(Collectors.toList());
-		return collect;
-		 
+		result.stream().forEach(System.err::println);
+		return result;
+
 	}
 
 }

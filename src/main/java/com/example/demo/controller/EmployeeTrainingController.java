@@ -127,9 +127,10 @@ public class EmployeeTrainingController {
 
 	}
 
-	@GetMapping("/api/competencies/{emp_id}")
+	@GetMapping("/competencies/{id}")
 	public ResponseEntity<List<CompetencyScore>> getAllTrainingCompetencyiesByEmployeeId(@PathVariable Long id) {
 		List<CompetencyScore> object = emptrainhistserv.getAllTrainingCompetenciesBuyEmpId(id);
+		
 		return ResponseEntity.status(HttpStatus.OK).body(object);
 		
 	}
