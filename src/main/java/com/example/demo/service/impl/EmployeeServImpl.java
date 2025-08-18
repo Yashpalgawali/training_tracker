@@ -91,6 +91,8 @@ public class EmployeeServImpl implements IEmployeeService {
 	@Transactional
 	public int updateEmployee(Employee emp) {
 
+		System.err.println("EMployee OBJECT "+emp.toString());
+		 
 		int result = emprepo.updateEmployee(emp.getEmp_id(), emp.getEmp_name(), emp.getEmp_code(),
 				emp.getContractor_name(), emp.getCategory().getCategory_id(), emp.getJoining_date(),
 				emp.getDepartment().getDept_id(), emp.getDesignation().getDesig_id());

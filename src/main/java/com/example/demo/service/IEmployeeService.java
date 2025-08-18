@@ -3,6 +3,8 @@ package com.example.demo.service;
 import java.io.InputStream;
 import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import com.example.demo.entity.Employee;
 import com.example.demo.entity.Training;
 
@@ -13,6 +15,7 @@ public interface IEmployeeService {
 	public Employee getEmployeeByEmployeeId(Long empid);
 	
 	public Employee getEmployeeByEmployeeCode(String empcode);
+	
 	
 	public int updateEmployee(Employee emp);
 	

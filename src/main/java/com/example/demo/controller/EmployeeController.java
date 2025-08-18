@@ -106,6 +106,7 @@ public class EmployeeController {
 	@PutMapping("/")
 	public ResponseEntity<ResponseDto> updateEmployee(@RequestBody Employee employee) {
 		
+		System.err.println("Employee Object "+employee.toString());
 		empserv.updateEmployee(employee);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
 				"Employee " + employee.getEmp_name() + " is UPDATED successfully"));
@@ -149,7 +150,7 @@ public class EmployeeController {
 			 
 			return empdto;
 
-		}).collect(Collectors.toList());;		 
+		}).collect(Collectors.toList());		 
 		 
 		logger.info("EMPLDTO LIST is {} ",empDtoList);
 		

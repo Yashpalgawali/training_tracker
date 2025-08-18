@@ -41,12 +41,13 @@ public class ExportAllEmployees {
 	
 		createCell(row,0,"Sr No.",style);
 		createCell(row,1,"Employee",style);
-		createCell(row,2,"Designation",style);
-		createCell(row,3,"Department",style);
-		createCell(row,4,"Company",style);
-		createCell(row,5,"Joining Date",style);
-		createCell(row,6,"Contractor",style);
-		createCell(row,7,"Category",style);
+		createCell(row,2,"Employee Code",style);
+		createCell(row,3,"Designation",style);
+		createCell(row,4,"Department",style);
+		createCell(row,5,"Company",style);
+		createCell(row,6,"Joining Date",style);
+		createCell(row,7,"Contractor",style);
+		createCell(row,8,"Category",style);
 		 
 	}
 	
@@ -85,7 +86,8 @@ public class ExportAllEmployees {
 			int columnCount = 0;
 			
 			createCell(row,columnCount++, sr++ ,style);
-			createCell(row,columnCount++, employee.getEmp_name() , style);		 
+			createCell(row,columnCount++, employee.getEmp_name() , style);
+			createCell(row,columnCount++, employee.getEmp_code() , style);
 			createCell(row,columnCount++, employee.getDesignation() , style);
 			createCell(row,columnCount++, employee.getDepartment() , style);
 			createCell(row,columnCount++, employee.getCompany() , style);
