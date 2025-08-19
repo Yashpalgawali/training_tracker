@@ -31,7 +31,7 @@ import com.example.demo.entity.Employee;
 import com.example.demo.entity.Training;
 import com.example.demo.export.ExportAllEmployees;
 import com.example.demo.service.IEmployeeService;
-import com.example.demo.service.IEmployeeTrainingHistoryService;
+import com.example.demo.service.IEmployeeTrainingService;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -40,13 +40,13 @@ import jakarta.servlet.http.HttpServletResponse;
 public class EmployeeController {
 
 	private final IEmployeeService empserv;
-	private final IEmployeeTrainingHistoryService emptrainhistserv;
+	private final IEmployeeTrainingService emptrainhistserv;
 
 	/**
 	 * @param empserv
 	 * @param emptrainhistserv
 	 */
-	public EmployeeController(IEmployeeService empserv, IEmployeeTrainingHistoryService emptrainhistserv) {
+	public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emptrainhistserv) {
 		super();
 		this.empserv = empserv;
 		this.emptrainhistserv = emptrainhistserv;
@@ -67,7 +67,7 @@ public class EmployeeController {
 
 		List<Employee> empList = empserv.getAllEmployees();
 		List<EmployeeDTO> collect = empList.stream().map(emp -> {
-			String training_names = emptrainhistserv.getEmployeesTrainingHistoryByEmployeeId(emp.getEmp_id()).stream()
+			String training_names = emptrainhistserv.getEmployeesTrainingByEmployeeId(emp.getEmp_id()).stream()
 					.map(hist -> hist.getTraining().getTraining_name()).filter(Objects::nonNull)
 					.collect(Collectors.joining(","));
 		

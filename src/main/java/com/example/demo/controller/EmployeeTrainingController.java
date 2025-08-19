@@ -2,20 +2,21 @@ package com.example.demo.controller;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,63 +25,77 @@ import com.example.demo.dto.EmployeeTrainingDto;
 import com.example.demo.dto.ResponseDto;
 import com.example.demo.entity.CompetencyScore;
 import com.example.demo.entity.Employee;
-import com.example.demo.entity.EmployeeTrainingHistory;
+import com.example.demo.entity.EmployeeTraining;
 import com.example.demo.entity.Training;
 import com.example.demo.export.ExportAllTrainings;
 import com.example.demo.export.ExportEmployeeTrainingHistory;
 import com.example.demo.service.IEmployeeService;
-import com.example.demo.service.IEmployeeTrainingHistoryService;
+import com.example.demo.service.IEmployeeTrainingService;
 
-import ch.qos.logback.classic.Logger;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("employee-training")
 public class EmployeeTrainingController {
 
-	private final IEmployeeTrainingHistoryService emptrainhistserv;
+	private final IEmployeeTrainingService emptrainserv;
 	private final IEmployeeService empserv;
 
-	public EmployeeTrainingController(IEmployeeTrainingHistoryService emptrainhistserv, IEmployeeService empserv) {
+	public EmployeeTrainingController(IEmployeeTrainingService emptrainserv, IEmployeeService empserv) {
 		super();
-		this.emptrainhistserv = emptrainhistserv;
+		this.emptrainserv = emptrainserv;
 		this.empserv = empserv;
 	}
 
 	@GetMapping("/")
-	public ResponseEntity<List<EmployeeTrainingHistory>> getAllEmployeesTrainingList() {
+	public ResponseEntity<List<EmployeeTraining>> getAllEmployeesTrainingList() {
 
-		List<EmployeeTrainingHistory> trainingHistory = emptrainhistserv.getAllEmployeesTrainingHistory();
+		List<EmployeeTraining> trainingHistory = emptrainserv.getAllEmployeesTrainingHistory();
 		return ResponseEntity.status(HttpStatus.OK).body(trainingHistory);
 	}
 
+	private Logger logger = LoggerFactory.getLogger(getClass());
 	@GetMapping("/{id}")
-	public ResponseEntity<List<EmployeeTrainingHistory>> getAllTrainingListByEmployeeId(@PathVariable Long id) {
+	public ResponseEntity<List<EmployeeTraining>> getAllTrainingListByEmployeeId(@PathVariable Long id) {
 
-		List<EmployeeTrainingHistory> trainingHistory = emptrainhistserv.getEmployeesTrainingHistoryByEmployeeId(id);
+		List<EmployeeTraining> trainingHistory = emptrainserv.getEmployeesTrainingByEmployeeId(id);
+		
+		logger.info("All trainings found of emp id {} are {} ",id,trainingHistory);
+		
 		return ResponseEntity.status(HttpStatus.OK).body(trainingHistory);
 	}
 
 	@PostMapping("/")
-	public ResponseEntity<ResponseDto> saveEmployeeTraining(@RequestBody EmployeeTrainingHistory emptraining) {
+	public ResponseEntity<ResponseDto> saveEmployeeTraining(@RequestBody EmployeeTraining emptraining) {
 
 		System.err.println("In Employee Controller Training save Object " + emptraining.toString());
 
-		emptrainhistserv.saveEmployeeTrainingHistory(emptraining);
+		emptrainserv.saveEmployeeTraining(emptraining);
 		return ResponseEntity.status(HttpStatus.CREATED)
 				.body(new ResponseDto(HttpStatus.CREATED.toString(), "Training is started of the Employee"));
+	}
+
+	@PutMapping("/")
+	public ResponseEntity<ResponseDto> updateEmployeeTraining(@RequestBody EmployeeTraining emptraining ) {
+
+		System.err.println("Employee Training to be updated "+emptraining.toString());
+		
+		emptrainserv.updateEmployeeTraining(emptraining);
+		
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(new ResponseDto(HttpStatus.OK.toString(), "Training is Updated of the Employee "+emptraining.getEmployee().getEmp_name()));
 	}
 
 	@PatchMapping("/training/{id}")
 	public ResponseEntity<ResponseDto> updateCompletionTime(@PathVariable Long id,
 			@RequestBody Map<String, String> body) {
-		EmployeeTrainingHistory employeeTrainingHistory = emptrainhistserv.getEmployeeTrainingHistoryByID(id);
+		EmployeeTraining employeeTrainingHistory = emptrainserv.getEmployeeTrainingByID(id);
 
 		Employee employee = empserv.getEmployeeByEmployeeId(employeeTrainingHistory.getEmployee().getEmp_id());
 
 		String comp_date = body.get("completion_date");
-		emptrainhistserv.updateCompletionTime(id, comp_date);
-		Training training = emptrainhistserv.getTrainingByHistId(id);
+		emptrainserv.updateCompletionTime(id, comp_date);
+		Training training = emptrainserv.getTrainingByHistId(id);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
 				"Training " + training.getTraining_name() + " is completed Successfully of " + employee.getEmp_name()));
 	}
@@ -89,7 +104,7 @@ public class EmployeeTrainingController {
 	public ResponseEntity<InputStreamResource> exportToExcel(HttpServletResponse response,
 			@PathVariable("id") Long empid) throws IOException {
 
-		List<EmployeeTrainingHistory> alist = emptrainhistserv.getEmployeesTrainingHistoryByEmployeeId(empid);
+		List<EmployeeTraining> alist = emptrainserv.getEmployeesTrainingByEmployeeId(empid);
 
 		// Set headers
 		HttpHeaders headers = new HttpHeaders();
@@ -114,7 +129,7 @@ public class EmployeeTrainingController {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=All_Trainings_List.xlsx");
 
-		List<EmployeeTrainingDto> alist = emptrainhistserv.getAllTrainingListOfAllEmployees();
+		List<EmployeeTrainingDto> alist = emptrainserv.getAllTrainingListOfAllEmployees();
 
 		ExportAllTrainings excelExporter = new ExportAllTrainings(alist);
 		byte[] excelContent = excelExporter.export(response);
@@ -129,10 +144,10 @@ public class EmployeeTrainingController {
 
 	@GetMapping("/competencies/{id}")
 	public ResponseEntity<List<CompetencyScore>> getAllTrainingCompetencyiesByEmployeeId(@PathVariable Long id) {
-		List<CompetencyScore> object = emptrainhistserv.getAllTrainingCompetenciesBuyEmpId(id);
+		List<CompetencyScore> object = emptrainserv.getAllTrainingCompetenciesByEmpId(id);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(object);
 		
-	}
+	} 
 }
 

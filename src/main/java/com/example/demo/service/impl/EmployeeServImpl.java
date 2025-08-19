@@ -29,11 +29,11 @@ import com.example.demo.repository.CompanyRepository;
 import com.example.demo.repository.DepartmentRepository;
 import com.example.demo.repository.DesignationRepository;
 import com.example.demo.repository.EmployeeRepository;
-import com.example.demo.repository.EmployeeTrainingHistoryRepository;
+import com.example.demo.repository.EmployeeTrainingRepository;
 import com.example.demo.repository.TrainingRepository;
 import com.example.demo.service.ICategoryService;
 import com.example.demo.service.IEmployeeService;
-import com.example.demo.service.IEmployeeTrainingHistoryService;
+import com.example.demo.service.IEmployeeTrainingService;
 
 @Service("empserv")
 public class EmployeeServImpl implements IEmployeeService {
@@ -43,13 +43,13 @@ public class EmployeeServImpl implements IEmployeeService {
 	private final DepartmentRepository deptrepo;
 	private final TrainingRepository trainRepository;
 	private final CompanyRepository comprepo;
-	private final EmployeeTrainingHistoryRepository emptrainhistrepo;
-	private final IEmployeeTrainingHistoryService emptrainhistserv;
+	private final EmployeeTrainingRepository emptrainhistrepo;
+	private final IEmployeeTrainingService emptrainhistserv;
 	private final ICategoryService categoryserv;
 
 	public EmployeeServImpl(EmployeeRepository emprepo, DesignationRepository desigrepo, DepartmentRepository deptrepo,
 			TrainingRepository trainRepository, CompanyRepository comprepo,
-			EmployeeTrainingHistoryRepository emptrainhistrepo, IEmployeeTrainingHistoryService emptrainhistserv,
+			EmployeeTrainingRepository emptrainhistrepo, IEmployeeTrainingService emptrainhistserv,
 			ICategoryService categoryserv) {
 		super();
 		this.emprepo = emprepo;
@@ -137,7 +137,7 @@ public class EmployeeServImpl implements IEmployeeService {
 	@Override
 	public void uploadEmployeeList(InputStream is) {
 
-		List<Employee> employees = new ArrayList<>();
+//		List<Employee> employees = new ArrayList<>();
 		try (Workbook workbook = new XSSFWorkbook(is)) {
 			Sheet sheet = workbook.getSheetAt(0);
 
@@ -163,7 +163,7 @@ public class EmployeeServImpl implements IEmployeeService {
 				Category category = categoryserv.getCategoryByCategoryName(getCellValue(row.getCell(7)));
 
 				emp.setCategory(category);
-
+				System.err.println("EMployee Object is "+emp.toString());
 				emprepo.save(emp);
 			}
 		} catch (Exception e) {

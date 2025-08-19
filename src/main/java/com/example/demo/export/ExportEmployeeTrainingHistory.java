@@ -14,7 +14,7 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.example.demo.entity.EmployeeTrainingHistory;
+import com.example.demo.entity.EmployeeTraining;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -23,9 +23,9 @@ public class ExportEmployeeTrainingHistory {
 	private XSSFWorkbook workbook;
 	private XSSFSheet sheet;
 	
-	private List<EmployeeTrainingHistory> ahist;
+	private List<EmployeeTraining> ahist;
 	
-	public ExportEmployeeTrainingHistory(List<EmployeeTrainingHistory> ahist)
+	public ExportEmployeeTrainingHistory(List<EmployeeTraining> ahist)
 	{
 		this.ahist = ahist;
 		workbook = new XSSFWorkbook();
@@ -92,7 +92,7 @@ public class ExportEmployeeTrainingHistory {
 		font.setFontHeight(16);
 		int sr=1,cn=1;		
 		if(ahist.size() > 0) {
-      	for(EmployeeTrainingHistory hist : ahist)
+      	for(EmployeeTraining hist : ahist)
 			{
 				Row row = sheet.createRow(rowCount++);				
 				int columnCount = 0;
