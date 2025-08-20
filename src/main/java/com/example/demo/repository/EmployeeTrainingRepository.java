@@ -54,5 +54,7 @@ public interface EmployeeTrainingRepository extends JpaRepository<EmployeeTraini
 	EmployeeTraining getTrainingByTrainingAndEmpId(Long empid,Long training_id);
 		
 	@Query("UPDATE EmployeeTraining et SET et.competency.competency_id=:competencyid,et.trainingTimeSlot.training_time_slot_id=:timeslotid WHERE et.emp_train_id=:emptrainid")
+	@Modifying
+	@Transactional
 	public int updateEmployeeTrainingByEmpTrainId(Long emptrainid, Long competencyid,Long timeslotid);
 }	

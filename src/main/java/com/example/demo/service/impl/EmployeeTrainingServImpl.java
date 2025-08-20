@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.dto.EmployeeTrainingDto;
 import com.example.demo.entity.Competency;
@@ -58,38 +59,63 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 	@Override
 	public int saveEmployeeTraining(EmployeeTraining training) {
 
-		List<Long> training_ids = training.getTraining_ids();
-		List<EmployeeTraining> savedhistory = training_ids.stream().map(id -> {
+//		List<Long> training_ids = training.getTraining_ids();
 
-			Training trainingObject = trainserv.getTrainingById(id);
+//		List<EmployeeTraining> savedhistory = training_ids.stream().map(id -> {
+//
+//			Training trainingObject = trainserv.getTrainingById(id);
+//
+//			EmployeeTraining hist = new EmployeeTraining();
+//
+//			Employee emp = emprepo.findById(training.getEmployee().getEmp_id()).get();
+//
+//			Competency competency = competencyrepo.findById(training.getCompetency().getCompetency_id()).get();
+//
+//			hist.setCompetency(competency);
+//			hist.setEmployee(emp);
+//			hist.setTraining(trainingObject);
+//			hist.setTraining_date((training.getTraining_date()));
+//			hist.setCompletion_date(training.getCompletion_date());
+//			hist.setTrainingTimeSlot(training.getTrainingTimeSlot());
+//
+//			System.err.println("OBJECT TO BE SAVED " + hist.toString());
+//
+//			EmployeeTraining savedEmpTraining = emptrainrepo.save(hist);
+//			if(savedEmpTraining!=null) {
+//				EmployeeTrainingHistory emptrainhist = new EmployeeTrainingHistory();
+//				emptrainhist.setEmployeeTraining(savedEmpTraining);
+//				emptrainhistserv.saveEmployeeTrainingHistory(emptrainhist);
+//				
+//			}
+//			return hist;
+//
+//		}).collect(Collectors.toList());
+		
+		Long training_ids = training.getTraining_ids();
+		
+		Training trainingObject = trainserv.getTrainingById(training_ids);
 
-			EmployeeTraining hist = new EmployeeTraining();
+		EmployeeTraining train = new EmployeeTraining();
 
-			Employee emp = emprepo.findById(training.getEmployee().getEmp_id()).get();
+		Employee emp = emprepo.findById(training.getEmployee().getEmp_id()).get();
 
-			Competency competency = competencyrepo.findById(training.getCompetency().getCompetency_id()).get();
+		Competency competency = competencyrepo.findById(training.getCompetency().getCompetency_id()).get();
 
-			hist.setCompetency(competency);
-			hist.setEmployee(emp);
-			hist.setTraining(trainingObject);
-			hist.setTraining_date((training.getTraining_date()));
-			hist.setCompletion_date(training.getCompletion_date());
-			hist.setTrainingTimeSlot(training.getTrainingTimeSlot());
+		train.setCompetency(competency);
+		train.setEmployee(emp);
+		train.setTraining(trainingObject);
+		train.setTraining_date((training.getTraining_date()));
+		train.setCompletion_date(training.getCompletion_date());
+		train.setTrainingTimeSlot(training.getTrainingTimeSlot());
 
-			System.err.println("OBJECT TO BE SAVED " + hist.toString());
+		System.err.println("OBJECT TO BE SAVED " + train.toString());
 
-			EmployeeTraining savedEmpTraining = emptrainrepo.save(hist);
-			if(savedEmpTraining!=null) {
-				EmployeeTrainingHistory emptrainhist = new EmployeeTrainingHistory();
-				emptrainhist.setEmployeeTraining(savedEmpTraining);
-				emptrainhistserv.saveEmployeeTrainingHistory(emptrainhist);
-				
-			}
-			return hist;
-
-		}).collect(Collectors.toList());
-
-		if (!savedhistory.isEmpty()) {
+		EmployeeTraining savedEmpTraining = emptrainrepo.save(train);
+		if(savedEmpTraining!=null) {
+			EmployeeTrainingHistory emptrainhist = new EmployeeTrainingHistory();
+			emptrainhist.setEmployeeTraining(savedEmpTraining);
+			emptrainhistserv.saveEmployeeTrainingHistory(emptrainhist); 
+		 
 			return 1;
 		} else {
 			throw new GlobalException("No Training is assigned to the Employee " + training.getEmployee().getEmp_name());
@@ -183,18 +209,27 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 
 	}
 
-	@Override
+	@Override	
 	public int updateEmployeeTraining(EmployeeTraining emptraining) {
 		
-		Long tid = emptraining.getTraining().getTraining_id();
+		System.err.println("Employee Training to be updated "+emptraining.toString());
+//		Long obj = emptraining.getTraining_ids().stream().findFirst().get();
+		Long obj  =emptraining.getTraining_ids();
 		int result = 0;
-		EmployeeTraining empTrainings = emptrainrepo.getTrainingByTrainingAndEmpId(tid,emptraining.getEmployee().getEmp_id());
+		EmployeeTraining empTrainings = emptrainrepo.getTrainingByTrainingAndEmpId(emptraining.getEmployee().getEmp_id(),obj);
 		
-		System.err.println("Emptraining found for given training and emp id "+empTrainings);
+		if(empTrainings!= null) {
+			System.err.println("Emptraining found for given training and emp id "+empTrainings);
+			System.err.println("Call to UPDATE method");
+		}
+		else {
+			System.err.println("Calling to save method");
+		}
 		return 0;
 //		if(empTrainings!= null) {
-//			result = emptrainrepo.updateEmployeeTrainingByEmpTrainId(empTrainings.getEmp_train_id(), empTrainings.getCompetency().getCompetency_id(), empTrainings.getTrainingTimeSlot().getTraining_time_slot_id());
+//			result = emptrainrepo.updateEmployeeTrainingByEmpTrainId(empTrainings.getEmp_train_id(), emptraining.getCompetency().getCompetency_id(), emptraining.getTrainingTimeSlot().getTraining_time_slot_id());
 //			if(result > 0) {
+//				System.err.println("After updating the employee training "+emptrainrepo.getTrainingByTrainingAndEmpId(emptraining.getEmployee().getEmp_id(),obj).toString());
 //				return result;
 //			}
 //			else {

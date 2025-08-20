@@ -78,7 +78,7 @@ public class EmployeeTrainingController {
 	@PutMapping("/")
 	public ResponseEntity<ResponseDto> updateEmployeeTraining(@RequestBody EmployeeTraining emptraining ) {
 
-		System.err.println("Employee Training to be updated "+emptraining.toString());
+		
 		
 		emptrainserv.updateEmployeeTraining(emptraining);
 		

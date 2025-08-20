@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -91,8 +92,6 @@ public class EmployeeServImpl implements IEmployeeService {
 	@Transactional
 	public int updateEmployee(Employee emp) {
 
-		System.err.println("EMployee OBJECT "+emp.toString());
-		 
 		int result = emprepo.updateEmployee(emp.getEmp_id(), emp.getEmp_name(), emp.getEmp_code(),
 				emp.getContractor_name(), emp.getCategory().getCategory_id(), emp.getJoining_date(),
 				emp.getDepartment().getDept_id(), emp.getDesignation().getDesig_id());
@@ -102,7 +101,6 @@ public class EmployeeServImpl implements IEmployeeService {
 		} else {
 			throw new ResourceNotModifiedException("Employee " + emp.getEmp_name() + " is not updated");
 		}
-
 	}
 
 	@Override
@@ -146,15 +144,17 @@ public class EmployeeServImpl implements IEmployeeService {
 
 				Employee emp = new Employee();
 
+				Optional<Employee> byEmp_name = emprepo.findByEmp_name(getCellValue(row.getCell(0)));
+				if(!byEmp_name.isPresent()) {					
+
 				emp.setEmp_name(getCellValue(row.getCell(0)));
 				emp.setEmp_code(getCellValue(row.getCell(1)));
 
 				Designation desig = desigrepo.findByDesig_name(getCellValue(row.getCell(2)));
 				emp.setDesignation(desig);
-
 				String dept_name = getCellValue(row.getCell(3));
 				String comp_name = getCellValue(row.getCell(4));
-				Department dept = deptrepo.getDepartmentByDeptNameAndCompName(dept_name, comp_name);
+				Department dept = deptrepo.getDepartmentByDeptNameAndCompName(dept_name.trim(), comp_name.trim());
 
 				emp.setDepartment(dept);
 				emp.setJoining_date(getCellValue(row.getCell(5)));
@@ -163,8 +163,9 @@ public class EmployeeServImpl implements IEmployeeService {
 				Category category = categoryserv.getCategoryByCategoryName(getCellValue(row.getCell(7)));
 
 				emp.setCategory(category);
-				System.err.println("EMployee Object is "+emp.toString());
+				
 				emprepo.save(emp);
+			  }
 			}
 		} catch (Exception e) {
 			throw new RuntimeException("Fail to parse Excel file: " + e.getMessage(), e);

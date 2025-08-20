@@ -8,6 +8,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamResource;
@@ -27,9 +33,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dto.EmployeeDTO;
 import com.example.demo.dto.ResponseDto;
+import com.example.demo.entity.Category;
+import com.example.demo.entity.Department;
+import com.example.demo.entity.Designation;
 import com.example.demo.entity.Employee;
 import com.example.demo.entity.Training;
 import com.example.demo.export.ExportAllEmployees;
+import com.example.demo.repository.DepartmentRepository;
+import com.example.demo.repository.DesignationRepository;
+import com.example.demo.service.ICategoryService;
 import com.example.demo.service.IEmployeeService;
 import com.example.demo.service.IEmployeeTrainingService;
 
@@ -41,16 +53,29 @@ public class EmployeeController {
 
 	private final IEmployeeService empserv;
 	private final IEmployeeTrainingService emptrainhistserv;
-
-	/**
-	 * @param empserv
-	 * @param emptrainhistserv
-	 */
-	public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emptrainhistserv) {
+	private final  ICategoryService categoryserv;
+	private final DepartmentRepository deptrepo;
+	private final DesignationRepository desigrepo;
+	
+	
+public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emptrainhistserv,
+			ICategoryService categoryserv, DepartmentRepository deptrepo, DesignationRepository desigrepo) {
 		super();
 		this.empserv = empserv;
 		this.emptrainhistserv = emptrainhistserv;
+		this.categoryserv = categoryserv;
+		this.deptrepo = deptrepo;
+		this.desigrepo = desigrepo;
 	}
+//	/**
+//	 * @param empserv
+//	 * @param emptrainhistserv
+//	 */
+//	public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emptrainhistserv) {
+//		super();
+//		this.empserv = empserv;
+//		this.emptrainhistserv = emptrainhistserv;
+//	}
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -77,8 +102,16 @@ public class EmployeeController {
 			empdto.setEmp_name(emp.getEmp_name());
 			empdto.setEmp_code(emp.getEmp_code());
 			empdto.setJoining_date(emp.getJoining_date());
-			empdto.setCompany(emp.getDepartment().getCompany().getComp_name());
-			empdto.setDepartment(emp.getDepartment().getDept_name());
+			if(emp.getDepartment()!=null)
+			{
+				empdto.setCompany(emp.getDepartment().getCompany().getComp_name());
+				empdto.setDepartment(emp.getDepartment().getDept_name());
+			}
+			else {
+				empdto.setCompany("");
+				empdto.setDepartment("");
+			}
+			
 			empdto.setDesignation(emp.getDesignation().getDesig_name());
 			empdto.setTrainings(training_names);
 			return empdto;
@@ -167,17 +200,14 @@ public class EmployeeController {
 	@PostMapping("/upload")
 	public ResponseEntity<String> uploadEmployeeList(@RequestParam MultipartFile empListExcel) throws IOException {
 		
+		if(empListExcel.isEmpty())
+		{ return ResponseEntity.badRequest().body("Please get a file to upload"); }
+		
 		InputStream inputStream = empListExcel.getInputStream();
 		empserv.uploadEmployeeList(inputStream);
 		
 		return ResponseEntity.status(HttpStatus.OK).body("uploaded");
-		
-//		if(empListExcel.isEmpty())
-//		{ return ResponseEntity.badRequest().body("Please get a file to upload"); }
-//		
-//		empserv.uploadEmployeeList(empListExcel);
-//		return ResponseEntity.status(HttpStatus.OK).body("File Uploaded successfully");
-		
+			
 	}
 }
 

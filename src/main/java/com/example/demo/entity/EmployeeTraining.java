@@ -53,8 +53,10 @@ public class EmployeeTraining {
 	@JoinColumn(name="training_time_slot_id")
 	TrainingTimeSlot trainingTimeSlot;
 
+//	@Transient
+//	List<Long> training_ids;
 	@Transient
-	List<Long> training_ids;
+	Long training_ids;
 	
 	@ManyToOne
 	@JoinColumn(name="competency_id")
