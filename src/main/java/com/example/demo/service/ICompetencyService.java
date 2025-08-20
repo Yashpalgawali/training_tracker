@@ -11,5 +11,6 @@ public interface ICompetencyService {
 	public List<Competency> getAllCompetencyList();
 
 	public  Competency getCompetencyById(Long competencyid);
-	
+
+	public int updateCompetency(Competency competency);
 }

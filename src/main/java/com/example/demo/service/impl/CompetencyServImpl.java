@@ -3,6 +3,7 @@ package com.example.demo.service.impl;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.entity.Competency;
 import com.example.demo.entity.Employee;
@@ -19,16 +20,9 @@ public class CompetencyServImpl implements ICompetencyService {
 
 	private final CompetencyRepository competencyrepo;
 
-	private final IEmployeeService empserv;
-
-	private final ITrainingService trainserv;
-
-	public CompetencyServImpl(CompetencyRepository competencyrepo, IEmployeeService empserv,
-			ITrainingService trainserv) {
+	public CompetencyServImpl(CompetencyRepository competencyrepo) {
 		super();
 		this.competencyrepo = competencyrepo;
-		this.empserv = empserv;
-		this.trainserv = trainserv;
 	}
 
 	@Override
@@ -51,7 +45,14 @@ public class CompetencyServImpl implements ICompetencyService {
 	@Override
 	public Competency getCompetencyById(Long competencyid) {
 	 
-		return competencyrepo.findById(competencyid).orElseThrow(()-> new ResourceNotFoundException("No Competency found for gicen ID "+competencyid));
+		return competencyrepo.findById(competencyid).orElseThrow(()-> new ResourceNotFoundException("No Competency found for given ID "+competencyid));
+	}
+
+	@Override
+	@Transactional
+	public int updateCompetency(Competency competency) {
+
+		return competencyrepo.updateCompetencyById(competency.getCompetency_id(), competency.getScore());
 	}
 
 }

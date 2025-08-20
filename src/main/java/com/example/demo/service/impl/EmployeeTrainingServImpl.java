@@ -8,7 +8,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.dto.EmployeeTrainingDto;
 import com.example.demo.entity.Competency;
@@ -23,8 +22,6 @@ import com.example.demo.exception.ResourceNotModifiedException;
 import com.example.demo.repository.CompetencyRepository;
 import com.example.demo.repository.EmployeeRepository;
 import com.example.demo.repository.EmployeeTrainingRepository;
-import com.example.demo.service.ICompetencyService;
-import com.example.demo.service.IEmployeeService;
 import com.example.demo.service.IEmployeeTrainingHistoryService;
 import com.example.demo.service.IEmployeeTrainingService;
 import com.example.demo.service.ITrainingService;
@@ -59,38 +56,6 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 	@Override
 	public int saveEmployeeTraining(EmployeeTraining training) {
 
-//		List<Long> training_ids = training.getTraining_ids();
-
-//		List<EmployeeTraining> savedhistory = training_ids.stream().map(id -> {
-//
-//			Training trainingObject = trainserv.getTrainingById(id);
-//
-//			EmployeeTraining hist = new EmployeeTraining();
-//
-//			Employee emp = emprepo.findById(training.getEmployee().getEmp_id()).get();
-//
-//			Competency competency = competencyrepo.findById(training.getCompetency().getCompetency_id()).get();
-//
-//			hist.setCompetency(competency);
-//			hist.setEmployee(emp);
-//			hist.setTraining(trainingObject);
-//			hist.setTraining_date((training.getTraining_date()));
-//			hist.setCompletion_date(training.getCompletion_date());
-//			hist.setTrainingTimeSlot(training.getTrainingTimeSlot());
-//
-//			System.err.println("OBJECT TO BE SAVED " + hist.toString());
-//
-//			EmployeeTraining savedEmpTraining = emptrainrepo.save(hist);
-//			if(savedEmpTraining!=null) {
-//				EmployeeTrainingHistory emptrainhist = new EmployeeTrainingHistory();
-//				emptrainhist.setEmployeeTraining(savedEmpTraining);
-//				emptrainhistserv.saveEmployeeTrainingHistory(emptrainhist);
-//				
-//			}
-//			return hist;
-//
-//		}).collect(Collectors.toList());
-		
 		Long training_ids = training.getTraining_ids();
 		
 		Training trainingObject = trainserv.getTrainingById(training_ids);
@@ -107,13 +72,15 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 		train.setTraining_date((training.getTraining_date()));
 		train.setCompletion_date(training.getCompletion_date());
 		train.setTrainingTimeSlot(training.getTrainingTimeSlot());
-
-		System.err.println("OBJECT TO BE SAVED " + train.toString());
-
+	
 		EmployeeTraining savedEmpTraining = emptrainrepo.save(train);
+		
 		if(savedEmpTraining!=null) {
 			EmployeeTrainingHistory emptrainhist = new EmployeeTrainingHistory();
-			emptrainhist.setEmployeeTraining(savedEmpTraining);
+			emptrainhist.setTraining(savedEmpTraining.getTraining());
+			emptrainhist.setTraining_date(savedEmpTraining.getTraining_date());
+			emptrainhist.setTrainingTimeSlot(savedEmpTraining.getTrainingTimeSlot());
+			emptrainhist.setEmployee(savedEmpTraining.getEmployee());
 			emptrainhistserv.saveEmployeeTrainingHistory(emptrainhist); 
 		 
 			return 1;

@@ -1,7 +1,5 @@
 package com.example.demo.entity;
 
-import java.util.List;
-
 import org.springframework.validation.annotation.Validated;
 
 import jakarta.persistence.Entity;
@@ -32,12 +30,22 @@ import lombok.experimental.FieldDefaults;
 public class EmployeeTrainingHistory {
 
 	@Id
-	@SequenceGenerator(name = "emp_train_seq", allocationSize = 1,initialValue = 1)
-	@GeneratedValue(generator = "emp_train_seq" ,strategy = GenerationType.AUTO )
+	@SequenceGenerator(name = "emp_train_hist_seq", allocationSize = 1,initialValue = 1)
+	@GeneratedValue(generator = "emp_train_hist_seq" ,strategy = GenerationType.AUTO )
 	Long emp_train_hist_id;
 	
+	String training_date;
+	
 	@ManyToOne
-	@JoinColumn(name= "emp_train_id")
-	EmployeeTraining employeeTraining;
+	@JoinColumn(name= "training_id")
+	Training training;
+	
+	@ManyToOne
+	@JoinColumn(name= "training_time_slot_id")
+	TrainingTimeSlot trainingTimeSlot;
+	
+	@ManyToOne
+	@JoinColumn(name= "emp_id")
+	Employee employee;
 
 }

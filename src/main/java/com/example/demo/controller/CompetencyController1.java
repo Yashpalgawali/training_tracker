@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -79,5 +80,18 @@ public class CompetencyController1 {
 		return ResponseEntity.status(HttpStatus.OK).body(competency);
 	}
 	
-	 
+
+	
+	@PutMapping("/") 
+	@Operation(summary = "Save Competency", description = "This endpoint updates the Competency object to the database" )
+	@ApiResponses(
+			value = {
+					@ApiResponse(responseCode = "201" ,description = "The competency is saved Successfully "),
+					@ApiResponse(responseCode = "500" ,description = "The competency is NOT Saved ")
+			})
+	public ResponseEntity<ResponseDto> updateCompetency(@RequestBody Competency competency) {
+		competencyserv.updateCompetency(competency);
+		return ResponseEntity.status(HttpStatus.CREATED)
+							 .body(new ResponseDto(HttpStatus.CREATED.toString(),"Competency "+competency.getScore()+" is saved Successfully"));
+	}
 }

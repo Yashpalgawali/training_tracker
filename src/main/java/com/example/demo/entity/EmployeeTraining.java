@@ -1,7 +1,5 @@
 package com.example.demo.entity;
 
-import java.util.List;
-
 import org.springframework.validation.annotation.Validated;
 
 import jakarta.persistence.Entity;
