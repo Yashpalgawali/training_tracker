@@ -14,7 +14,7 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.example.demo.entity.EmployeeTraining;
+import com.example.demo.entity.EmployeeTrainingHistory;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -23,9 +23,9 @@ public class ExportEmployeeTrainingHistory {
 	private XSSFWorkbook workbook;
 	private XSSFSheet sheet;
 	
-	private List<EmployeeTraining> ahist;
+	private List<EmployeeTrainingHistory> ahist;
 	
-	public ExportEmployeeTrainingHistory(List<EmployeeTraining> ahist)
+	public ExportEmployeeTrainingHistory(List<EmployeeTrainingHistory> ahist)
 	{
 		this.ahist = ahist;
 		workbook = new XSSFWorkbook();
@@ -92,7 +92,7 @@ public class ExportEmployeeTrainingHistory {
 		font.setFontHeight(16);
 		int sr=1,cn=1;		
 		if(ahist.size() > 0) {
-      	for(EmployeeTraining hist : ahist)
+      	for(EmployeeTrainingHistory hist : ahist)
 			{
 				Row row = sheet.createRow(rowCount++);				
 				int columnCount = 0;
@@ -101,8 +101,8 @@ public class ExportEmployeeTrainingHistory {
 				createCell(row,columnCount++, hist.getTraining().getTraining_name() ,style);			
 				createCell(row,columnCount++, hist.getTraining_date() ,style);
 				
-				if(!hist.getCompletion_date().equals("")) {				 
-					createCell(row,columnCount++, hist.getCompletion_date() ,style);
+				if(!hist.getTraining_date().equals("")) {				 
+					createCell(row,columnCount++, hist.getTraining_date() ,style);
 				}
 				else {
 					createCell(row,columnCount++, "Not Completed" , style );

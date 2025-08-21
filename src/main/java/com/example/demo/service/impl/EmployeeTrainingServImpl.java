@@ -16,6 +16,7 @@ import com.example.demo.entity.Employee;
 import com.example.demo.entity.EmployeeTraining;
 import com.example.demo.entity.EmployeeTrainingHistory;
 import com.example.demo.entity.Training;
+import com.example.demo.entity.TrainingTimeSlot;
 import com.example.demo.exception.GlobalException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.exception.ResourceNotModifiedException;
@@ -25,6 +26,7 @@ import com.example.demo.repository.EmployeeTrainingRepository;
 import com.example.demo.service.IEmployeeTrainingHistoryService;
 import com.example.demo.service.IEmployeeTrainingService;
 import com.example.demo.service.ITrainingService;
+import com.example.demo.service.ITrainingTimeSlotService;
 
 @Service("emptrainserv")
 public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
@@ -32,22 +34,25 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 	private final EmployeeTrainingRepository emptrainrepo;
 
 	private final ITrainingService trainserv;
-	
+
 	private final IEmployeeTrainingHistoryService emptrainhistserv;
 
 	private final EmployeeRepository emprepo;
 
 	private final CompetencyRepository competencyrepo;
 
+	private final ITrainingTimeSlotService traintimeslotserv;
+
 	public EmployeeTrainingServImpl(EmployeeTrainingRepository emptrainrepo, ITrainingService trainserv,
 			IEmployeeTrainingHistoryService emptrainhistserv, EmployeeRepository emprepo,
-			CompetencyRepository competencyrepo) {
+			CompetencyRepository competencyrepo, ITrainingTimeSlotService traintimeslotserv) {
 		super();
 		this.emptrainrepo = emptrainrepo;
 		this.trainserv = trainserv;
 		this.emptrainhistserv = emptrainhistserv;
 		this.emprepo = emprepo;
 		this.competencyrepo = competencyrepo;
+		this.traintimeslotserv = traintimeslotserv;
 	}
 
 	private DateTimeFormatter dday = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -57,7 +62,7 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 	public int saveEmployeeTraining(EmployeeTraining training) {
 
 		Long training_ids = training.getTraining_ids();
-		
+
 		Training trainingObject = trainserv.getTrainingById(training_ids);
 
 		EmployeeTraining train = new EmployeeTraining();
@@ -72,20 +77,23 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 		train.setTraining_date((training.getTraining_date()));
 		train.setCompletion_date(training.getCompletion_date());
 		train.setTrainingTimeSlot(training.getTrainingTimeSlot());
-	
+
 		EmployeeTraining savedEmpTraining = emptrainrepo.save(train);
-		
-		if(savedEmpTraining!=null) {
+
+		if (savedEmpTraining != null) {
 			EmployeeTrainingHistory emptrainhist = new EmployeeTrainingHistory();
 			emptrainhist.setTraining(savedEmpTraining.getTraining());
 			emptrainhist.setTraining_date(savedEmpTraining.getTraining_date());
 			emptrainhist.setTrainingTimeSlot(savedEmpTraining.getTrainingTimeSlot());
 			emptrainhist.setEmployee(savedEmpTraining.getEmployee());
-			emptrainhistserv.saveEmployeeTrainingHistory(emptrainhist); 
-		 
+			emptrainhist.setCompetency(savedEmpTraining.getCompetency());
+
+			emptrainhistserv.saveEmployeeTrainingHistory(emptrainhist);
+
 			return 1;
 		} else {
-			throw new GlobalException("No Training is assigned to the Employee " + training.getEmployee().getEmp_name());
+			throw new GlobalException(
+					"No Training is assigned to the Employee " + training.getEmployee().getEmp_name());
 		}
 	}
 
@@ -160,56 +168,66 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 	@Override
 	public List<CompetencyScore> getAllTrainingCompetenciesByEmpId(Long emp_id) {
 
-		List<CompetencyScore> result = emptrainrepo.getTrainingAndScoreByEmployeeId(emp_id).stream()
-				.map(emptrain -> {
-					CompetencyScore scores = new CompetencyScore();
+		List<CompetencyScore> result = emptrainrepo.getTrainingAndScoreByEmployeeId(emp_id).stream().map(emptrain -> {
+			CompetencyScore scores = new CompetencyScore();
 
-					scores.setName(emptrain.getTraining().getTraining_name());
-					scores.setScore(emptrain.getCompetency().getScore());
+			scores.setName(emptrain.getTraining().getTraining_name());
+			scores.setScore(emptrain.getCompetency().getScore());
 
-					return scores;
+			return scores;
 
-				}).collect(Collectors.toList());
-		
+		}).collect(Collectors.toList());
+
 		result.stream().forEach(System.err::println);
 		return result;
 
 	}
 
 	@Override	
-	public int updateEmployeeTraining(EmployeeTraining emptraining) {
+	public int updateEmployeeTraining(EmployeeTraining emptraining) {				
 		
-		System.err.println("Employee Training to be updated "+emptraining.toString());
-//		Long obj = emptraining.getTraining_ids().stream().findFirst().get();
-		Long obj  =emptraining.getTraining_ids();
-		int result = 0;
-		EmployeeTraining empTrainings = emptrainrepo.getTrainingByTrainingAndEmpId(emptraining.getEmployee().getEmp_id(),obj);
+		 
 		
-		if(empTrainings!= null) {
-			System.err.println("Emptraining found for given training and emp id "+empTrainings);
-			System.err.println("Call to UPDATE method");
+		Competency compet = competencyrepo.findById(emptraining.getCompetency().getCompetency_id()).get();
+		
+		TrainingTimeSlot traintimeslot = traintimeslotserv.getTrainingTimeSlotById(emptraining.getTrainingTimeSlot().getTraining_time_slot_id());
+		 
+		int	result = emptrainrepo.updateEmployeeTrainingByEmpTrainId(emptraining.getEmp_train_id(), compet.getCompetency_id(), traintimeslot.getTraining_time_slot_id(),emptraining.getTraining_date(),emptraining.getTraining_date());
+			if(result > 0) {
+				EmployeeTraining savedEmpTraining = emptrainrepo.getEmployeeTrainingById(emptraining.getEmp_train_id());
+				
+				System.err.println("Updated Emplpoyee Training "+savedEmpTraining.toString());
+				
+				EmployeeTrainingHistory emptrainhist = new EmployeeTrainingHistory();
+				
+				emptrainhist.setTraining(savedEmpTraining.getTraining());
+				emptrainhist.setTraining_date(savedEmpTraining.getTraining_date());
+				emptrainhist.setTrainingTimeSlot(savedEmpTraining.getTrainingTimeSlot());
+				emptrainhist.setEmployee(savedEmpTraining.getEmployee());
+				emptrainhist.setCompetency(savedEmpTraining.getCompetency());
+				
+				emptrainhistserv.saveEmployeeTrainingHistory(emptrainhist);
+				
+				return result;
+			}
+			else {
+				
+				System.err.println("Training is not udpated");
+				throw new GlobalException("Training is not updated of the Employee");
+			} 
+		 
+	}
+
+	@Override
+	public EmployeeTraining getEmployeesTrainingByEmployeeIdAndTrainingId(Long empid, Long training_id) {
+		EmployeeTraining obj = emptrainrepo.getTrainingByTrainingAndEmpId(empid, training_id);
+		if(obj!=null)
+		{
+			return obj;
 		}
 		else {
-			System.err.println("Calling to save method");
+			throw new ResourceNotFoundException("No Trainings found");
 		}
-		return 0;
-//		if(empTrainings!= null) {
-//			result = emptrainrepo.updateEmployeeTrainingByEmpTrainId(empTrainings.getEmp_train_id(), emptraining.getCompetency().getCompetency_id(), emptraining.getTrainingTimeSlot().getTraining_time_slot_id());
-//			if(result > 0) {
-//				System.err.println("After updating the employee training "+emptrainrepo.getTrainingByTrainingAndEmpId(emptraining.getEmployee().getEmp_id(),obj).toString());
-//				return result;
-//			}
-//			else {
-//				throw new GlobalException("Training is not updated of "+emptraining.getEmployee().getEmp_name());
-//			}
-//		}
-//		else {
-//			 if(emptrainrepo.save(emptraining)!=null) {
-//				 return 1;
-//			 }
-//			 throw new GlobalException("Training is not saved of Employee "+emptraining.getEmployee().getEmp_name());
-//		}
-		 
 	}
 
 }

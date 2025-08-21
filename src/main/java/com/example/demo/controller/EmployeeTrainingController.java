@@ -26,10 +26,12 @@ import com.example.demo.dto.ResponseDto;
 import com.example.demo.entity.CompetencyScore;
 import com.example.demo.entity.Employee;
 import com.example.demo.entity.EmployeeTraining;
+import com.example.demo.entity.EmployeeTrainingHistory;
 import com.example.demo.entity.Training;
 import com.example.demo.export.ExportAllTrainings;
 import com.example.demo.export.ExportEmployeeTrainingHistory;
 import com.example.demo.service.IEmployeeService;
+import com.example.demo.service.IEmployeeTrainingHistoryService;
 import com.example.demo.service.IEmployeeTrainingService;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -40,11 +42,14 @@ public class EmployeeTrainingController {
 
 	private final IEmployeeTrainingService emptrainserv;
 	private final IEmployeeService empserv;
+	private final IEmployeeTrainingHistoryService emptrainhistserv;
 
-	public EmployeeTrainingController(IEmployeeTrainingService emptrainserv, IEmployeeService empserv) {
+	public EmployeeTrainingController(IEmployeeTrainingService emptrainserv, IEmployeeService empserv,
+			IEmployeeTrainingHistoryService emptrainhistserv) {
 		super();
 		this.emptrainserv = emptrainserv;
 		this.empserv = empserv;
+		this.emptrainhistserv = emptrainhistserv;
 	}
 
 	@GetMapping("/")
@@ -55,13 +60,23 @@ public class EmployeeTrainingController {
 	}
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
+
 	@GetMapping("/{id}")
 	public ResponseEntity<List<EmployeeTraining>> getAllTrainingListByEmployeeId(@PathVariable Long id) {
 
 		List<EmployeeTraining> trainingHistory = emptrainserv.getEmployeesTrainingByEmployeeId(id);
-		
-		logger.info("All trainings found of emp id {} are {} ",id,trainingHistory);
-		
+
+		logger.info("All trainings found of emp id {} are {} ", id, trainingHistory);
+
+		return ResponseEntity.status(HttpStatus.OK).body(trainingHistory);
+	}
+	
+	
+	@GetMapping("/{id}/training/{tid}")
+	public ResponseEntity<EmployeeTraining> getAllTrainingsByEmployeeIdAndTrainingId(@PathVariable("id") Long empid,@PathVariable("tid") Long trainingId) {
+
+		EmployeeTraining trainingHistory = emptrainserv.getEmployeesTrainingByEmployeeIdAndTrainingId(empid, trainingId);
+		System.err.println("Employee Traing found for empid "+empid+" and training id "+trainingId+" is "+trainingHistory.toString() );
 		return ResponseEntity.status(HttpStatus.OK).body(trainingHistory);
 	}
 
@@ -76,14 +91,14 @@ public class EmployeeTrainingController {
 	}
 
 	@PutMapping("/")
-	public ResponseEntity<ResponseDto> updateEmployeeTraining(@RequestBody EmployeeTraining emptraining ) {
+	public ResponseEntity<ResponseDto> updateEmployeeTraining(@RequestBody EmployeeTraining emptraining) {
 
-		
-		
+		System.err.println("in Employee Training controller " + emptraining.toString());
+
 		emptrainserv.updateEmployeeTraining(emptraining);
-		
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(new ResponseDto(HttpStatus.OK.toString(), "Training is Updated of the Employee "+emptraining.getEmployee().getEmp_name()));
+
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
+				"Training is Updated of the Employee " + emptraining.getEmployee().getEmp_name()));
 	}
 
 	@PatchMapping("/training/{id}")
@@ -104,7 +119,7 @@ public class EmployeeTrainingController {
 	public ResponseEntity<InputStreamResource> exportToExcel(HttpServletResponse response,
 			@PathVariable("id") Long empid) throws IOException {
 
-		List<EmployeeTraining> alist = emptrainserv.getEmployeesTrainingByEmployeeId(empid);
+		List<EmployeeTrainingHistory> alist = emptrainhistserv.getAllEmployeeTrainingHistoryByEmployeeId(empid);
 
 		// Set headers
 		HttpHeaders headers = new HttpHeaders();
@@ -145,9 +160,8 @@ public class EmployeeTrainingController {
 	@GetMapping("/competencies/{id}")
 	public ResponseEntity<List<CompetencyScore>> getAllTrainingCompetencyiesByEmployeeId(@PathVariable Long id) {
 		List<CompetencyScore> object = emptrainserv.getAllTrainingCompetenciesByEmpId(id);
-		
-		return ResponseEntity.status(HttpStatus.OK).body(object);
-		
-	} 
-}
 
+		return ResponseEntity.status(HttpStatus.OK).body(object);
+
+	}
+}

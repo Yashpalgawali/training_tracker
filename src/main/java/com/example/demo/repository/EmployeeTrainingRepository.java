@@ -21,9 +21,6 @@ public interface EmployeeTrainingRepository extends JpaRepository<EmployeeTraini
 			+ " WHERE et.emp_id=:empid",nativeQuery = true)
 //	@Query("SELECT et FROM EmployeeTraining et JOIN et.employee JOIN et.training JOIN et.trainingTimeSlot WHERE et.employee.emp_id=:empid")
 	List<EmployeeTraining> findByEmployeeId(Long empid);
-	
-	
-//	List<EmployeeTraining> findByEmployee(Employee employee);
 
 	@Query("UPDATE EmployeeTraining eth SET eth.completion_date=:completion_date WHERE eth.emp_train_id=:id")
 	@Modifying
@@ -51,10 +48,12 @@ public interface EmployeeTrainingRepository extends JpaRepository<EmployeeTraini
 	List<EmployeeTraining> getEmployeeTrainingByTrainingId(Long tid);
 	
 	@Query("SELECT eth FROM EmployeeTraining eth WHERE eth.training.training_id=:training_id AND eth.employee.emp_id=:empid")
-	EmployeeTraining getTrainingByTrainingAndEmpId(Long empid,Long training_id);
+	public EmployeeTraining getTrainingByTrainingAndEmpId(Long empid,Long training_id);
 		
-	@Query("UPDATE EmployeeTraining et SET et.competency.competency_id=:competencyid,et.trainingTimeSlot.training_time_slot_id=:timeslotid WHERE et.emp_train_id=:emptrainid")
+	@Query("UPDATE EmployeeTraining et SET et.competency.competency_id=:competencyid,et.trainingTimeSlot.training_time_slot_id=:timeslotid,"
+			+ " et.training_date=:training_date,et.completion_date=:completion_date"
+			+ " WHERE et.emp_train_id=:emptrainid")
 	@Modifying
 	@Transactional
-	public int updateEmployeeTrainingByEmpTrainId(Long emptrainid, Long competencyid,Long timeslotid);
+	public int updateEmployeeTrainingByEmpTrainId(Long emptrainid, Long competencyid,Long timeslotid,String training_date,String completion_date);
 }	

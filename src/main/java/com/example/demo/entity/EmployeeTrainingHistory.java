@@ -45,6 +45,10 @@ public class EmployeeTrainingHistory {
 	TrainingTimeSlot trainingTimeSlot;
 	
 	@ManyToOne
+	@JoinColumn(name= "competency_id")
+	Competency competency;
+		
+	@ManyToOne
 	@JoinColumn(name= "emp_id")
 	Employee employee;
 
