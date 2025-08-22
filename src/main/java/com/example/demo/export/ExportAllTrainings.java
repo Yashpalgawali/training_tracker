@@ -28,7 +28,7 @@ public class ExportAllTrainings {
 	
 	private void writeHeaderLine()
 	{
-		sheet = workbook.createSheet("All Employees Training History");
+		sheet = workbook.createSheet("All Employees Trainings ");
 		Row row = sheet.createRow(0);
 		
 		CellStyle style = workbook.createCellStyle();

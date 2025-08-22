@@ -54,6 +54,7 @@ public interface EmployeeTrainingRepository extends JpaRepository<EmployeeTraini
 			+ " et.training_date=:training_date,et.completion_date=:completion_date"
 			+ " WHERE et.emp_train_id=:emptrainid")
 	@Modifying
-	@Transactional
 	public int updateEmployeeTrainingByEmpTrainId(Long emptrainid, Long competencyid,Long timeslotid,String training_date,String completion_date);
+ 
+
 }	

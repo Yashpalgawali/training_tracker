@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.dto.EmployeeTrainingDto;
 import com.example.demo.entity.Competency;
@@ -129,9 +130,9 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 	}
 
 	@Override
-	public EmployeeTraining getEmployeeTrainingByID(Long emptrainhist_id) {
+	public EmployeeTraining getEmployeeTrainingByID(Long emptrain_id) {
 
-		return emptrainrepo.findById(emptrainhist_id)
+		return emptrainrepo.findById(emptrain_id)
 				.orElseThrow(() -> new ResourceNotFoundException("No Employee Training history Found "));
 	}
 
@@ -183,51 +184,74 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 
 	}
 
-	@Override	
-	public int updateEmployeeTraining(EmployeeTraining emptraining) {				
-		
-		 
-		
+	@Override
+	@Transactional
+	public int updateEmployeeTraining(EmployeeTraining emptraining) {
+
 		Competency compet = competencyrepo.findById(emptraining.getCompetency().getCompetency_id()).get();
-		
-		TrainingTimeSlot traintimeslot = traintimeslotserv.getTrainingTimeSlotById(emptraining.getTrainingTimeSlot().getTraining_time_slot_id());
-		 
-		int	result = emptrainrepo.updateEmployeeTrainingByEmpTrainId(emptraining.getEmp_train_id(), compet.getCompetency_id(), traintimeslot.getTraining_time_slot_id(),emptraining.getTraining_date(),emptraining.getTraining_date());
-			if(result > 0) {
-				EmployeeTraining savedEmpTraining = emptrainrepo.getEmployeeTrainingById(emptraining.getEmp_train_id());
-				
-				System.err.println("Updated Emplpoyee Training "+savedEmpTraining.toString());
-				
-				EmployeeTrainingHistory emptrainhist = new EmployeeTrainingHistory();
-				
-				emptrainhist.setTraining(savedEmpTraining.getTraining());
-				emptrainhist.setTraining_date(savedEmpTraining.getTraining_date());
-				emptrainhist.setTrainingTimeSlot(savedEmpTraining.getTrainingTimeSlot());
-				emptrainhist.setEmployee(savedEmpTraining.getEmployee());
-				emptrainhist.setCompetency(savedEmpTraining.getCompetency());
-				
-				emptrainhistserv.saveEmployeeTrainingHistory(emptrainhist);
-				
-				return result;
-			}
-			else {
-				
-				System.err.println("Training is not udpated");
-				throw new GlobalException("Training is not updated of the Employee");
-			} 
-		 
+
+		TrainingTimeSlot traintimeslot = traintimeslotserv
+				.getTrainingTimeSlotById(emptraining.getTrainingTimeSlot().getTraining_time_slot_id());
+
+		int result = emptrainrepo.updateEmployeeTrainingByEmpTrainId(emptraining.getEmp_train_id(),
+				compet.getCompetency_id(), traintimeslot.getTraining_time_slot_id(), emptraining.getTraining_date(),
+				emptraining.getTraining_date());
+		if (result > 0) {
+			EmployeeTraining savedEmpTraining = emptrainrepo.getEmployeeTrainingById(emptraining.getEmp_train_id());
+
+			System.err.println("Updated Emplpoyee Training " + savedEmpTraining.toString());
+
+			EmployeeTrainingHistory emptrainhist = new EmployeeTrainingHistory();
+
+			emptrainhist.setTraining(savedEmpTraining.getTraining());
+			emptrainhist.setTraining_date(savedEmpTraining.getTraining_date());
+			emptrainhist.setTrainingTimeSlot(savedEmpTraining.getTrainingTimeSlot());
+			emptrainhist.setEmployee(savedEmpTraining.getEmployee());
+			emptrainhist.setCompetency(savedEmpTraining.getCompetency());
+
+			emptrainhistserv.saveEmployeeTrainingHistory(emptrainhist);
+
+			return result;
+		} else {
+
+			System.err.println("Training is not udpated");
+			throw new GlobalException("Training is not updated of the Employee");
+		}
+
 	}
 
 	@Override
 	public EmployeeTraining getEmployeesTrainingByEmployeeIdAndTrainingId(Long empid, Long training_id) {
 		EmployeeTraining obj = emptrainrepo.getTrainingByTrainingAndEmpId(empid, training_id);
-		if(obj!=null)
-		{
+		if (obj != null) {
 			return obj;
-		}
-		else {
+		} else {
 			throw new ResourceNotFoundException("No Trainings found");
 		}
+	}
+
+	@Override
+	@Transactional
+	public int updateTrainingTimeAndCompetency(Long id, String training_date, Long competency_id,
+			Long training_time_slot_id) {
+		int res = emptrainrepo.updateEmployeeTrainingByEmpTrainId(id, competency_id, training_time_slot_id,
+				training_date, training_date);
+		if (res > 0) {
+			EmployeeTraining savedEmpTraining = emptrainrepo.getEmployeeTrainingById(id);
+
+			EmployeeTrainingHistory emptrainhist = new EmployeeTrainingHistory();
+
+			emptrainhist.setTraining(savedEmpTraining.getTraining());
+			emptrainhist.setTraining_date(savedEmpTraining.getTraining_date());
+			emptrainhist.setTrainingTimeSlot(savedEmpTraining.getTrainingTimeSlot());
+			emptrainhist.setEmployee(savedEmpTraining.getEmployee());
+			emptrainhist.setCompetency(savedEmpTraining.getCompetency());
+
+			emptrainhistserv.saveEmployeeTrainingHistory(emptrainhist);
+			return res;
+		}
+
+		throw new ResourceNotModifiedException("Training date and Competency is not updated");
 	}
 
 }

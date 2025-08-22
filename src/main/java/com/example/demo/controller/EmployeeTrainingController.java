@@ -65,9 +65,7 @@ public class EmployeeTrainingController {
 	public ResponseEntity<List<EmployeeTraining>> getAllTrainingListByEmployeeId(@PathVariable Long id) {
 
 		List<EmployeeTraining> trainingHistory = emptrainserv.getEmployeesTrainingByEmployeeId(id);
-
-		logger.info("All trainings found of emp id {} are {} ", id, trainingHistory);
-
+		
 		return ResponseEntity.status(HttpStatus.OK).body(trainingHistory);
 	}
 	
@@ -82,8 +80,6 @@ public class EmployeeTrainingController {
 
 	@PostMapping("/")
 	public ResponseEntity<ResponseDto> saveEmployeeTraining(@RequestBody EmployeeTraining emptraining) {
-
-		System.err.println("In Employee Controller Training save Object " + emptraining.toString());
 
 		emptrainserv.saveEmployeeTraining(emptraining);
 		return ResponseEntity.status(HttpStatus.CREATED)
@@ -101,15 +97,34 @@ public class EmployeeTrainingController {
 				"Training is Updated of the Employee " + emptraining.getEmployee().getEmp_name()));
 	}
 
+//	@PatchMapping("/training/{id}")
+//	public ResponseEntity<ResponseDto> updateCompletionTime(@PathVariable Long id,
+//			@RequestBody Map<String, String> body) {
+//		EmployeeTraining employeeTrainingHistory = emptrainserv.getEmployeeTrainingByID(id);
+//
+//		Employee employee = empserv.getEmployeeByEmployeeId(employeeTrainingHistory.getEmployee().getEmp_id());
+//
+//		String comp_date = body.get("completion_date");
+//		emptrainserv.updateCompletionTime(id, comp_date);
+//		Training training = emptrainserv.getTrainingByHistId(id);
+//		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
+//				"Training " + training.getTraining_name() + " is completed Successfully of " + employee.getEmp_name()));
+//	}
+
 	@PatchMapping("/training/{id}")
 	public ResponseEntity<ResponseDto> updateCompletionTime(@PathVariable Long id,
 			@RequestBody Map<String, String> body) {
 		EmployeeTraining employeeTrainingHistory = emptrainserv.getEmployeeTrainingByID(id);
 
 		Employee employee = empserv.getEmployeeByEmployeeId(employeeTrainingHistory.getEmployee().getEmp_id());
+		System.err.println("Body for Patch "+body.toString());
+		String training_date =  body.get("training_date");
+		Long competency_id =  Long.parseLong(body.get("competency_id"));
 
-		String comp_date = body.get("completion_date");
-		emptrainserv.updateCompletionTime(id, comp_date);
+		Long training_time_slot_id = Long.parseLong(body.get("training_time_id"));
+
+		emptrainserv.updateTrainingTimeAndCompetency(id, training_date,competency_id,training_time_slot_id);
+
 		Training training = emptrainserv.getTrainingByHistId(id);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
 				"Training " + training.getTraining_name() + " is completed Successfully of " + employee.getEmp_name()));

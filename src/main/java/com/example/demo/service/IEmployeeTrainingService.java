@@ -19,6 +19,8 @@ public interface IEmployeeTrainingService {
 	
 	public int updateCompletionTime(Long id,String completion_date);
 	
+	public int updateTrainingTimeAndCompetency(Long id,String training_date,Long competency_id,Long training_time_slot_id);
+	
 	public Training getTrainingByHistId(Long histid);
 	
 	public EmployeeTraining getEmployeeTrainingByID(Long emptrainhist_id);
