@@ -23,7 +23,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @RestController
 @RequestMapping("department")
-@CrossOrigin("*")
 public class DepartmentController {
 
 	private final IDepartmentService deptserv;

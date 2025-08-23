@@ -14,14 +14,13 @@ import com.example.demo.security.CustomUserDetails;
 public class CustomUserDetailsService implements UserDetailsService {
 
 	@Autowired
-    private UsersRepository usersRepository;
+	private UsersRepository usersRepository;
 
-	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		 Users user = usersRepository.findByUsername(username)
-		            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-		        return new CustomUserDetails(user);
+		Users user = usersRepository.findByUsername(username)
+				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
+		return new CustomUserDetails(user);
 	}
 
 }

@@ -3,7 +3,6 @@ package com.example.demo.service.impl;
 
 import java.io.InputStream;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,24 +41,14 @@ public class EmployeeServImpl implements IEmployeeService {
 	private final EmployeeRepository emprepo;
 	private final DesignationRepository desigrepo;
 	private final DepartmentRepository deptrepo;
-	private final TrainingRepository trainRepository;
-	private final CompanyRepository comprepo;
-	private final EmployeeTrainingRepository emptrainhistrepo;
-	private final IEmployeeTrainingService emptrainhistserv;
-	private final ICategoryService categoryserv;
+	private final ICategoryService categoryserv;	 
 
 	public EmployeeServImpl(EmployeeRepository emprepo, DesignationRepository desigrepo, DepartmentRepository deptrepo,
-			TrainingRepository trainRepository, CompanyRepository comprepo,
-			EmployeeTrainingRepository emptrainhistrepo, IEmployeeTrainingService emptrainhistserv,
 			ICategoryService categoryserv) {
 		super();
 		this.emprepo = emprepo;
 		this.desigrepo = desigrepo;
 		this.deptrepo = deptrepo;
-		this.trainRepository = trainRepository;
-		this.comprepo = comprepo;
-		this.emptrainhistrepo = emptrainhistrepo;
-		this.emptrainhistserv = emptrainhistserv;
 		this.categoryserv = categoryserv;
 	}
 
@@ -71,8 +60,6 @@ public class EmployeeServImpl implements IEmployeeService {
 	@Override
 	public Employee saveEmployee(Employee emp) {
 
-//		List<Long> trainingList = emp.getTraining_ids();
-		logger.info("Employee Object {} ", emp);
 		Employee savedEmployee = emprepo.save(emp);
 		if (savedEmployee != null) {
 			return savedEmployee;
@@ -134,8 +121,7 @@ public class EmployeeServImpl implements IEmployeeService {
 
 	@Override
 	public void uploadEmployeeList(InputStream is) {
-
-//		List<Employee> employees = new ArrayList<>();
+ 
 		try (Workbook workbook = new XSSFWorkbook(is)) {
 			Sheet sheet = workbook.getSheetAt(0);
 

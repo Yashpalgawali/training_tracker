@@ -26,7 +26,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("designation")
-@CrossOrigin("*")
 @Tag(name = "Designation Controller",description = "This controller handles endpoints to perform operations like Save Designation,Find, Update the designation")
 public class DesignationController {
 

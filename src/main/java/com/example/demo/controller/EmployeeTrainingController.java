@@ -23,11 +23,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.EmployeeTrainingDto;
 import com.example.demo.dto.ResponseDto;
+import com.example.demo.entity.Competency;
 import com.example.demo.entity.CompetencyScore;
-import com.example.demo.entity.Employee;
 import com.example.demo.entity.EmployeeTraining;
 import com.example.demo.entity.EmployeeTrainingHistory;
-import com.example.demo.entity.Training;
+import com.example.demo.entity.TrainingTimeSlot;
 import com.example.demo.export.ExportAllTrainings;
 import com.example.demo.export.ExportEmployeeTrainingHistory;
 import com.example.demo.service.IEmployeeService;
@@ -73,8 +73,9 @@ public class EmployeeTrainingController {
 	@GetMapping("/{id}/training/{tid}")
 	public ResponseEntity<EmployeeTraining> getAllTrainingsByEmployeeIdAndTrainingId(@PathVariable("id") Long empid,@PathVariable("tid") Long trainingId) {
 
+		System.err.println("Inside get Trainings by employee id "+empid+" and training ID= "+trainingId);
 		EmployeeTraining trainingHistory = emptrainserv.getEmployeesTrainingByEmployeeIdAndTrainingId(empid, trainingId);
-		System.err.println("Employee Traing found for empid "+empid+" and training id "+trainingId+" is "+trainingHistory.toString() );
+		
 		return ResponseEntity.status(HttpStatus.OK).body(trainingHistory);
 	}
 
@@ -89,10 +90,8 @@ public class EmployeeTrainingController {
 	@PutMapping("/")
 	public ResponseEntity<ResponseDto> updateEmployeeTraining(@RequestBody EmployeeTraining emptraining) {
 
-		System.err.println("in Employee Training controller " + emptraining.toString());
-
+		
 		emptrainserv.updateEmployeeTraining(emptraining);
-
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
 				"Training is Updated of the Employee " + emptraining.getEmployee().getEmp_name()));
 	}
@@ -114,20 +113,35 @@ public class EmployeeTrainingController {
 	@PatchMapping("/training/{id}")
 	public ResponseEntity<ResponseDto> updateCompletionTime(@PathVariable Long id,
 			@RequestBody Map<String, String> body) {
-		EmployeeTraining employeeTrainingHistory = emptrainserv.getEmployeeTrainingByID(id);
-
-		Employee employee = empserv.getEmployeeByEmployeeId(employeeTrainingHistory.getEmployee().getEmp_id());
-		System.err.println("Body for Patch "+body.toString());
+		EmployeeTraining employeeTraining = emptrainserv.getEmployeeTrainingByID(id);
+		
+		System.err.println("Employee training Found for emp_train_id "+id+" is "+employeeTraining.toString());
+		
 		String training_date =  body.get("training_date");
 		Long competency_id =  Long.parseLong(body.get("competency_id"));
 
 		Long training_time_slot_id = Long.parseLong(body.get("training_time_id"));
 
-		emptrainserv.updateTrainingTimeAndCompetency(id, training_date,competency_id,training_time_slot_id);
-
-		Training training = emptrainserv.getTrainingByHistId(id);
+		System.err.println("emp_train_id = "+id+" \n Training Date= "+training_date+"\n Competency Id = "+competency_id+"\n time_slot_id= "+training_time_slot_id);
+		Competency comp = new Competency();
+		comp.setCompetency_id(competency_id);
+		
+		TrainingTimeSlot trainTimeSlot =new TrainingTimeSlot();
+		
+		trainTimeSlot.setTraining_time_slot_id(training_time_slot_id);
+		employeeTraining.setTraining_date(training_date);
+		employeeTraining.setCompetency(comp);
+		employeeTraining.setTrainingTimeSlot(trainTimeSlot);
+//		emptrainserv.updateTrainingTimeAndCompetency(id, training_date,competency_id,training_time_slot_id);
+		
+		emptrainserv.updateEmployeeTraining(employeeTraining);
+		
+		EmployeeTraining afterEmployeeTraining = emptrainserv.getEmployeeTrainingByID(id);
+		System.err.println("After updating the employee training "+afterEmployeeTraining.toString());
+		
+		 
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
-				"Training " + training.getTraining_name() + " is completed Successfully of " + employee.getEmp_name()));
+				"Training " +employeeTraining.getTraining().getTraining_name() + " is completed Successfully of " + employeeTraining.getEmployee().getEmp_name()));
 	}
 
 	@GetMapping("/exporttrainingshistory/excel/{id}")

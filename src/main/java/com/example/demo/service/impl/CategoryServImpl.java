@@ -63,8 +63,7 @@ public class CategoryServImpl implements ICategoryService {
 
 	@Override
 	public Category getCategoryByCategoryName(String category_name) {
-	 System.err.println("Category to found is "+category_name);
-//		return categoryrepo.findByCategory(category_name).get();
+	 
 		return categoryrepo.getCategoryByName(category_name);
 	}
 

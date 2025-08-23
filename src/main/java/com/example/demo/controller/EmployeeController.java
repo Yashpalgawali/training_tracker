@@ -139,7 +139,6 @@ public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emp
 	@PutMapping("/")
 	public ResponseEntity<ResponseDto> updateEmployee(@RequestBody Employee employee) {
 		
-		System.err.println("Employee Object "+employee.toString());
 		empserv.updateEmployee(employee);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
 				"Employee " + employee.getEmp_name() + " is UPDATED successfully"));

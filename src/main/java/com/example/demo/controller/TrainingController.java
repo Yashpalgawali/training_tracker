@@ -21,7 +21,6 @@ import com.example.demo.service.ITrainingService;
 
 @RestController
 @RequestMapping("training")
-@CrossOrigin("*")
 public class TrainingController {
 
 	private final ITrainingService trainserv;

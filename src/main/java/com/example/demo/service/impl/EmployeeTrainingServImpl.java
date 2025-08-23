@@ -124,9 +124,9 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 	}
 
 	@Override
-	public Training getTrainingByHistId(Long histid) {
-		EmployeeTraining employeeTrainHistoryById = emptrainrepo.getEmployeeTrainingById(histid);
-		return trainserv.getTrainingById(employeeTrainHistoryById.getTraining().getTraining_id());
+	public Training getTrainingByEmpTrainId(Long histid) {
+		EmployeeTraining employeeTrainById = emptrainrepo.getEmployeeTrainingById(histid);
+		return trainserv.getTrainingById(employeeTrainById.getTraining().getTraining_id());
 	}
 
 	@Override
@@ -179,7 +179,6 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 
 		}).collect(Collectors.toList());
 
-		result.stream().forEach(System.err::println);
 		return result;
 
 	}
@@ -199,8 +198,6 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 		if (result > 0) {
 			EmployeeTraining savedEmpTraining = emptrainrepo.getEmployeeTrainingById(emptraining.getEmp_train_id());
 
-			System.err.println("Updated Emplpoyee Training " + savedEmpTraining.toString());
-
 			EmployeeTrainingHistory emptrainhist = new EmployeeTrainingHistory();
 
 			emptrainhist.setTraining(savedEmpTraining.getTraining());
@@ -213,8 +210,6 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 
 			return result;
 		} else {
-
-			System.err.println("Training is not udpated");
 			throw new GlobalException("Training is not updated of the Employee");
 		}
 
@@ -223,35 +218,12 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 	@Override
 	public EmployeeTraining getEmployeesTrainingByEmployeeIdAndTrainingId(Long empid, Long training_id) {
 		EmployeeTraining obj = emptrainrepo.getTrainingByTrainingAndEmpId(empid, training_id);
+
 		if (obj != null) {
 			return obj;
 		} else {
 			throw new ResourceNotFoundException("No Trainings found");
 		}
-	}
-
-	@Override
-	@Transactional
-	public int updateTrainingTimeAndCompetency(Long id, String training_date, Long competency_id,
-			Long training_time_slot_id) {
-		int res = emptrainrepo.updateEmployeeTrainingByEmpTrainId(id, competency_id, training_time_slot_id,
-				training_date, training_date);
-		if (res > 0) {
-			EmployeeTraining savedEmpTraining = emptrainrepo.getEmployeeTrainingById(id);
-
-			EmployeeTrainingHistory emptrainhist = new EmployeeTrainingHistory();
-
-			emptrainhist.setTraining(savedEmpTraining.getTraining());
-			emptrainhist.setTraining_date(savedEmpTraining.getTraining_date());
-			emptrainhist.setTrainingTimeSlot(savedEmpTraining.getTrainingTimeSlot());
-			emptrainhist.setEmployee(savedEmpTraining.getEmployee());
-			emptrainhist.setCompetency(savedEmpTraining.getCompetency());
-
-			emptrainhistserv.saveEmployeeTrainingHistory(emptrainhist);
-			return res;
-		}
-
-		throw new ResourceNotModifiedException("Training date and Competency is not updated");
-	}
+	}	 
 
 }

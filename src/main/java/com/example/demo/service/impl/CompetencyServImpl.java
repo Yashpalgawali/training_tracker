@@ -6,14 +6,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.entity.Competency;
-import com.example.demo.entity.Employee;
-import com.example.demo.entity.Training;
 import com.example.demo.exception.GlobalException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.CompetencyRepository;
 import com.example.demo.service.ICompetencyService;
-import com.example.demo.service.IEmployeeService;
-import com.example.demo.service.ITrainingService;
 
 @Service("competencyserv")
 public class CompetencyServImpl implements ICompetencyService {
