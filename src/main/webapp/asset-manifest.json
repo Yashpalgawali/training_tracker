@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/trainingtracker/static/css/main.ce89dea3.css",
+    "main.js": "/trainingtracker/static/js/main.76d17db6.js",
+    "static/js/453.5eb888a6.chunk.js": "/trainingtracker/static/js/453.5eb888a6.chunk.js",
+    "index.html": "/trainingtracker/index.html",
+    "main.ce89dea3.css.map": "/trainingtracker/static/css/main.ce89dea3.css.map",
+    "main.76d17db6.js.map": "/trainingtracker/static/js/main.76d17db6.js.map",
+    "453.5eb888a6.chunk.js.map": "/trainingtracker/static/js/453.5eb888a6.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.ce89dea3.css",
+    "static/js/main.76d17db6.js"
+  ]
+}
