@@ -2,7 +2,6 @@ package com.example.demo.export;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -11,24 +10,22 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.example.demo.dto.EmployeeDTO;
-
 import jakarta.servlet.http.HttpServletResponse;
 
-public class ExportAllEmployees {
+public class ExportSampleToUploadEmployees {
 
 	private XSSFWorkbook workbook;
 	private XSSFSheet sheet;
-	private List<EmployeeDTO> EmployeeList;
+	 
 	
-	public ExportAllEmployees(List<EmployeeDTO> alist) {
-		this.EmployeeList = alist;
+	public ExportSampleToUploadEmployees() {
+	
 		workbook = new XSSFWorkbook();
 	}
 	
 	private void writeHeaderLine()
 	{
-		sheet = workbook.createSheet("All Employee List");
+		sheet = workbook.createSheet("Sample Employee List");
 		Row row = sheet.createRow(0);
 		
 		CellStyle style = workbook.createCellStyle();
@@ -67,7 +64,7 @@ public class ExportAllEmployees {
 	        }
 	        cell.setCellStyle(style);
 	}
-	
+
 	private void writeDataLines()
 	{
 		int rowCount = 1;
@@ -75,38 +72,53 @@ public class ExportAllEmployees {
 		XSSFFont font = workbook.createFont();
 		font.setBold(true);
 		font.setFontHeight(16);
-		int sr=1;
 		
-		if(EmployeeList.size() > 0 ) {
-		for(EmployeeDTO employee : EmployeeList)
-		{
+		int columnCount = 8;
+		for(int i=0;i<columnCount;i++) {
 			Row row = sheet.createRow(rowCount++);
-			
-			int columnCount = 0;
-			
-			createCell(row,columnCount++, sr++ ,style);
-			createCell(row,columnCount++, employee.getEmp_name() , style);
-			createCell(row,columnCount++, employee.getEmp_code() , style);
-			createCell(row,columnCount++, employee.getDesignation() , style);
-			createCell(row,columnCount++, employee.getDepartment() , style);
-			createCell(row,columnCount++, employee.getCompany() , style);
-			createCell(row,columnCount++, employee.getJoining_date(), style);
-			createCell(row,columnCount++, employee.getContractor_name() ,style);
-			createCell(row,columnCount++, employee.getCategory() ,style);
-		  }
-	    }
-		else {
-			Row row = sheet.createRow(rowCount++);			
-			int columnCount = 0;			
-			createCell(row,columnCount++, "No Data Found " ,style);
+			 
+			createCell(row,i++, "" ,style);
+			createCell(row,i++, "" ,style);
+			createCell(row,i++, "" ,style);
+			createCell(row,i++, "" ,style);
+			createCell(row,i++, "" ,style);
+			createCell(row,i++, "" ,style);
+			createCell(row,i++, "" ,style);
+			createCell(row,i++, "" ,style);
 		}
+		
+		
+		
+//		if(EmployeeList.size() > 0 ) {
+//		for(EmployeeDTO employee : EmployeeList)
+//		{
+//			Row row = sheet.createRow(rowCount++);
+//			
+//			int columnCount = 0;
+//			
+//			createCell(row,columnCount++, sr++ ,style);
+//			createCell(row,columnCount++, employee.getEmp_name() , style);
+//			createCell(row,columnCount++, employee.getEmp_code() , style);
+//			createCell(row,columnCount++, employee.getDesignation() , style);
+//			createCell(row,columnCount++, employee.getDepartment() , style);
+//			createCell(row,columnCount++, employee.getCompany() , style);
+//			createCell(row,columnCount++, employee.getJoining_date(), style);
+//			createCell(row,columnCount++, employee.getContractor_name() ,style);
+//			createCell(row,columnCount++, employee.getCategory() ,style);
+//		  }
+//	    }
+//		else {
+//			Row row = sheet.createRow(rowCount++);			
+//			int columnCount = 0;			
+//			createCell(row,columnCount++, "No Data Found " ,style);
+//		}
 	}
-	
+
 	public byte[] export(HttpServletResponse resp)throws IOException
 	{
 		writeHeaderLine();
 		writeDataLines();
-		
+
 	    ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
 		workbook.write(bos);

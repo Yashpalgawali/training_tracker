@@ -39,6 +39,7 @@ import com.example.demo.entity.Designation;
 import com.example.demo.entity.Employee;
 import com.example.demo.entity.Training;
 import com.example.demo.export.ExportAllEmployees;
+import com.example.demo.export.ExportSampleToUploadEmployees;
 import com.example.demo.repository.DepartmentRepository;
 import com.example.demo.repository.DesignationRepository;
 import com.example.demo.service.ICategoryService;
@@ -187,6 +188,24 @@ public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emp
 		logger.info("EMPLDTO LIST is {} ",empDtoList);
 		
 		ExportAllEmployees excelExporter = new ExportAllEmployees(empDtoList);
+		byte[] excelContent = excelExporter.export(response);
+
+		// Return the file as a ResponseEntity
+		return ResponseEntity.ok().headers(headers)
+				.contentType(
+						MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+				.body(new InputStreamResource(new ByteArrayInputStream(excelContent)));
+	}
+	
+	
+	@GetMapping("/export/sample/employeelist")
+	public ResponseEntity<InputStreamResource> exportSampleToUploadEmployeesToExcel(HttpServletResponse response) throws IOException {
+		
+		// Set headers
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Sample_To_Upload_Employee_List.xlsx");
+	
+		ExportSampleToUploadEmployees excelExporter = new ExportSampleToUploadEmployees();
 		byte[] excelContent = excelExporter.export(response);
 
 		// Return the file as a ResponseEntity

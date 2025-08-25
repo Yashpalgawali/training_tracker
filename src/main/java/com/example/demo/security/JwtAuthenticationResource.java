@@ -58,7 +58,7 @@ public class JwtAuthenticationResource {
 		
 		var claims = JwtClaimsSet.builder().issuer("self")
 								.issuedAt(Instant.now())
-								.expiresAt(Instant.now().plusSeconds(60*30))
+								.expiresAt(Instant.now().plusSeconds(60*60))
 								.subject(auth.getName()).claim("scope", createScope(auth))
 								.claim("userId", user.getUserId()) // 👈 Custom claim: adds user_id to the payload of the token.
 								.claim("username", user.getUsername()) // 👈 Custom claim: adds username to the payload of the token.
