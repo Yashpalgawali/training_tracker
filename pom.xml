@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="https://maven.apache.org/POM/4.0.0" xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="https://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -139,6 +139,30 @@
 					</excludes>
 				</configuration>
 			</plugin>
+ 			<plugin>
+  <groupId>org.codehaus.cargo</groupId>
+  <artifactId>cargo-maven3-plugin</artifactId>
+  <version>1.10.9</version>
+
+  <configuration>
+    <container>
+      <containerId>tomcat10x</containerId>
+      <type>remote</type>
+    </container>
+
+    <configuration type="runtime">
+      <property name="cargo.remote.username" value="tomcat"/>
+      <property name="cargo.remote.password" value="tomcat"/>
+      <property name="cargo.hostname" value="localhost"/>
+      <property name="cargo.servlet.port" value="8081"/>
+    </configuration>
+  </configuration>
+</plugin>
+
+
+
+
+
 		</plugins>
 	</build>
 
