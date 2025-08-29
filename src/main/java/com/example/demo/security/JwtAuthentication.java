@@ -58,7 +58,7 @@ public class JwtAuthentication {
 	 	http.cors(cors->{
 	 		cors.configurationSource(request->{
 	 			 CorsConfiguration config = new CorsConfiguration();
-
+//
 //	 			config.setAllowedOrigins(Arrays.asList("http://13.201.9.193")); // Your Angular app's URL
 	 			 config.setAllowedOrigins(Arrays.asList("http://192.168.0.*:8080","http://localhost:8080","http://192.168.0.219:8080","http://localhost:8081","http://192.168.0.219:8081","http://localhost:3000","http://192.168.0.*:3000")); // Your Angular app's URL
 //	 			 config.setAllowedOrigins(Arrays.asList("*")); // Your Angular app's URL
