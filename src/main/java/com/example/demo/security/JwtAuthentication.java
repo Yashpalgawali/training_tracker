@@ -66,7 +66,7 @@ public class JwtAuthentication {
 	             config.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
 	             config.setAllowCredentials(true); // Allow cookies
 	             return config;
-	 		});
+	 		}); 
 	 	});
 	 	http.logout(logout->{
 			logout.logoutUrl("/logouturl");
