@@ -83,9 +83,10 @@ public class EmployeeTrainingController {
 	@PostMapping("/")
 	public ResponseEntity<ResponseDto> saveEmployeeTraining(@RequestBody EmployeeTraining emptraining) {
 
-		emptrainserv.saveEmployeeTraining(emptraining);
+		EmployeeTraining savedEmployeeTraining = emptrainserv.saveEmployeeTraining(emptraining);
+
 		return ResponseEntity.status(HttpStatus.CREATED)
-				.body(new ResponseDto(HttpStatus.CREATED.toString(), "Training is started of the Employee"));
+				.body(new ResponseDto(HttpStatus.CREATED.toString(), "Training "+savedEmployeeTraining.getTraining().getTraining_name()+" is started of "+savedEmployeeTraining.getEmployee().getEmp_name()));
 	}
 
 	@PutMapping("/")

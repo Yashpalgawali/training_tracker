@@ -9,7 +9,7 @@ import com.example.demo.entity.Training;
 
 public interface IEmployeeTrainingService {
 
-	public int saveEmployeeTraining(EmployeeTraining emp_training);
+	public EmployeeTraining saveEmployeeTraining(EmployeeTraining emp_training);
 	
 	public List<EmployeeTraining> getAllEmployeesTrainingHistory();
 	

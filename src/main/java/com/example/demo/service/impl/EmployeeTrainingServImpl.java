@@ -60,7 +60,7 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 	private DateTimeFormatter ttime = DateTimeFormatter.ofPattern("HH:mm:ss");
 
 	@Override
-	public int saveEmployeeTraining(EmployeeTraining training) {
+	public EmployeeTraining saveEmployeeTraining(EmployeeTraining training) {
 
 		Long training_ids = training.getTraining_ids();
 
@@ -91,7 +91,7 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 
 			emptrainhistserv.saveEmployeeTrainingHistory(emptrainhist);
 
-			return 1;
+			return savedEmpTraining;
 		} else {
 			throw new GlobalException(
 					"No Training is assigned to the Employee " + training.getEmployee().getEmp_name());
