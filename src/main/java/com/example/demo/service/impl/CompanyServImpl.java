@@ -40,6 +40,9 @@ public class CompanyServImpl implements ICompanyService {
 	@Override
 	public List<Company> getAllCompanies() {
 		List<Company> compList = comprepo.findAll();
+		if(compList.isEmpty()) {
+			throw new ResourceNotFoundException("No Companies found");
+		}
 		return compList;
 		
 	}

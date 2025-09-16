@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -23,6 +24,18 @@ public class GlobalExceptionHandler {
 		
 		
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+	}
+	
+	@ExceptionHandler(BadCredentialsException.class)
+	public ResponseEntity<ErrorResponseDto> handleResourceNotFoundException(BadCredentialsException exception , WebRequest request){
+		
+		ErrorResponseDto error = new ErrorResponseDto(
+													request.getDescription(false),
+													HttpStatus.UNAUTHORIZED,
+													exception.getMessage(),LocalDateTime.now().toString() );
+		
+		System.err.println("Error is "+error.toString());
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
 	}
 	
 	@ExceptionHandler(GlobalException.class)

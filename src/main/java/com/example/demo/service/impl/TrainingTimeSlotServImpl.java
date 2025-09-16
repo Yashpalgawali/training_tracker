@@ -33,7 +33,11 @@ public class TrainingTimeSlotServImpl implements ITrainingTimeSlotService {
 	@Override
 	public List<TrainingTimeSlot> getAllTimeSlots() {
 
-		return traintimeslotrepo.findAll();
+		List<TrainingTimeSlot> trainingTimeSlotList = traintimeslotrepo.findAll();
+		if(trainingTimeSlotList.isEmpty()) {
+			throw new ResourceNotFoundException("No Training Time Slots Found");
+		}
+		return trainingTimeSlotList;
 	}
 
 	@Override
@@ -50,7 +54,6 @@ public class TrainingTimeSlotServImpl implements ITrainingTimeSlotService {
 		} else {
 			throw new GlobalException("Training Time Slot" + timeSlot.getTraining_time_slot() + " is not Updated");
 		}
-
 	}
 
 }

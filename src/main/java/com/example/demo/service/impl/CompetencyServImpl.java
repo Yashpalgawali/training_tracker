@@ -35,7 +35,11 @@ public class CompetencyServImpl implements ICompetencyService {
 	@Override
 	public List<Competency> getAllCompetencyList() {
 
-		return competencyrepo.findAll();
+		List<Competency> competencyList = competencyrepo.findAll();
+		if(competencyList.isEmpty()) {
+			throw new ResourceNotFoundException("No Competencies found");
+		}
+		return competencyList;
 	}
 
 	@Override
