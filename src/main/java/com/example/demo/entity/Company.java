@@ -2,7 +2,7 @@ package com.example.demo.entity;
 
 import org.springframework.validation.annotation.Validated;
 
-import jakarta.persistence.Column;
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,6 +28,7 @@ import lombok.experimental.FieldDefaults;
 @ToString
 @Validated
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Cacheable
 public class Company {
 
 	@Id

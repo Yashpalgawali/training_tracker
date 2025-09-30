@@ -92,11 +92,21 @@ public class EmployeeTrainingController {
 	@PutMapping("/")
 	public ResponseEntity<ResponseDto> updateEmployeeTraining(@RequestBody EmployeeTraining emptraining) {
 
-		emptrainserv.updateEmployeeTraining(emptraining);
+		int updatedEmployeeTraining = emptrainserv.updateEmployeeTraining(emptraining);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
 				"Training is Updated of the Employee " + emptraining.getEmployee().getEmp_name()));
 	}
 
+	@GetMapping("/getalltrainings")
+	public ResponseEntity<List<EmployeeTraining>> getAllEmployeeTrainings() {
+		
+		var list = emptrainserv.getAllEmployeesTrainingHistory();
+		
+		list.forEach(System.err::println);
+		
+		return ResponseEntity.status(HttpStatus.OK).body(list);
+	}
+	
 //	@PatchMapping("/training/{id}")
 //	public ResponseEntity<ResponseDto> updateCompletionTime(@PathVariable Long id,
 //			@RequestBody Map<String, String> body) {

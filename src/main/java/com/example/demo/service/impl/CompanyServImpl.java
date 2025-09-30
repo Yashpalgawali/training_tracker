@@ -5,6 +5,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.entity.Company;
 import com.example.demo.exception.GlobalException;
@@ -48,8 +49,15 @@ public class CompanyServImpl implements ICompanyService {
 	}
 
 	@Override
+	@Transactional
 	public Company getCompanyById(Long comp_id) {
-		return comprepo.findById(comp_id).orElseThrow(()-> new ResourceNotFoundException("No Company found for given id "+comp_id));
+		Company companyObject = comprepo.findById(comp_id).orElseThrow(()-> new ResourceNotFoundException("No Company found for given id "+comp_id));
+		logger.info("Company found is {} ",companyObject);
+		
+		Company companyObject1 = comprepo.findById(comp_id).orElseThrow(()-> new ResourceNotFoundException("No Company found for given id "+comp_id));
+		logger.info("Company Again Found is {} ",companyObject1);
+		
+		return companyObject;
 	}
 
 	@Override
