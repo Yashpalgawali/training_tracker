@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.dto.ChartDto;
 import com.example.demo.entity.EmployeeTraining;
 
 @Repository("emptrainrepo")
@@ -57,5 +58,15 @@ public interface EmployeeTrainingRepository extends JpaRepository<EmployeeTraini
 	@Transactional
 	public int updateEmployeeTrainingByEmpTrainId(Long emptrainid, Long competencyid,Long timeslotid,String training_date,String completion_date);
  
-
+	@Query(value="SELECT \r\n"
+			+ "    t.training_id,\r\n"
+			+ "    COUNT(DISTINCT et.emp_id) AS totalEmployees,\r\n"
+			+ "    SUM(CASE WHEN et.competency_id = 25 THEN 1 ELSE 0 END) AS comp25,\r\n"
+			+ "    SUM(CASE WHEN et.competency_id = 50 THEN 1 ELSE 0 END) AS comp50,\r\n"
+			+ "    SUM(CASE WHEN et.competency_id = 75 THEN 1 ELSE 0 END) AS comp75,\r\n"
+			+ "    SUM(CASE WHEN et.competency_id = 100 THEN 1 ELSE 0 END) AS comp100\r\n"
+			+ "FROM tbl_employee_training et\r\n"
+			+ "JOIN tbl_training t ON et.training_id = t.id   \r\n"
+			+ "GROUP BY t.training_id;",nativeQuery = true)
+	public List<ChartDto> getAllTrainingsWithCount();
 }	

@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.dto.ChartDto;
 import com.example.demo.dto.EmployeeTrainingDto;
 import com.example.demo.entity.Competency;
 import com.example.demo.entity.CompetencyScore;
@@ -101,7 +102,8 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 	@Override
 	public List<EmployeeTraining> getAllEmployeesTrainingHistory() {
 
-		return emptrainrepo.findAll();
+		return emptrainrepo.findAll();		
+
 	}
 
 	@Override
@@ -224,6 +226,11 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 		} else {
 			throw new ResourceNotFoundException("No Trainings found");
 		}
+	}
+
+	@Override
+	public List<ChartDto> getAllEmployeesTrainingForCharts() {
+		return emptrainrepo.getAllTrainingsWithCount();
 	}	 
 
 }

@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.ChartDto;
 import com.example.demo.dto.EmployeeTrainingDto;
 import com.example.demo.dto.ResponseDto;
 import com.example.demo.entity.Competency;
@@ -98,15 +100,26 @@ public class EmployeeTrainingController {
 	}
 
 	@GetMapping("/getalltrainings")
-	public ResponseEntity<List<EmployeeTraining>> getAllEmployeeTrainings() {
+	public ResponseEntity<List<ChartDto>> getAllEmployeeTrainings() {
 		
 		var list = emptrainserv.getAllEmployeesTrainingHistory();
 		
-		list.forEach(System.err::println);
-		
-		return ResponseEntity.status(HttpStatus.OK).body(list);
+		List<ChartDto> collect = list.stream().map(train->{
+			ChartDto newr = new ChartDto();
+
+			 
+			return newr;
+		}).collect(Collectors.toList());
+		return ResponseEntity.status(HttpStatus.OK).body(collect);
 	}
-	
+
+//	@GetMapping("/getalltrainings")
+//	public ResponseEntity<List<EmployeeTraining>> getaAllEmployeeTrainings() {
+//		
+//		var list = emptrainserv.getAllEmployeesTrainingHistory();
+//		return ResponseEntity.status(HttpStatus.OK).body(list);
+//	}
+
 //	@PatchMapping("/training/{id}")
 //	public ResponseEntity<ResponseDto> updateCompletionTime(@PathVariable Long id,
 //			@RequestBody Map<String, String> body) {
