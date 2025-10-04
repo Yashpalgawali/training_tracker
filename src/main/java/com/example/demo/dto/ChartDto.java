@@ -12,14 +12,14 @@ public class ChartDto {
 
 	private String training_name;
 	
-	private Integer total_emp;
+	private Integer emp;
 	
-	private Integer comp25;
+	private Long competency;
 	
-	private Integer comp50;
-	
-	private Integer comp75;
-	
-	private Integer comp100;
+//	private Integer comp50;
+//	
+//	private Integer comp75;
+//	
+//	private Integer comp100;
 	
 }

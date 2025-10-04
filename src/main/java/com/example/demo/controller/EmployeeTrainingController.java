@@ -99,18 +99,18 @@ public class EmployeeTrainingController {
 				"Training is Updated of the Employee " + emptraining.getEmployee().getEmp_name()));
 	}
 
-	@GetMapping("/getalltrainings")
+	@GetMapping("/getalltrainingsforchart")
 	public ResponseEntity<List<ChartDto>> getAllEmployeeTrainings() {
 		
-		var list = emptrainserv.getAllEmployeesTrainingHistory();
+		var list = emptrainserv.getAllEmployeesTrainingForCharts();
 		
-		List<ChartDto> collect = list.stream().map(train->{
-			ChartDto newr = new ChartDto();
-
-			 
-			return newr;
-		}).collect(Collectors.toList());
-		return ResponseEntity.status(HttpStatus.OK).body(collect);
+//		List<ChartDto> collect = list.stream().map(train->{
+//			ChartDto newr = new ChartDto();
+//
+//			 
+//			return newr;
+//		}).collect(Collectors.toList());
+		return ResponseEntity.status(HttpStatus.OK).body(list);
 	}
 
 //	@GetMapping("/getalltrainings")
