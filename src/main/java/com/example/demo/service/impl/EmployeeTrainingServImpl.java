@@ -229,19 +229,7 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 	}
 
 	@Override
-	public List<ChartDto> getAllEmployeesTrainingForCharts() {
-			
-//		List<ChartDto> chartData = emptrainrepo.getAllTrainingsWithCount().stream()
-//			    .map(row -> new ChartDto(
-//			        (String) row[0],
-//			        ((Number) row[1]).intValue(),
-//			        ((Number) row[2]).intValue(),
-//			        ((Number) row[3]).intValue(),
-//			        ((Number) row[4]).intValue(),
-//			        ((Number) row[5]).intValue()
-//			    ))
-//			    .toList(); 
-//		return chartData;
+	public List<ChartDto> getAllEmployeesTrainingForCharts() { 
 		
 		List<Object[]> rows = emptrainrepo.getAllTrainingsWithCount();
 		
@@ -255,11 +243,7 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
             Long comp75 = ((Number) row[4]).longValue();
             Long comp100 = ((Number) row[5]).longValue();
 
-            result.add(new ChartDto(trainingName, comp25, comp50, comp75, comp100));
-//                        result.add(new ChartDto(trainingName, 25, comp25));
-//            result.add(new ChartDto(trainingName, 50, comp50));
-//            result.add(new ChartDto(trainingName, 75, comp75));
-//            result.add(new ChartDto(trainingName, 100, comp100));
+            result.add(new ChartDto(trainingName, comp25, comp50, comp75, comp100)); 
         }
         
         return result;

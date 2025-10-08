@@ -49,7 +49,6 @@ public class CategoryController {
 	}
 
 	@GetMapping("/{id}")
-
 	@Operation(summary = "Find Category By ID", description = "This endpoint finds the Category object from the database by its ID")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The category is found Successfully "),
 			@ApiResponse(responseCode = "404", description = "The category is NOT FOUND") })

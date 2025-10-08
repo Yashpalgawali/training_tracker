@@ -1,17 +1,19 @@
 package com.example.demo.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.dto.EmployeeDTO;
 import com.example.demo.entity.Employee;
 
 @Repository("emprepo")
-public interface EmployeeRepository extends JpaRepository<Employee, Long> {
+public interface EmployeeRepository extends JpaRepository<Employee, Long>  {
 
 	@Query("UPDATE Employee e SET e.emp_name=:empname,e.emp_code=:empcode,e.joining_date=:doj,e.department.dept_id=:deptid,"
 			+ "e.contractor_name=:contractor,e.category.category_id=:category_id,e.designation.desig_id=:desigid  WHERE e.emp_id=:eid")
@@ -27,4 +29,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 //	@Query("SELECT e.training FROM Employee e WHERE e.emp_id=:empid")
 //	public List<Training> getAllTrainingsByEmployeeId(Long empid);
 
+//	@Query("SELECT new com.example.demo.dto.EmployeeDTO(e.emp_id, e.emp_name, e.emp_code,e.joining_date,e.contractor_name,dept.dept_name,"
+//			+ "dept.company.comp_name,desig.desig_name,cat.category) "
+//			+ "FROM Employee e JOIN e.department dept JOIN e.designation desig JOIN e.category cat")
+//	List<EmployeeDTO> findAllEmployeeDtos();
 }

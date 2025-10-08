@@ -143,6 +143,7 @@ public class EmployeeServImpl implements IEmployeeService {
 				Department dept = deptrepo.getDepartmentByDeptNameAndCompName(dept_name.trim(), comp_name.trim());
 
 				emp.setDepartment(dept);
+
 				emp.setJoining_date(getCellValue(row.getCell(5)));
 				emp.setContractor_name(getCellValue(row.getCell(6)));
 

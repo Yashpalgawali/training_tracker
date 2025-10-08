@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,14 +42,12 @@ import jakarta.servlet.http.HttpServletResponse;
 public class EmployeeTrainingController {
 
 	private final IEmployeeTrainingService emptrainserv;
-	private final IEmployeeService empserv;
 	private final IEmployeeTrainingHistoryService emptrainhistserv;
 
-	public EmployeeTrainingController(IEmployeeTrainingService emptrainserv, IEmployeeService empserv,
+	public EmployeeTrainingController(IEmployeeTrainingService emptrainserv ,
 			IEmployeeTrainingHistoryService emptrainhistserv) {
 		super();
-		this.emptrainserv = emptrainserv;
-		this.empserv = empserv;
+		this.emptrainserv = emptrainserv;	 
 		this.emptrainhistserv = emptrainhistserv;
 	}
 
@@ -61,7 +58,7 @@ public class EmployeeTrainingController {
 		return ResponseEntity.status(HttpStatus.OK).body(trainingHistory);
 	}
 
-	private Logger logger = LoggerFactory.getLogger(getClass());
+//	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@GetMapping("/{id}")
 	public ResponseEntity<List<EmployeeTraining>> getAllTrainingListByEmployeeId(@PathVariable Long id) {
@@ -86,7 +83,6 @@ public class EmployeeTrainingController {
 	public ResponseEntity<ResponseDto> saveEmployeeTraining(@RequestBody EmployeeTraining emptraining) {
 
 		EmployeeTraining savedEmployeeTraining = emptrainserv.saveEmployeeTraining(emptraining);
-
 		return ResponseEntity.status(HttpStatus.CREATED)
 				.body(new ResponseDto(HttpStatus.CREATED.toString(), "Training "+savedEmployeeTraining.getTraining().getTraining_name()+" is started of "+savedEmployeeTraining.getEmployee().getEmp_name()));
 	}
@@ -94,7 +90,7 @@ public class EmployeeTrainingController {
 	@PutMapping("/")
 	public ResponseEntity<ResponseDto> updateEmployeeTraining(@RequestBody EmployeeTraining emptraining) {
 
-		int updatedEmployeeTraining = emptrainserv.updateEmployeeTraining(emptraining);
+		emptrainserv.updateEmployeeTraining(emptraining);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
 				"Training is Updated of the Employee " + emptraining.getEmployee().getEmp_name()));
 	}
@@ -103,36 +99,9 @@ public class EmployeeTrainingController {
 	public ResponseEntity<List<ChartDto>> getAllEmployeeTrainings() {
 		
 		var list = emptrainserv.getAllEmployeesTrainingForCharts();
-		
-//		List<ChartDto> collect = list.stream().map(train->{
-//			ChartDto newr = new ChartDto();
-//
-//			 
-//			return newr;
-//		}).collect(Collectors.toList());
 		return ResponseEntity.status(HttpStatus.OK).body(list);
 	}
 
-//	@GetMapping("/getalltrainings")
-//	public ResponseEntity<List<EmployeeTraining>> getaAllEmployeeTrainings() {
-//		
-//		var list = emptrainserv.getAllEmployeesTrainingHistory();
-//		return ResponseEntity.status(HttpStatus.OK).body(list);
-//	}
-
-//	@PatchMapping("/training/{id}")
-//	public ResponseEntity<ResponseDto> updateCompletionTime(@PathVariable Long id,
-//			@RequestBody Map<String, String> body) {
-//		EmployeeTraining employeeTrainingHistory = emptrainserv.getEmployeeTrainingByID(id);
-//
-//		Employee employee = empserv.getEmployeeByEmployeeId(employeeTrainingHistory.getEmployee().getEmp_id());
-//
-//		String comp_date = body.get("completion_date");
-//		emptrainserv.updateCompletionTime(id, comp_date);
-//		Training training = emptrainserv.getTrainingByHistId(id);
-//		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
-//				"Training " + training.getTraining_name() + " is completed Successfully of " + employee.getEmp_name()));
-//	}
 
 	@PatchMapping("/training/{id}")
 	public ResponseEntity<ResponseDto> updateCompletionTime(@PathVariable Long id,
@@ -156,8 +125,8 @@ public class EmployeeTrainingController {
 
 		emptrainserv.updateEmployeeTraining(employeeTraining);
 
-		EmployeeTraining afterEmployeeTraining = emptrainserv.getEmployeeTrainingByID(id);
-		System.err.println("After updating the employee training " + afterEmployeeTraining.toString());
+//		EmployeeTraining afterEmployeeTraining = emptrainserv.getEmployeeTrainingByID(id);
+//		System.err.println("After updating the employee training " + afterEmployeeTraining.toString());
 
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(new ResponseDto(HttpStatus.OK.toString(),

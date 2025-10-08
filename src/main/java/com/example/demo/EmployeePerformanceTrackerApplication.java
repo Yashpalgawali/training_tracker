@@ -13,8 +13,8 @@ public class EmployeePerformanceTrackerApplication {
 		SpringApplication.run(EmployeePerformanceTrackerApplication.class, args);
 	}
 
-	@RequestMapping(value = {"/{path:[^\\.]*}", "/**/{path:[^\\.]*}"})
-    public String forward() {
-        return "forward:/index.html";
-    }
+//	@RequestMapping(value = {"/{path:[^\\.]*}", "/**/{path:[^\\.]*}"})
+//    public String forward() {
+//        return "forward:/index.html";
+//    }
 }

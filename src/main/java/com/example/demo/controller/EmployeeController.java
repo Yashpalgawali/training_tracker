@@ -3,22 +3,16 @@ package com.example.demo.controller;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,15 +27,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dto.EmployeeDTO;
 import com.example.demo.dto.ResponseDto;
-import com.example.demo.entity.Category;
-import com.example.demo.entity.Department;
-import com.example.demo.entity.Designation;
 import com.example.demo.entity.Employee;
 import com.example.demo.entity.Training;
 import com.example.demo.export.ExportAllEmployees;
 import com.example.demo.export.ExportSampleToUploadEmployees;
-import com.example.demo.repository.DepartmentRepository;
-import com.example.demo.repository.DesignationRepository;
 import com.example.demo.service.ICategoryService;
 import com.example.demo.service.IEmployeeService;
 import com.example.demo.service.IEmployeeTrainingService;
@@ -54,19 +43,14 @@ public class EmployeeController {
 
 	private final IEmployeeService empserv;
 	private final IEmployeeTrainingService emptrainhistserv;
-	private final  ICategoryService categoryserv;
-	private final DepartmentRepository deptrepo;
-	private final DesignationRepository desigrepo;
 	
 	
 public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emptrainhistserv,
-			ICategoryService categoryserv, DepartmentRepository deptrepo, DesignationRepository desigrepo) {
+			ICategoryService categoryserv ) {
 		super();
 		this.empserv = empserv;
 		this.emptrainhistserv = emptrainhistserv;
-		this.categoryserv = categoryserv;
-		this.deptrepo = deptrepo;
-		this.desigrepo = desigrepo;
+		 
 	}
 //	/**
 //	 * @param empserv
@@ -112,8 +96,12 @@ public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emp
 				empdto.setCompany("");
 				empdto.setDepartment("");
 			}
-			
-			empdto.setDesignation(emp.getDesignation().getDesig_name());
+			if(emp.getDesignation()!=null) {
+				empdto.setDesignation(emp.getDesignation().getDesig_name());
+			}
+			else {
+				empdto.setDesignation("");
+			}
 			empdto.setTrainings(training_names);
 			return empdto;
 
@@ -173,9 +161,15 @@ public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emp
 			empdto.setContractor_name(emp.getContractor_name());
 			empdto.setCompany(emp.getDepartment().getCompany().getComp_name());
 			empdto.setDepartment(emp.getDepartment().getDept_name());
-			empdto.setDesignation(emp.getDesignation().getDesig_name());
+			
+			if(emp.getDesignation()!=null) {
+				empdto.setDesignation(emp.getDesignation().getDesig_name());
+			}
+			else {
+				empdto.setDepartment("");
+			}
 			if(emp.getCategory()==null) {
-				empdto.setCategory(null);							
+				empdto.setCategory("");							
 			}
 			else {
 				empdto.setCategory(emp.getCategory().getCategory());
@@ -226,6 +220,13 @@ public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emp
 		
 		return ResponseEntity.status(HttpStatus.OK).body("uploaded");
 			
+	}
+	
+	
+	@GetMapping("/employee/dto")
+	public ResponseEntity<List<EmployeeDTO>> getAllEmployeesDTO() {
+		
+		return ResponseEntity.status(HttpStatus.OK).body(null);
 	}
 }
 
