@@ -3,7 +3,9 @@ package com.example.demo.service.impl;
 
 import java.io.InputStream;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -14,6 +16,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,15 +29,11 @@ import com.example.demo.entity.Training;
 import com.example.demo.exception.GlobalException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.exception.ResourceNotModifiedException;
-import com.example.demo.repository.CompanyRepository;
 import com.example.demo.repository.DepartmentRepository;
 import com.example.demo.repository.DesignationRepository;
 import com.example.demo.repository.EmployeeRepository;
-import com.example.demo.repository.EmployeeTrainingRepository;
-import com.example.demo.repository.TrainingRepository;
 import com.example.demo.service.ICategoryService;
 import com.example.demo.service.IEmployeeService;
-import com.example.demo.service.IEmployeeTrainingService;
 
 @Service("empserv")
 public class EmployeeServImpl implements IEmployeeService {
@@ -79,21 +79,25 @@ public class EmployeeServImpl implements IEmployeeService {
 	@Transactional
 	public int updateEmployee(Employee emp) {
 
-		int result = emprepo.updateEmployee(emp.getEmp_id(), emp.getEmp_name(), emp.getEmp_code(),
-				emp.getContractor_name(), emp.getCategory().getCategory_id(), emp.getJoining_date(),
-				emp.getDepartment().getDept_id(), emp.getDesignation().getDesig_id());
-
-		if (result > 0) {
-			return result;
+//		int result = emprepo.updateEmployee(emp.getEmp_id(), emp.getEmp_name(), emp.getEmp_code(),
+//				emp.getContractor_name(), emp.getCategory().getCategory_id(), emp.getJoining_date(),
+//				emp.getDepartment().getDept_id(), emp.getDesignation().getDesig_id());
+		
+		Employee updatedEmployee = emprepo.save(emp);
+		
+		if (updatedEmployee!=null ) {
+			System.err.println("employee Updated ");
+			return 1;
 		} else {
-			throw new ResourceNotModifiedException("Employee " + emp.getEmp_name() + " is not updated");
+			throw new ResourceNotModifiedException("Employee " + emp.getEmp_name() + " is not Updated");
 		}
 	}
 
 	@Override
 	public List<Employee> getAllEmployees() {
-		var elist = emprepo.findAll();
-
+		 
+		var elist = emprepo.findAll();	
+		 
 		if (elist.size() > 0) {
 			return elist;
 		} else {
@@ -180,5 +184,19 @@ public class EmployeeServImpl implements IEmployeeService {
 		default:
 			return "";
 		}
+	}
+
+	@Override
+	public Map<String, Object> getAllEmployeesWithPagination(int page, int size) {
+	 
+		 	Page<Employee> pageResult = emprepo.findAll(PageRequest.of(page, size));
+
+	        Map<String, Object> response = new HashMap<>();
+	        response.put("employees", pageResult.getContent());
+	        response.put("totalPages", pageResult.getTotalPages());
+	        response.put("totalElements", pageResult.getTotalElements());
+	        response.put("currentPage", pageResult.getNumber());
+
+	        return response;
 	}
 }

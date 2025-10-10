@@ -2,8 +2,7 @@ package com.example.demo.service;
 
 import java.io.InputStream;
 import java.util.List;
-
-import org.springframework.transaction.annotation.Transactional;
+import java.util.Map;
 
 import com.example.demo.entity.Employee;
 import com.example.demo.entity.Training;
@@ -20,6 +19,8 @@ public interface IEmployeeService {
 	public int updateEmployee(Employee emp);
 	
 	public List<Employee> getAllEmployees();
+	
+	public Map<String, Object> getAllEmployeesWithPagination(int page,int size);
 	
 	public List<Training> getAllTrainingsByEmployeeId(Long empid);
 	

@@ -48,7 +48,6 @@ public class CompanyController {
 					@ApiResponse(responseCode = "201" ,description = "The company is saved Successfully "),
 					@ApiResponse(responseCode = "500" ,description = "The company is NOT Saved ")
 			})
-	@CacheEvict(key = "companylist")
 	public ResponseEntity<ResponseDto> saveCompany(@RequestBody Company company) {
 		Company savedCompany = compserv.saveCompany(company);
 		return ResponseEntity.status(HttpStatus.CREATED)
@@ -74,7 +73,6 @@ public class CompanyController {
 					@ApiResponse(responseCode = "200" ,description = "The companies are found Successfully "),
 					@ApiResponse(responseCode = "404" ,description = "No companies are found")
 			})
-	@Cacheable(key = "companylist")
 	public ResponseEntity<List<Company>> getAllCompanies() {
 		var company = compserv.getAllCompanies();
 		return ResponseEntity.status(HttpStatus.OK).body(company);
@@ -88,7 +86,6 @@ public class CompanyController {
 					@ApiResponse(responseCode = "200" ,description = "The company is updated Successfully "),
 					@ApiResponse(responseCode = "304" ,description = "The company is NOT updated ")
 			})
-	@CacheEvict(key = "companylist")
 	public ResponseEntity<ResponseDto> updateCompany(@RequestBody Company company) {
 		var updatedCompany = compserv.saveCompany(company);
 		return ResponseEntity.status(HttpStatus.OK)

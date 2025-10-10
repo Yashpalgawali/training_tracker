@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -12,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -87,6 +87,7 @@ public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emp
 			empdto.setEmp_name(emp.getEmp_name());
 			empdto.setEmp_code(emp.getEmp_code());
 			empdto.setJoining_date(emp.getJoining_date());
+			empdto.setContractor_name(emp.getContractor_name());
 			if(emp.getDepartment()!=null)
 			{
 				empdto.setCompany(emp.getDepartment().getCompany().getComp_name());
@@ -102,6 +103,7 @@ public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emp
 			else {
 				empdto.setDesignation("");
 			}
+			 
 			empdto.setTrainings(training_names);
 			return empdto;
 
@@ -110,6 +112,57 @@ public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emp
 		return ResponseEntity.status(HttpStatus.OK).body(collect);
 
 	}
+	
+	  // Fetch paginated employees
+    @GetMapping("/paged")
+	public Map<String, Object> getEmployees(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+		
+			Map<String, Object> response = empserv.getAllEmployeesWithPagination(page,size);
+	        return response;
+	}
+	// With pagination
+//	@GetMapping("paged/")
+//	public ResponseEntity<List<EmployeeDTO>> getAllEmployeesWithPagination(@RequestParam String page, @RequestParam String size) {
+//
+//		List<Employee> empList = empserv.getAllEmployees();
+//		List<EmployeeDTO> collect = empList.stream().map(emp -> {
+//			String training_names = emptrainhistserv.getEmployeesTrainingByEmployeeId(emp.getEmp_id()).stream()
+//					.map(hist -> hist.getTraining().getTraining_name()).filter(Objects::nonNull)
+//					.collect(Collectors.joining(","));
+//		
+//			EmployeeDTO empdto = new EmployeeDTO();
+//
+//			empdto.setEmp_id(emp.getEmp_id());
+//			empdto.setEmp_name(emp.getEmp_name());
+//			empdto.setEmp_code(emp.getEmp_code());
+//			empdto.setJoining_date(emp.getJoining_date());
+//			empdto.setContractor_name(emp.getContractor_name());
+//			if(emp.getDepartment()!=null)
+//			{
+//				empdto.setCompany(emp.getDepartment().getCompany().getComp_name());
+//				empdto.setDepartment(emp.getDepartment().getDept_name());
+//			}
+//			else {
+//				empdto.setCompany("");
+//				empdto.setDepartment("");
+//			}
+//			if(emp.getDesignation()!=null) {
+//				empdto.setDesignation(emp.getDesignation().getDesig_name());
+//			}
+//			else {
+//				empdto.setDesignation("");
+//			}
+//			 
+//			empdto.setTrainings(training_names);
+//			return empdto;
+//
+//		}).collect(Collectors.toList());
+//
+//		return ResponseEntity.status(HttpStatus.OK).body(collect);
+//
+//	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Employee> getEmployeebyEmployeeId(@PathVariable("id") Long empid) {
@@ -126,6 +179,7 @@ public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emp
 	}
 
 	@PutMapping("/")
+ 
 	public ResponseEntity<ResponseDto> updateEmployee(@RequestBody Employee employee) {
 		
 		empserv.updateEmployee(employee);
@@ -214,7 +268,7 @@ public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emp
 		
 		if(empListExcel.isEmpty())
 		{ return ResponseEntity.badRequest().body("Please get a file to upload"); }
-		
+
 		InputStream inputStream = empListExcel.getInputStream();
 		empserv.uploadEmployeeList(inputStream);
 		
