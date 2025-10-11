@@ -116,13 +116,14 @@ public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emp
 	  // Fetch paginated employees
     @GetMapping("/paged")
 	public Map<String, Object> getEmployees(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "0") String page,
+            @RequestParam(defaultValue = "10") String size) {
 		
-			Map<String, Object> response = empserv.getAllEmployeesWithPagination(page,size);
+			Map<String, Object> response = empserv.getAllEmployeesWithPagination(Integer.valueOf(page) ,Integer.valueOf(size));
 	        return response;
 	}
-	// With pagination
+
+// 	With pagination
 //	@GetMapping("paged/")
 //	public ResponseEntity<List<EmployeeDTO>> getAllEmployeesWithPagination(@RequestParam String page, @RequestParam String size) {
 //
