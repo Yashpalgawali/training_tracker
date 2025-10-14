@@ -20,7 +20,7 @@ public interface IEmployeeService {
 	
 	public List<Employee> getAllEmployees();
 	
-	public Map<String, Object> getAllEmployeesWithPagination(int page,int size);
+	public Map<String, Object> getAllEmployeesWithPagination(int page,int size,String searchValue);
 	
 	public List<Training> getAllTrainingsByEmployeeId(Long empid);
 	

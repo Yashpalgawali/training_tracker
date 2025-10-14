@@ -65,11 +65,11 @@ public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emp
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@PostMapping("/")
-	public ResponseEntity<ResponseDto> saveEmployee(@RequestBody Employee empdto) {
+	public ResponseEntity<ResponseDto> saveEmployee(@RequestBody Employee emp) {
 		
-		empserv.saveEmployee(empdto);
+		empserv.saveEmployee(emp);
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto(HttpStatus.CREATED.toString(),
-				"Employee " + empdto.getEmp_name() + " is saved successfully"));
+				"Employee " + emp.getEmpName() + " is saved successfully"));
 	}
 
 	@GetMapping("/")
@@ -77,17 +77,17 @@ public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emp
 
 		List<Employee> empList = empserv.getAllEmployees();
 		List<EmployeeDTO> collect = empList.stream().map(emp -> {
-			String training_names = emptrainhistserv.getEmployeesTrainingByEmployeeId(emp.getEmp_id()).stream()
+			String training_names = emptrainhistserv.getEmployeesTrainingByEmployeeId(emp.getEmpId()).stream()
 					.map(hist -> hist.getTraining().getTraining_name()).filter(Objects::nonNull)
 					.collect(Collectors.joining(","));
 		
 			EmployeeDTO empdto = new EmployeeDTO();
 
-			empdto.setEmp_id(emp.getEmp_id());
-			empdto.setEmp_name(emp.getEmp_name());
-			empdto.setEmp_code(emp.getEmp_code());
-			empdto.setJoining_date(emp.getJoining_date());
-			empdto.setContractor_name(emp.getContractor_name());
+			empdto.setEmp_id(emp.getEmpId());
+			empdto.setEmp_name(emp.getEmpName());
+			empdto.setEmp_code(emp.getEmpCode());
+			empdto.setJoining_date(emp.getJoiningDate());
+			empdto.setContractor_name(emp.getContractorName());
 			if(emp.getDepartment()!=null)
 			{
 				empdto.setCompany(emp.getDepartment().getCompany().getComp_name());
@@ -114,15 +114,27 @@ public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emp
 	}
 	
 	  // Fetch paginated employees
-    @GetMapping("/paged")
-	public Map<String, Object> getEmployees(
-            @RequestParam(defaultValue = "0") String page,
-            @RequestParam(defaultValue = "10") String size) {
-		
-			Map<String, Object> response = empserv.getAllEmployeesWithPagination(Integer.valueOf(page) ,Integer.valueOf(size));
-	        return response;
-	}
+//    @GetMapping("/paged")
+//	public Map<String, Object> getEmployees(
+//            @RequestParam(defaultValue = "0") int start,
+//            @RequestParam(defaultValue = "10") int length,
+//            @RequestParam(name = "search[value]", required = false) String searchValue) {
+//    	 
+////			Map<String, Object> response = empserv.getAllEmployeesWithPagination(Integer.valueOf(page) ,Integer.valueOf(size));
+//    		Map<String, Object> response = empserv.getAllEmployeesWithPagination(start ,length, searchValue);
+//	        return response;
+//	}
 
+	   @GetMapping("/paged")
+		public Map<String, Object> getEmployees(
+	            @RequestParam(defaultValue = "0") int start,
+	            @RequestParam(defaultValue = "10") int length ) {
+	    	 
+
+	    		Map<String, Object> response = empserv.getAllEmployeesWithPagination(start ,length, "");
+		        return response;
+		}	
+	
 // 	With pagination
 //	@GetMapping("paged/")
 //	public ResponseEntity<List<EmployeeDTO>> getAllEmployeesWithPagination(@RequestParam String page, @RequestParam String size) {
@@ -180,12 +192,11 @@ public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emp
 	}
 
 	@PutMapping("/")
- 
 	public ResponseEntity<ResponseDto> updateEmployee(@RequestBody Employee employee) {
 		
 		empserv.updateEmployee(employee);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
-				"Employee " + employee.getEmp_name() + " is UPDATED successfully"));
+				"Employee " + employee.getEmpName() + " is UPDATED successfully"));
 	}
 
 	@GetMapping("/training/employee/{empid}")
@@ -209,11 +220,11 @@ public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emp
 		
 			EmployeeDTO empdto = new EmployeeDTO();
 
-			empdto.setEmp_id(emp.getEmp_id());
-			empdto.setEmp_name(emp.getEmp_name());
-			empdto.setEmp_code(emp.getEmp_code());
-			empdto.setJoining_date(emp.getJoining_date());
-			empdto.setContractor_name(emp.getContractor_name());
+			empdto.setEmp_id(emp.getEmpId());
+			empdto.setEmp_name(emp.getEmpName());
+			empdto.setEmp_code(emp.getEmpCode());
+			empdto.setJoining_date(emp.getJoiningDate());
+			empdto.setContractor_name(emp.getContractorName());
 			empdto.setCompany(emp.getDepartment().getCompany().getComp_name());
 			empdto.setDepartment(emp.getDepartment().getDept_name());
 			

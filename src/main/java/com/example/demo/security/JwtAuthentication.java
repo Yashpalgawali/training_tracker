@@ -63,7 +63,8 @@ public class JwtAuthentication {
 	 			 config.setAllowedOrigins(Arrays.asList("http://192.168.0.*:8080","http://localhost:8080","http://192.168.0.219:8080","http://localhost:8081","http://192.168.0.219:8081","http://localhost:3000","http://192.168.0.*:3000")); // Your Angular app's URL
 //	 			 config.setAllowedOrigins(Arrays.asList("*")); // Your Angular app's URL
 	             config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS","PATCH"));
-	             config.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+//	             config.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+	             config.setAllowedHeaders(Arrays.asList("*"));
 	             config.setAllowCredentials(true); // Allow cookies
 	             return config;
 	 		});   

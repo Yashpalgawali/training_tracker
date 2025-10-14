@@ -12,6 +12,6 @@ import com.example.demo.entity.EmployeeTrainingHistory;
 @Repository("emptrainhistrepo")
 public interface EmployeeTrainingHistoryRepository extends JpaRepository<EmployeeTrainingHistory, Long> {
 
-	@Query("SELECT eth FROM EmployeeTrainingHistory eth WHERE eth.employee.emp_id=:empid")
+	@Query("SELECT eth FROM EmployeeTrainingHistory eth WHERE eth.employee.empId=:empid")
 	List<EmployeeTrainingHistory> getAllTrainingHistoryByEmployeeId(Long empid);
 }

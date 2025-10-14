@@ -69,7 +69,7 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 
 		EmployeeTraining train = new EmployeeTraining();
 
-		Employee emp = emprepo.findById(training.getEmployee().getEmp_id()).get();
+		Employee emp = emprepo.findById(training.getEmployee().getEmpId()).get();
 
 		Competency competency = competencyrepo.findById(training.getCompetency().getCompetency_id()).get();
 
@@ -95,7 +95,7 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 			return savedEmpTraining;
 		} else {
 			throw new GlobalException(
-					"No Training is assigned to the Employee " + training.getEmployee().getEmp_name());
+					"No Training is assigned to the Employee " + training.getEmployee().getEmpName());
 		}
 	}
 

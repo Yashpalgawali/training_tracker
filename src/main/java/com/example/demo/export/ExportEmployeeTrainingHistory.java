@@ -110,7 +110,7 @@ public class ExportEmployeeTrainingHistory {
 				createCell(row,columnCount++, hist.getCompetency().getScore() ,style);
 				
 				if(cn==1) {
-					createCell(row,columnCount++, hist.getEmployee().getEmp_name() ,style);
+					createCell(row,columnCount++, hist.getEmployee().getEmpName() ,style);
 					cn++;
 				}				
 			}

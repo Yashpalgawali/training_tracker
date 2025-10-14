@@ -43,13 +43,13 @@ public interface EmployeeTrainingRepository extends JpaRepository<EmployeeTraini
 	List<Object[]> getAllTrainingsOfAllEmployees();
 	
 	 
-	@Query("SELECT eth FROM EmployeeTraining eth WHERE eth.employee.emp_id=:empid")
+	@Query("SELECT eth FROM EmployeeTraining eth WHERE eth.employee.empId=:empid")
 	List<EmployeeTraining> getTrainingAndScoreByEmployeeId(Long empid);
 	
 	@Query("SELECT eth FROM EmployeeTraining eth WHERE eth.training.training_id=:tid")
 	List<EmployeeTraining> getEmployeeTrainingByTrainingId(Long tid);
 	
-	@Query("SELECT eth FROM EmployeeTraining eth WHERE eth.training.training_id=:training_id AND eth.employee.emp_id=:empid")
+	@Query("SELECT eth FROM EmployeeTraining eth WHERE eth.training.training_id=:training_id AND eth.employee.empId=:empid")
 	public EmployeeTraining getTrainingByTrainingAndEmpId(Long empid,Long training_id);
 		
 	@Query("UPDATE EmployeeTraining et SET et.competency.competency_id=:competencyid,et.trainingTimeSlot.training_time_slot_id=:timeslotid,"
@@ -82,7 +82,7 @@ public interface EmployeeTrainingRepository extends JpaRepository<EmployeeTraini
 //            )
 //            FROM tbl_employee_training et
 //            JOIN tbl_training t ON et.training_id = t.training_id
-//            GROUP BY t.training_id
+//            GROUP BY t.training_id 
 //            """,nativeQuery = true)
 //	public List<ChartDto> getAllTrainingsWithCount();
 }	

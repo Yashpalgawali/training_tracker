@@ -1,4 +1,3 @@
-
 package com.example.demo.service.impl;
 
 import java.io.InputStream;
@@ -16,8 +15,11 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,13 +60,14 @@ public class EmployeeServImpl implements IEmployeeService {
 	private DateTimeFormatter ttime = DateTimeFormatter.ofPattern("HH:mm:ss");
 
 	@Override
+	@CacheEvict(value = "emplist",allEntries = true)
 	public Employee saveEmployee(Employee emp) {
 
 		Employee savedEmployee = emprepo.save(emp);
 		if (savedEmployee != null) {
 			return savedEmployee;
 		} else {
-			throw new GlobalException("Employee " + emp.getEmp_name() + " is not saved and No trainings are provided");
+			throw new GlobalException("Employee " + emp.getEmpName() + " is not saved and No trainings are provided");
 		}
 	}
 
@@ -77,6 +80,7 @@ public class EmployeeServImpl implements IEmployeeService {
 
 	@Override
 	@Transactional
+	@CacheEvict(value = "emplist",allEntries = true)	
 	public int updateEmployee(Employee emp) {
 
 //		int result = emprepo.updateEmployee(emp.getEmp_id(), emp.getEmp_name(), emp.getEmp_code(),
@@ -89,11 +93,12 @@ public class EmployeeServImpl implements IEmployeeService {
 			System.err.println("employee Updated ");
 			return 1;
 		} else {
-			throw new ResourceNotModifiedException("Employee " + emp.getEmp_name() + " is not Updated");
+			throw new ResourceNotModifiedException("Employee " + emp.getEmpName() + " is not Updated");
 		}
 	}
 
 	@Override
+	@Cacheable(value = "emplist")
 	public List<Employee> getAllEmployees() {
 		 
 		var elist = emprepo.findAll();	
@@ -137,8 +142,8 @@ public class EmployeeServImpl implements IEmployeeService {
 				Optional<Employee> byEmp_name = emprepo.findByEmp_name(getCellValue(row.getCell(0)));
 				if(!byEmp_name.isPresent()) {					
 
-				emp.setEmp_name(getCellValue(row.getCell(0)));
-				emp.setEmp_code(getCellValue(row.getCell(1)));
+				emp.setEmpName(getCellValue(row.getCell(0)));
+				emp.setEmpCode(getCellValue(row.getCell(1)));
 
 				Designation desig = desigrepo.findByDesig_name(getCellValue(row.getCell(2)));
 				emp.setDesignation(desig);
@@ -148,8 +153,8 @@ public class EmployeeServImpl implements IEmployeeService {
 
 				emp.setDepartment(dept);
 
-				emp.setJoining_date(getCellValue(row.getCell(5)));
-				emp.setContractor_name(getCellValue(row.getCell(6)));
+				emp.setJoiningDate(getCellValue(row.getCell(5)));
+				emp.setContractorName(getCellValue(row.getCell(6)));
 
 				Category category = categoryserv.getCategoryByCategoryName(getCellValue(row.getCell(7)));
 
@@ -187,16 +192,52 @@ public class EmployeeServImpl implements IEmployeeService {
 	}
 
 	@Override
-	public Map<String, Object> getAllEmployeesWithPagination(int page, int size) {
+	public Map<String, Object> getAllEmployeesWithPagination(int start, int length,String searchValue) {
 	 
-		 	Page<Employee> pageResult = emprepo.findAll(PageRequest.of(page, size));
+		 PageRequest pageRequest = PageRequest.of(start / length, length);
 
-	        Map<String, Object> response = new HashMap<>();
-	        response.put("employees", pageResult.getContent());
-	        response.put("totalPages", pageResult.getTotalPages());
-	        response.put("totalElements", pageResult.getTotalElements());
-	        response.put("currentPage", pageResult.getNumber());
+		    Page<Employee> page;
 
-	        return response;
+		    if (!searchValue.isEmpty()) {
+		        page = emprepo.findByEmpNameContainingIgnoreCaseOrEmpCodeContainingIgnoreCase(
+		                searchValue, searchValue, pageRequest);
+		    } else {
+		        page = emprepo.findAll(pageRequest);
+		    }
+
+		    Map<String, Object> response = new HashMap<>();
+		    response.put("recordsTotal", emprepo.count()); // total rows
+		    response.put("recordsFiltered", page.getTotalElements()); // rows after search
+		    response.put("data", page.getContent());
+		    return response;
+		    
+//		 int page = start / length;
+//		    Pageable pageable = PageRequest.of(page, length);
+//
+//		    Page<Employee> employeePage;
+//		    if (searchValue != null && !searchValue.isEmpty()) {
+//		        employeePage = emprepo.findByEmpNameContainingIgnoreCase(searchValue, pageable);
+//		    } else {
+//		        employeePage = emprepo.findAll(pageable);
+//		    }
+//		    employeePage = emprepo.findAll(pageable);
+//		    
+//		    Map<String, Object> response = new HashMap<>();
+//		    response.put("data", employeePage.getContent());
+//		    response.put("recordsTotal", employeePage.getTotalElements());
+//		    response.put("recordsFiltered", employeePage.getTotalElements());
+//		    response.put("draw", 1);
+//
+//		    return response;
+		    
+//		 	Page<Employee> pageResult = emprepo.findAll(PageRequest.of(page, size));
+//
+//	        Map<String, Object> response = new HashMap<>();
+//	        response.put("employees", pageResult.getContent());
+//	        response.put("totalPages", pageResult.getTotalPages());
+//	        response.put("totalElements", pageResult.getTotalElements());
+//	        response.put("currentPage", pageResult.getNumber());
+//
+//	        return response;
 	}
 }

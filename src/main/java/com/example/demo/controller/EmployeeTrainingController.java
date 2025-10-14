@@ -84,7 +84,7 @@ public class EmployeeTrainingController {
 
 		EmployeeTraining savedEmployeeTraining = emptrainserv.saveEmployeeTraining(emptraining);
 		return ResponseEntity.status(HttpStatus.CREATED)
-				.body(new ResponseDto(HttpStatus.CREATED.toString(), "Training "+savedEmployeeTraining.getTraining().getTraining_name()+" is started of "+savedEmployeeTraining.getEmployee().getEmp_name()));
+				.body(new ResponseDto(HttpStatus.CREATED.toString(), "Training "+savedEmployeeTraining.getTraining().getTraining_name()+" is started of "+savedEmployeeTraining.getEmployee().getEmpName()));
 	}
 
 	@PutMapping("/")
@@ -92,7 +92,7 @@ public class EmployeeTrainingController {
 
 		emptrainserv.updateEmployeeTraining(emptraining);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
-				"Training is Updated of the Employee " + emptraining.getEmployee().getEmp_name()));
+				"Training is Updated of the Employee " + emptraining.getEmployee().getEmpName()));
 	}
 
 	@GetMapping("/getalltrainingsforchart")
@@ -131,7 +131,7 @@ public class EmployeeTrainingController {
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(new ResponseDto(HttpStatus.OK.toString(),
 						"Training " + employeeTraining.getTraining().getTraining_name()
-								+ " is completed Successfully of " + employeeTraining.getEmployee().getEmp_name()));
+								+ " is completed Successfully of " + employeeTraining.getEmployee().getEmpName()));
 	}
 
 	@GetMapping("/exporttrainingshistory/excel/{id}")
@@ -142,7 +142,7 @@ public class EmployeeTrainingController {
 
 		// Set headers
 		HttpHeaders headers = new HttpHeaders();
-		String fname = "Training_History_" + alist.get(0).getEmployee().getEmp_name() + ".xlsx";
+		String fname = "Training_History_" + alist.get(0).getEmployee().getEmpName() + ".xlsx";
 		headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fname);
 
 		ExportEmployeeTrainingHistory ahist = new ExportEmployeeTrainingHistory(alist);

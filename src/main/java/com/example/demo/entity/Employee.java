@@ -36,16 +36,20 @@ public class Employee {
 	@Id
 	@SequenceGenerator(name = "emp_seq", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "emp_seq")
-	Long emp_id;
+	@Column(name= "emp_id")
+	Long empId;
 
-	@Column(unique = true)
-	String emp_code;
+	@Column(unique = true,name ="emp_code")
+	String empCode;
 
-	String emp_name;
+	@Column(name="emp_name")
+	String empName;
 
-	String joining_date;
+	@Column(name="joining_date")
+	String joiningDate;
 
-	String contractor_name;
+	@Column(name="contractor_name")
+	String contractorName;
 
 	@Transient
 	List<Long> training_ids;
