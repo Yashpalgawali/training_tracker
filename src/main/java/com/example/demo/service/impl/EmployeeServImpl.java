@@ -20,6 +20,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -192,52 +193,58 @@ public class EmployeeServImpl implements IEmployeeService {
 	}
 
 	@Override
-	public Map<String, Object> getAllEmployeesWithPagination(int start, int length,String searchValue) {
-	 
-		 PageRequest pageRequest = PageRequest.of(start / length, length);
+//	public Map<String, Object> getAllEmployeesWithPagination(int start, int length,String searchValue) {
+//	 PageRequest pageRequest = PageRequest.of(start / length, length);
+//
+//	    Page<Employee> page;
+//
+//	    if (!search.isEmpty()) {
+//	        page = emprepo.findByEmpNameContainingIgnoreCaseOrEmpCodeContainingIgnoreCase(
+//	                search, search, pageRequest);
+//	    } else {
+//	        page = emprepo.findAll(pageRequest);
+//	    }
+//
+//	    Map<String, Object> response = new HashMap<>();
+//	    response.put("recordsTotal", emprepo.count()); // total rows
+//	    response.put("recordsFiltered", page.getTotalElements()); // rows after search
+//	    response.put("data", page.getContent());
+//	    return response;
+	
+	public Map<String, Object> getAllEmployeesWithPagination(int start, int length,String search,String orderColumn,String orderDir) {
+		    
+		 	int page = start / length; // convert DataTables start -> page index
 
-		    Page<Employee> page;
+		    // ✅ Default sort
+		    Sort sort = Sort.by(Sort.Direction.ASC, "empId");
 
-		    if (!searchValue.isEmpty()) {
-		        page = emprepo.findByEmpNameContainingIgnoreCaseOrEmpCodeContainingIgnoreCase(
-		                searchValue, searchValue, pageRequest);
-		    } else {
-		        page = emprepo.findAll(pageRequest);
+		    // ✅ Apply DataTables sorting
+		    if (orderColumn != null && !orderColumn.isEmpty()) {
+		        Sort.Direction direction = "desc".equalsIgnoreCase(orderDir)
+		                ? Sort.Direction.DESC
+		                : Sort.Direction.ASC;
+		        sort = Sort.by(direction, orderColumn);
 		    }
 
-		    Map<String, Object> response = new HashMap<>();
-		    response.put("recordsTotal", emprepo.count()); // total rows
-		    response.put("recordsFiltered", page.getTotalElements()); // rows after search
-		    response.put("data", page.getContent());
-		    return response;
-		    
-//		 int page = start / length;
-//		    Pageable pageable = PageRequest.of(page, length);
-//
-//		    Page<Employee> employeePage;
-//		    if (searchValue != null && !searchValue.isEmpty()) {
-//		        employeePage = emprepo.findByEmpNameContainingIgnoreCase(searchValue, pageable);
-//		    } else {
-//		        employeePage = emprepo.findAll(pageable);
-//		    }
-//		    employeePage = emprepo.findAll(pageable);
-//		    
-//		    Map<String, Object> response = new HashMap<>();
-//		    response.put("data", employeePage.getContent());
-//		    response.put("recordsTotal", employeePage.getTotalElements());
-//		    response.put("recordsFiltered", employeePage.getTotalElements());
-//		    response.put("draw", 1);
-//
-//		    return response;
-		    
-//		 	Page<Employee> pageResult = emprepo.findAll(PageRequest.of(page, size));
-//
-//	        Map<String, Object> response = new HashMap<>();
-//	        response.put("employees", pageResult.getContent());
-//	        response.put("totalPages", pageResult.getTotalPages());
-//	        response.put("totalElements", pageResult.getTotalElements());
-//	        response.put("currentPage", pageResult.getNumber());
-//
-//	        return response;
+		    Pageable pageable = PageRequest.of(page, length, sort);
+
+		    Page<Employee> employees;
+		    if (search != null && !search.isEmpty()) {
+		        employees = this.searchEmployees(search, pageable);
+		    } else {
+		        employees = emprepo.findAll(pageable);
+		    }
+
+		    Map<String, Object> result = new HashMap<>();
+		    result.put("recordsTotal", emprepo.count());
+		    result.put("recordsFiltered", employees.getTotalElements());
+		    result.put("data", employees.getContent());
+
+		    return result;
 	}
+	
+	public Page<Employee> searchEmployees(String search, Pageable pageable) {
+        return emprepo.findByEmpNameContainingIgnoreCaseOrEmpCodeContainingIgnoreCase(
+                search, search, pageable);
+    }
 }

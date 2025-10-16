@@ -128,10 +128,13 @@ public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emp
 	   @GetMapping("/paged")
 		public Map<String, Object> getEmployees(
 	            @RequestParam(defaultValue = "0") int start,
-	            @RequestParam(defaultValue = "10") int length ) {
+	            @RequestParam(defaultValue = "10") int length,
+	            @RequestParam(required = false) String search,
+	            @RequestParam(required = false) String orderColumn,
+	            @RequestParam(required = false) String orderDir ) {
 	    	 
 
-	    		Map<String, Object> response = empserv.getAllEmployeesWithPagination(start ,length, "");
+	    		Map<String, Object> response = empserv.getAllEmployeesWithPagination(start ,length, search,orderColumn,orderDir);
 		        return response;
 		}	
 	

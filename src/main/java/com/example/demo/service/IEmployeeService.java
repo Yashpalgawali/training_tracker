@@ -13,14 +13,15 @@ public interface IEmployeeService {
 	
 	public Employee getEmployeeByEmployeeId(Long empid);
 	
-	public Employee getEmployeeByEmployeeCode(String empcode);
-	
+	public Employee getEmployeeByEmployeeCode(String empcode);	
 	
 	public int updateEmployee(Employee emp);
 	
 	public List<Employee> getAllEmployees();
 	
-	public Map<String, Object> getAllEmployeesWithPagination(int page,int size,String searchValue);
+//	public Map<String, Object> getAllEmployeesWithPagination(int page,int size,String searchValue);
+	
+	public Map<String, Object> getAllEmployeesWithPagination(int page,int size,String search,String orderColumn, String orderDir );
 	
 	public List<Training> getAllTrainingsByEmployeeId(Long empid);
 	
