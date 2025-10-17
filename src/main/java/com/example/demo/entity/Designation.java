@@ -2,6 +2,7 @@ package com.example.demo.entity;
 
 import org.springframework.validation.annotation.Validated;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,8 +31,10 @@ public class Designation {
 	@Id
 	@SequenceGenerator(name = "desig_seq", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "dept_seq")
-	Long desig_id;
+	@Column(name= "desig_id")
+	Long desigId;
 
-	String desig_name;
+	@Column(name="desig_name")
+	String desigName;
 
 }

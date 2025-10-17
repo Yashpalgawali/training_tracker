@@ -146,7 +146,7 @@ public class EmployeeServImpl implements IEmployeeService {
 				emp.setEmpName(getCellValue(row.getCell(0)));
 				emp.setEmpCode(getCellValue(row.getCell(1)));
 
-				Designation desig = desigrepo.findByDesig_name(getCellValue(row.getCell(2)));
+				Designation desig = desigrepo.findByDesigName(getCellValue(row.getCell(2)));
 				emp.setDesignation(desig);
 				String dept_name = getCellValue(row.getCell(3));
 				String comp_name = getCellValue(row.getCell(4));
@@ -193,24 +193,6 @@ public class EmployeeServImpl implements IEmployeeService {
 	}
 
 	@Override
-//	public Map<String, Object> getAllEmployeesWithPagination(int start, int length,String searchValue) {
-//	 PageRequest pageRequest = PageRequest.of(start / length, length);
-//
-//	    Page<Employee> page;
-//
-//	    if (!search.isEmpty()) {
-//	        page = emprepo.findByEmpNameContainingIgnoreCaseOrEmpCodeContainingIgnoreCase(
-//	                search, search, pageRequest);
-//	    } else {
-//	        page = emprepo.findAll(pageRequest);
-//	    }
-//
-//	    Map<String, Object> response = new HashMap<>();
-//	    response.put("recordsTotal", emprepo.count()); // total rows
-//	    response.put("recordsFiltered", page.getTotalElements()); // rows after search
-//	    response.put("data", page.getContent());
-//	    return response;
-	
 	public Map<String, Object> getAllEmployeesWithPagination(int start, int length,String search,String orderColumn,String orderDir) {
 		    
 		 	int page = start / length; // convert DataTables start -> page index
@@ -244,7 +226,11 @@ public class EmployeeServImpl implements IEmployeeService {
 	}
 	
 	public Page<Employee> searchEmployees(String search, Pageable pageable) {
-        return emprepo.findByEmpNameContainingIgnoreCaseOrEmpCodeContainingIgnoreCase(
-                search, search, pageable);
+//        Department departmentByDeptName = deptrepo.getDepartmentByDeptName(search);
+//        System.err.println();
+//		return emprepo.findByEmpNameContainingIgnoreCaseOrEmpCodeOrJoiningDateOrContractorNameContainingIgnoreCaseOrDesignationOrDepartment(
+//                search, search,search,search,desigrepo.findByDesigName(search),departmentByDeptName, pageable);
+		
+		return emprepo.searchEmployees(search, pageable);
     }
 }

@@ -98,7 +98,7 @@ public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emp
 				empdto.setDepartment("");
 			}
 			if(emp.getDesignation()!=null) {
-				empdto.setDesignation(emp.getDesignation().getDesig_name());
+				empdto.setDesignation(emp.getDesignation().getDesigName());
 			}
 			else {
 				empdto.setDesignation("");
@@ -113,20 +113,8 @@ public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emp
 
 	}
 	
-	  // Fetch paginated employees
-//    @GetMapping("/paged")
-//	public Map<String, Object> getEmployees(
-//            @RequestParam(defaultValue = "0") int start,
-//            @RequestParam(defaultValue = "10") int length,
-//            @RequestParam(name = "search[value]", required = false) String searchValue) {
-//    	 
-////			Map<String, Object> response = empserv.getAllEmployeesWithPagination(Integer.valueOf(page) ,Integer.valueOf(size));
-//    		Map<String, Object> response = empserv.getAllEmployeesWithPagination(start ,length, searchValue);
-//	        return response;
-//	}
-
-	   @GetMapping("/paged")
-		public Map<String, Object> getEmployees(
+	@GetMapping("/paged")
+	public Map<String, Object> getEmployees(
 	            @RequestParam(defaultValue = "0") int start,
 	            @RequestParam(defaultValue = "10") int length,
 	            @RequestParam(required = false) String search,
@@ -136,49 +124,8 @@ public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emp
 
 	    		Map<String, Object> response = empserv.getAllEmployeesWithPagination(start ,length, search,orderColumn,orderDir);
 		        return response;
-		}	
+	}	
 	
-// 	With pagination
-//	@GetMapping("paged/")
-//	public ResponseEntity<List<EmployeeDTO>> getAllEmployeesWithPagination(@RequestParam String page, @RequestParam String size) {
-//
-//		List<Employee> empList = empserv.getAllEmployees();
-//		List<EmployeeDTO> collect = empList.stream().map(emp -> {
-//			String training_names = emptrainhistserv.getEmployeesTrainingByEmployeeId(emp.getEmp_id()).stream()
-//					.map(hist -> hist.getTraining().getTraining_name()).filter(Objects::nonNull)
-//					.collect(Collectors.joining(","));
-//		
-//			EmployeeDTO empdto = new EmployeeDTO();
-//
-//			empdto.setEmp_id(emp.getEmp_id());
-//			empdto.setEmp_name(emp.getEmp_name());
-//			empdto.setEmp_code(emp.getEmp_code());
-//			empdto.setJoining_date(emp.getJoining_date());
-//			empdto.setContractor_name(emp.getContractor_name());
-//			if(emp.getDepartment()!=null)
-//			{
-//				empdto.setCompany(emp.getDepartment().getCompany().getComp_name());
-//				empdto.setDepartment(emp.getDepartment().getDept_name());
-//			}
-//			else {
-//				empdto.setCompany("");
-//				empdto.setDepartment("");
-//			}
-//			if(emp.getDesignation()!=null) {
-//				empdto.setDesignation(emp.getDesignation().getDesig_name());
-//			}
-//			else {
-//				empdto.setDesignation("");
-//			}
-//			 
-//			empdto.setTrainings(training_names);
-//			return empdto;
-//
-//		}).collect(Collectors.toList());
-//
-//		return ResponseEntity.status(HttpStatus.OK).body(collect);
-//
-//	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Employee> getEmployeebyEmployeeId(@PathVariable("id") Long empid) {
@@ -232,7 +179,7 @@ public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emp
 			empdto.setDepartment(emp.getDepartment().getDept_name());
 			
 			if(emp.getDesignation()!=null) {
-				empdto.setDesignation(emp.getDesignation().getDesig_name());
+				empdto.setDesignation(emp.getDesignation().getDesigName());
 			}
 			else {
 				empdto.setDepartment("");

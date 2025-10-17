@@ -17,12 +17,12 @@ import java.util.List;
 @Repository("desigrepo")
 public interface DesignationRepository extends JpaRepository<Designation, Long> {
 
-	@Query("UPDATE Designation d SET d.desig_name=:dname WHERE d.desig_id=:did")
+	@Query("UPDATE Designation d SET d.desigName=:dname WHERE d.desigId=:did")
 	@Transactional
 	@Modifying
 	public int updateDesignation(Long did, String dname);
 	
-	@Query("SELECT d FROM Designation d WHERE d.desig_name=:desig_name")
-	Designation findByDesig_name(@Param("desig_name") String desig_name);
+//	@Query("SELECT d FROM Designation d WHERE d.desigName=:desig_name")
+	Designation findByDesigName(@Param("desig_name") String desig_name);
 }
  

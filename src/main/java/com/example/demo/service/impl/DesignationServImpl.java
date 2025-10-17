@@ -31,7 +31,7 @@ public class DesignationServImpl implements IDesignationService {
 			return desig;
 		}
 		else {
-			throw new GlobalException("Designation "+designation.getDesig_name()+" is not saved ");
+			throw new GlobalException("Designation "+designation.getDesigName()+" is not saved ");
 		}
 	}
 
@@ -54,18 +54,18 @@ public class DesignationServImpl implements IDesignationService {
 
 	@Override
 	public int updateDesignation(Designation designation) {
-		int res = desigrepo.updateDesignation(designation.getDesig_id(), designation.getDesig_name());
+		int res = desigrepo.updateDesignation(designation.getDesigId(), designation.getDesigName());
 		if(res>0) {
 			return res ;
 		}
 		else {
-			throw new ResourceNotModifiedException("Designation "+designation.getDesig_name()+" is not updated");
+			throw new ResourceNotModifiedException("Designation "+designation.getDesigName()+" is not updated");
 		}
 	}
 
 	@Override
 	public Object getDesignationByDesignation(String desig_name) {
-		return desigrepo.findByDesig_name(desig_name);		
+		return desigrepo.findByDesigName(desig_name);		
 	}
 
 }

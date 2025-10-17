@@ -50,7 +50,7 @@ public class DesignationController {
 	public ResponseEntity<ResponseDto> saveDesignation(@RequestBody Designation designation) {
 		Designation savedDesignation = desigserv.saveDesignation(designation);
 		return ResponseEntity.status(HttpStatus.CREATED)
-							 .body(new ResponseDto(HttpStatus.CREATED.toString(),"Designation "+savedDesignation.getDesig_name()+" is saved Successfully"));
+							 .body(new ResponseDto(HttpStatus.CREATED.toString(),"Designation "+savedDesignation.getDesigName()+" is saved Successfully"));
 	}
 	
 	@GetMapping("/{id}")
@@ -88,6 +88,6 @@ public class DesignationController {
 	public ResponseEntity<ResponseDto> updateDesignation(@RequestBody Designation designation) {
 		var updatedDesignation = desigserv.saveDesignation(designation);
 		return ResponseEntity.status(HttpStatus.OK)
-							 .body(new ResponseDto(HttpStatus.OK.toString(),"Designation "+updatedDesignation.getDesig_name()+" is Updated Successfully"));
+							 .body(new ResponseDto(HttpStatus.OK.toString(),"Designation "+updatedDesignation.getDesigName()+" is Updated Successfully"));
 	}
 }
