@@ -183,4 +183,12 @@ public class EmployeeTrainingController {
 		return ResponseEntity.status(HttpStatus.OK).body(object);
 
 	}
+	
+	@GetMapping("/count/{id}")
+	public ResponseEntity<Integer> countEmployeesById(@PathVariable Long id) {
+		
+		int count = emptrainserv.countTrainingByEmpId(id);
+		System.err.println("training given count is "+count);
+		return ResponseEntity.status(HttpStatus.OK).body(count);
+	}
 }

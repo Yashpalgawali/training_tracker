@@ -24,6 +24,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.dto.EmployeeDTO;
 import com.example.demo.entity.Category;
 import com.example.demo.entity.Department;
 import com.example.demo.entity.Designation;
@@ -32,6 +33,7 @@ import com.example.demo.entity.Training;
 import com.example.demo.exception.GlobalException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.exception.ResourceNotModifiedException;
+import com.example.demo.mapper.EmployeeMapper;
 import com.example.demo.repository.DepartmentRepository;
 import com.example.demo.repository.DesignationRepository;
 import com.example.demo.repository.EmployeeRepository;
@@ -211,10 +213,17 @@ public class EmployeeServImpl implements IEmployeeService {
 		    Pageable pageable = PageRequest.of(page, length, sort);
 
 		    Page<Employee> employees;
+		    Page<EmployeeDTO> empdtos = null;
+		    
 		    if (search != null && !search.isEmpty()) {
 		        employees = this.searchEmployees(search, pageable);
-		    } else {
+		    }
+		    else {
+		   
 		        employees = emprepo.findAll(pageable);
+//		        empdtos = employees.map(emp-> {
+//		        	return EmployeeMapper.EmployeeToEmployeeDTO(emp, new EmployeeDTO());
+//		        });
 		    }
 
 		    Map<String, Object> result = new HashMap<>();

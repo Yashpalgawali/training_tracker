@@ -82,7 +82,14 @@ public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emp
 					.collect(Collectors.joining(","));
 		
 			EmployeeDTO empdto = new EmployeeDTO();
-
+			
+			if(training_names!="") {
+				empdto.setIsTrainingGiven(true);
+			}
+			else {
+				empdto.setIsTrainingGiven(false);
+			}
+			
 			empdto.setEmp_id(emp.getEmpId());
 			empdto.setEmp_name(emp.getEmpName());
 			empdto.setEmp_code(emp.getEmpCode());

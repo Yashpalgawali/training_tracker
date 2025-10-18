@@ -30,6 +30,7 @@ public interface IEmployeeTrainingService {
 
 	public int updateEmployeeTraining(EmployeeTraining emptraining);
 	
+	public int countTrainingByEmpId(Long emp_id);
 	
 	public List<ChartDto> getAllEmployeesTrainingForCharts();
 

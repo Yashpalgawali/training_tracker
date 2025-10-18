@@ -34,15 +34,10 @@ import com.example.demo.service.ITrainingTimeSlotService;
 public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 
 	private final EmployeeTrainingRepository emptrainrepo;
-
 	private final ITrainingService trainserv;
-
 	private final IEmployeeTrainingHistoryService emptrainhistserv;
-
 	private final EmployeeRepository emprepo;
-
 	private final CompetencyRepository competencyrepo;
-
 	private final ITrainingTimeSlotService traintimeslotserv;
 
 	public EmployeeTrainingServImpl(EmployeeTrainingRepository emptrainrepo, ITrainingService trainserv,
@@ -101,14 +96,12 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 
 	@Override
 	public List<EmployeeTraining> getAllEmployeesTrainingHistory() {
-
-		return emptrainrepo.findAll();		
-
+		return emptrainrepo.findAll();
 	}
 
 	@Override
 	public List<EmployeeTraining> getEmployeesTrainingByEmployeeId(Long empid) {
-
+		 
 		List<EmployeeTraining> empHistList = Optional.ofNullable(emptrainrepo.findByEmployeeId(empid))
 				.orElse(Collections.emptyList());
 
@@ -247,6 +240,13 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
         }
         
         return result;
+	}
+
+	@Override
+	public int countTrainingByEmpId(Long emp_id) {
+
+		Employee emp = emprepo.findById(emp_id).get();
+		return emptrainrepo.countByEmployee(emp);		
 	}	 
 
 }
