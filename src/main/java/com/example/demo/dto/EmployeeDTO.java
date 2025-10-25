@@ -13,18 +13,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class EmployeeDTO {
 
-	Long emp_id;
-	String emp_code;
-	String emp_name;
-	String joining_date;
+	Long empId;
+	String empCode;
+	String empName;
+	String joiningDate;
 	String department;
 	String designation;
 	String company;	
-	String contractor_name;	
+	String contractorName;	
 	String trainings;
 	String category;
-	String training_date;
-	String completion_date;
+	String trainingDate;
+	String completionDate;
 	Boolean isTrainingGiven;
 	List<Long> training_ids = new ArrayList<>();
 }

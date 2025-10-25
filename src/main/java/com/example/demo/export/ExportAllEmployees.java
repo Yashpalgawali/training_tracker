@@ -85,13 +85,13 @@ public class ExportAllEmployees {
 			int columnCount = 0;
 			
 			createCell(row,columnCount++, sr++ ,style);
-			createCell(row,columnCount++, employee.getEmp_name() , style);
-			createCell(row,columnCount++, employee.getEmp_code() , style);
+			createCell(row,columnCount++, employee.getEmpName() , style);
+			createCell(row,columnCount++, employee.getEmpCode() , style);
 			createCell(row,columnCount++, employee.getDesignation() , style);
 			createCell(row,columnCount++, employee.getDepartment() , style);
 			createCell(row,columnCount++, employee.getCompany() , style);
-			createCell(row,columnCount++, employee.getJoining_date(), style);
-			createCell(row,columnCount++, employee.getContractor_name() ,style);
+			createCell(row,columnCount++, employee.getJoiningDate(), style);
+			createCell(row,columnCount++, employee.getContractorName() ,style);
 			createCell(row,columnCount++, employee.getCategory() ,style);
 		  }
 	    }

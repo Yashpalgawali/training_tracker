@@ -33,12 +33,12 @@ import com.example.demo.entity.Training;
 import com.example.demo.exception.GlobalException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.exception.ResourceNotModifiedException;
-import com.example.demo.mapper.EmployeeMapper;
 import com.example.demo.repository.DepartmentRepository;
 import com.example.demo.repository.DesignationRepository;
 import com.example.demo.repository.EmployeeRepository;
 import com.example.demo.service.ICategoryService;
 import com.example.demo.service.IEmployeeService;
+import com.example.demo.service.IEmployeeTrainingService;
 
 @Service("empserv")
 public class EmployeeServImpl implements IEmployeeService {
@@ -47,14 +47,16 @@ public class EmployeeServImpl implements IEmployeeService {
 	private final DesignationRepository desigrepo;
 	private final DepartmentRepository deptrepo;
 	private final ICategoryService categoryserv;	 
+	private final IEmployeeTrainingService emptrainserv;
 
 	public EmployeeServImpl(EmployeeRepository emprepo, DesignationRepository desigrepo, DepartmentRepository deptrepo,
-			ICategoryService categoryserv) {
+			ICategoryService categoryserv, IEmployeeTrainingService emptrainserv) {
 		super();
 		this.emprepo = emprepo;
 		this.desigrepo = desigrepo;
 		this.deptrepo = deptrepo;
 		this.categoryserv = categoryserv;
+		this.emptrainserv = emptrainserv;
 	}
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
@@ -198,7 +200,8 @@ public class EmployeeServImpl implements IEmployeeService {
 	public Map<String, Object> getAllEmployeesWithPagination(int start, int length,String search,String orderColumn,String orderDir) {
 		    
 		 	int page = start / length; // convert DataTables start -> page index
-
+		 	
+		 	 Page<EmployeeDTO> empdtos = null;
 		    // ✅ Default sort
 		    Sort sort = Sort.by(Sort.Direction.ASC, "empId");
 
@@ -213,23 +216,56 @@ public class EmployeeServImpl implements IEmployeeService {
 		    Pageable pageable = PageRequest.of(page, length, sort);
 
 		    Page<Employee> employees;
-		    Page<EmployeeDTO> empdtos = null;
+		    
 		    
 		    if (search != null && !search.isEmpty()) {
 		        employees = this.searchEmployees(search, pageable);
+		        
+		        empdtos  = employees.map(emp-> {
+		        	EmployeeDTO empdto =new EmployeeDTO();
+		        	
+		        	int count = emptrainserv.countTrainingByEmpId(emp.getEmpId());
+		        	empdto.setEmpId(emp.getEmpId());
+		        	empdto.setEmpName(emp.getEmpName());
+		        	empdto.setJoiningDate(emp.getJoiningDate());
+		        	empdto.setEmpCode(emp.getEmpCode());
+		        	empdto.setDesignation(emp.getDesignation().getDesigName());
+		        	empdto.setDepartment(emp.getDepartment().getDept_name());
+		        	empdto.setCompany(emp.getDepartment().getCompany().getComp_name());
+		        	empdto.setContractorName(emp.getContractorName());
+
+		        	empdto.setIsTrainingGiven(count > 0);
+		        	return empdto;
+
+		        });
 		    }
 		    else {
-		   
+
 		        employees = emprepo.findAll(pageable);
-//		        empdtos = employees.map(emp-> {
+
+		        empdtos  = employees.map(emp-> {
+		        	EmployeeDTO empdto =new EmployeeDTO();
+
+		        	int count = emptrainserv.countTrainingByEmpId(emp.getEmpId());
+		        	empdto.setEmpId(emp.getEmpId());
+		        	empdto.setEmpName(emp.getEmpName());
+		        	empdto.setJoiningDate(emp.getJoiningDate());
+		        	empdto.setEmpCode(emp.getEmpCode());
+		        	empdto.setDesignation(emp.getDesignation().getDesigName());
+		        	empdto.setDepartment(emp.getDepartment().getDept_name());
+		        	empdto.setCompany(emp.getDepartment().getCompany().getComp_name());
+		        	empdto.setContractorName(emp.getContractorName());
+
+		        	empdto.setIsTrainingGiven(count > 0);
+		        	return empdto;
 //		        	return EmployeeMapper.EmployeeToEmployeeDTO(emp, new EmployeeDTO());
-//		        });
+		        });
 		    }
 
 		    Map<String, Object> result = new HashMap<>();
 		    result.put("recordsTotal", emprepo.count());
-		    result.put("recordsFiltered", employees.getTotalElements());
-		    result.put("data", employees.getContent());
+		    result.put("recordsFiltered", empdtos.getTotalElements());
+		    result.put("data", empdtos.getContent());
 
 		    return result;
 	}
@@ -240,6 +276,8 @@ public class EmployeeServImpl implements IEmployeeService {
 //		return emprepo.findByEmpNameContainingIgnoreCaseOrEmpCodeOrJoiningDateOrContractorNameContainingIgnoreCaseOrDesignationOrDepartment(
 //                search, search,search,search,desigrepo.findByDesigName(search),departmentByDeptName, pageable);
 		
-		return emprepo.searchEmployees(search, pageable);
+		Page<Employee> searchEmployees = emprepo.searchEmployees(search, pageable);
+		
+		return searchEmployees;
     }
 }

@@ -26,6 +26,7 @@ import com.example.demo.dto.EmployeeTrainingDto;
 import com.example.demo.dto.ResponseDto;
 import com.example.demo.entity.Competency;
 import com.example.demo.entity.CompetencyScore;
+import com.example.demo.entity.Employee;
 import com.example.demo.entity.EmployeeTraining;
 import com.example.demo.entity.EmployeeTrainingHistory;
 import com.example.demo.entity.TrainingTimeSlot;
@@ -43,12 +44,14 @@ public class EmployeeTrainingController {
 
 	private final IEmployeeTrainingService emptrainserv;
 	private final IEmployeeTrainingHistoryService emptrainhistserv;
-
-	public EmployeeTrainingController(IEmployeeTrainingService emptrainserv ,
-			IEmployeeTrainingHistoryService emptrainhistserv) {
+	private final IEmployeeService empserv;
+	
+	public EmployeeTrainingController(IEmployeeTrainingService emptrainserv,
+			IEmployeeTrainingHistoryService emptrainhistserv, IEmployeeService empserv) {
 		super();
-		this.emptrainserv = emptrainserv;	 
+		this.emptrainserv = emptrainserv;
 		this.emptrainhistserv = emptrainhistserv;
+		this.empserv = empserv;
 	}
 
 	@GetMapping("/")
@@ -91,8 +94,10 @@ public class EmployeeTrainingController {
 	public ResponseEntity<ResponseDto> updateEmployeeTraining(@RequestBody EmployeeTraining emptraining) {
 
 		emptrainserv.updateEmployeeTraining(emptraining);
+		
+		Employee trainedEmployee = empserv.getEmployeeByEmployeeId(emptraining.getEmployee().getEmpId());
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
-				"Training is Updated of the Employee " + emptraining.getEmployee().getEmpName()));
+				"Training is Updated of the Employee " + trainedEmployee.getEmpName() ) );
 	}
 
 	@GetMapping("/getalltrainingsforchart")

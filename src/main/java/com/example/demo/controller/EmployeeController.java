@@ -90,11 +90,11 @@ public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emp
 				empdto.setIsTrainingGiven(false);
 			}
 			
-			empdto.setEmp_id(emp.getEmpId());
-			empdto.setEmp_name(emp.getEmpName());
-			empdto.setEmp_code(emp.getEmpCode());
-			empdto.setJoining_date(emp.getJoiningDate());
-			empdto.setContractor_name(emp.getContractorName());
+			empdto.setEmpId(emp.getEmpId());
+			empdto.setEmpName(emp.getEmpName());
+			empdto.setEmpCode(emp.getEmpCode());
+			empdto.setJoiningDate(emp.getJoiningDate());
+			empdto.setContractorName(emp.getContractorName());
 			if(emp.getDepartment()!=null)
 			{
 				empdto.setCompany(emp.getDepartment().getCompany().getComp_name());
@@ -177,11 +177,11 @@ public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emp
 		
 			EmployeeDTO empdto = new EmployeeDTO();
 
-			empdto.setEmp_id(emp.getEmpId());
-			empdto.setEmp_name(emp.getEmpName());
-			empdto.setEmp_code(emp.getEmpCode());
-			empdto.setJoining_date(emp.getJoiningDate());
-			empdto.setContractor_name(emp.getContractorName());
+			empdto.setEmpId(emp.getEmpId());
+			empdto.setEmpName(emp.getEmpName());
+			empdto.setEmpCode(emp.getEmpCode());
+			empdto.setJoiningDate(emp.getJoiningDate());
+			empdto.setContractorName(emp.getContractorName());
 			empdto.setCompany(emp.getDepartment().getCompany().getComp_name());
 			empdto.setDepartment(emp.getDepartment().getDept_name());
 			

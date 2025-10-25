@@ -11,8 +11,8 @@ public class EmployeeMapper {
 	public static Employee EmployeeDtoToEmployee(EmployeeDTO empdto, Employee emp) {
 		// Employee emp = new Employee();
 
-		emp.setEmpName(empdto.getEmp_name());
-		emp.setEmpCode(empdto.getEmp_code());
+		emp.setEmpName(empdto.getEmpName());
+		emp.setEmpCode(empdto.getEmpCode());
 
 		Department dept = new Department();
 		dept.setDept_id(Long.parseLong(empdto.getDepartment()));
