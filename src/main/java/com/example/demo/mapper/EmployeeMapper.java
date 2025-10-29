@@ -15,7 +15,7 @@ public class EmployeeMapper {
 		emp.setEmpCode(empdto.getEmpCode());
 
 		Department dept = new Department();
-		dept.setDept_id(Long.parseLong(empdto.getDepartment()));
+		dept.setDeptId(Long.parseLong(empdto.getDepartment()));
 
 		Designation desig = new Designation();
 		desig.setDesigId(Long.valueOf(empdto.getDesignation()));

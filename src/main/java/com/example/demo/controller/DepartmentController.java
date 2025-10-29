@@ -51,7 +51,7 @@ public class DepartmentController {
 
 		deptserv.saveDepartment(department);
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto(HttpStatus.CREATED.toString(),
-				"Department " + department.getDept_name() + " is saved successfully"));
+				"Department " + department.getDeptName() + " is saved successfully"));
 
 	}
 
@@ -93,7 +93,7 @@ public class DepartmentController {
 		deptserv.updateDepartment(department);
 
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
-				"Department " + department.getDept_name() + " is Updated successfully"));
+				"Department " + department.getDeptName() + " is Updated successfully"));
 
 	}
 	
@@ -109,8 +109,8 @@ public class DepartmentController {
 		List<DepartmentDto> deptList = deptserv.getAllDepartments().stream().map(dept -> {			 
 		
 			DepartmentDto dto = new DepartmentDto();
-			dto.setDept_name(dept.getDept_name());
-			dto.setComp_name(dept.getCompany().getComp_name());			 
+			dto.setDept_name(dept.getDeptName());
+			dto.setComp_name(dept.getCompany().getCompName());			 
 			 
 			return dto;
 

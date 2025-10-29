@@ -2,6 +2,7 @@ package com.example.demo.entity;
 
 import org.springframework.validation.annotation.Validated;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,9 +33,11 @@ public class Department {
 	@Id
 	@SequenceGenerator(name="dept_seq",initialValue = 1,allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "dept_seq")
-	Long dept_id;
+	@Column(name="dept_id")
+	Long deptId;
 
-	String dept_name;
+	@Column(name="dept_name")
+	String deptName;
 
 	@ManyToOne
 	@JoinColumn(name = "company_id")

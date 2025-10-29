@@ -3,6 +3,7 @@ package com.example.demo.entity;
 import org.springframework.validation.annotation.Validated;
 
 import jakarta.persistence.Cacheable;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -34,11 +35,13 @@ public class Company {
 	@Id
 	@SequenceGenerator(name="comp_seq" , allocationSize = 1,initialValue = 1)
 	@GeneratedValue(generator = "comp_seq",strategy = GenerationType.IDENTITY)
-	Long company_id;
+	@Column(name="company_id")
+	Long companyId;
 	
 //	@NotEmpty(message = "Company Name can't be Empty")
 	@NotNull(message = "Company Name can't be Empty")
 	@Size(min = 2, max =200, message = "Please Enter company Name having at least 2 characters" )
-	String comp_name;
+	@Column(name= "comp_name")
+	String compName;
 
 }

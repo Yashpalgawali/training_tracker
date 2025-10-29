@@ -16,14 +16,17 @@ public interface DepartmentRepository extends JpaRepository<Department, Long> {
 
 	public List<Department> findByCompany(Company company);
 
-	@Query("UPDATE Department d SET d.dept_name=:dname,d.company.company_id=:compid WHERE d.dept_id=:did")
+	@Query("UPDATE Department d SET d.deptName=:dname,d.company.companyId=:compid WHERE d.deptId=:did")
 	@Transactional
 	@Modifying
 	public int updateDepartment(Long did, String dname, Long compid);
 	
-	@Query("SELECT d FROM Department d WHERE d.dept_name=:dname")
-	public Department getDepartmentByDeptName(String dname);
+//	@Query("SELECT d FROM Department d WHERE d.deptName=:dname")
+//	public Department getDepartmentByDeptName(String dname);
 	
-	@Query("SELECT d FROM Department d WHERE d.dept_name=:dname AND d.company.comp_name=:cname")
-	public Department getDepartmentByDeptNameAndCompName(String dname,String cname);
+	public Department findByDeptName(String deptName);
+	
+	@Query("SELECT d FROM Department d WHERE d.deptName=:dname AND d.company.compName=:cname")
+	public Department getDepartmentByDeptNameAndCompanyName(String dname,String cname); 
+	 
 }

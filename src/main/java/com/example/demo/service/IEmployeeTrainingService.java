@@ -33,5 +33,7 @@ public interface IEmployeeTrainingService {
 	public int countTrainingByEmpId(Long emp_id);
 	
 	public List<ChartDto> getAllEmployeesTrainingForCharts();
+	
+	public int countTrainings();
 
 }

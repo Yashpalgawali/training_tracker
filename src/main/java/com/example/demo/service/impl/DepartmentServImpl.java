@@ -33,7 +33,7 @@ public class DepartmentServImpl implements IDepartmentService {
 			return department;
 		}
 		else {
-			throw new GlobalException("Department "+dept.getDept_name()+" is not saved ");
+			throw new GlobalException("Department "+dept.getDeptName()+" is not saved ");
 		}
 	}
 
@@ -55,12 +55,12 @@ public class DepartmentServImpl implements IDepartmentService {
 
 	@Override
 	public int updateDepartment(Department dept) {
-		int res = deptrepo.updateDepartment(dept.getDept_id(), dept.getDept_name(), dept.getCompany().getCompany_id());
+		int res = deptrepo.updateDepartment(dept.getDeptId(), dept.getDeptName(), dept.getCompany().getCompanyId());
 		if(res>0) {
 			return res;
 		}
 		else {
-			throw new ResourceNotModifiedException("Department "+dept.getDept_name()+" is not updated ");
+			throw new ResourceNotModifiedException("Department "+dept.getDeptName()+" is not updated ");
 		}
 	}
 
@@ -68,7 +68,7 @@ public class DepartmentServImpl implements IDepartmentService {
 	public List<Department> getAllDepartmentsByCompanyId(Long compid) {
 		 
 		Company comp = new Company();
-		comp.setCompany_id(compid);
+		comp.setCompanyId(compid);
 		var dlist = deptrepo.findByCompany(comp);
 		if(dlist.size()>0) {
 			return dlist;
@@ -81,13 +81,13 @@ public class DepartmentServImpl implements IDepartmentService {
 	@Override
 	public Department getDepartmentByDeptName(String dname) {
 		
-		return deptrepo.getDepartmentByDeptName(dname);
+		return deptrepo.findByDeptName(dname);
 	}
 
 	@Override
 	public Department getDepartmentByDeptNameAndCompName(String dname, String cname) {
 		 
-		return getDepartmentByDeptNameAndCompName(dname, cname);
+		return deptrepo.getDepartmentByDeptNameAndCompanyName(dname, cname);		 
 	}
 
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,13 +35,15 @@ public class CompanyServImpl implements ICompanyService {
 			return savedCompany;
 		}
 		else {
-			throw new GlobalException("Company "+company.getComp_name()+" is not saved");
+			throw new GlobalException("Company "+company.getCompName()+" is not saved");
 		}
 	}
 
 	@Override
+//	@Cacheable(value = "companyCache", key = "'allCompanies'")
 	public List<Company> getAllCompanies() {
 		List<Company> compList = comprepo.findAll();
+		System.err.println("Calling from DB....");
 		if(compList.isEmpty()) {
 			throw new ResourceNotFoundException("No Companies found");
 		}
@@ -63,12 +66,12 @@ public class CompanyServImpl implements ICompanyService {
 	@Override
 	public int updateCompany(Company company) {
 		
-		var result = comprepo.updateCompany(company.getCompany_id(), company.getComp_name());
+		var result = comprepo.updateCompany(company.getCompanyId(), company.getCompName());
 		if(result>0) {
 			return result;
 		}
 		else {
-			throw new ResourceNotModifiedException("Company "+company.getComp_name()+" is not updated");
+			throw new ResourceNotModifiedException("Company "+company.getCompName()+" is not updated");
 		}
 	}
 

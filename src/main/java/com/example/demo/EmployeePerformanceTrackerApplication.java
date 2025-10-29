@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @SpringBootApplication
 @Controller
-@EnableCaching
+//@EnableCaching
 public class EmployeePerformanceTrackerApplication {
 
 	public static void main(String[] args) {

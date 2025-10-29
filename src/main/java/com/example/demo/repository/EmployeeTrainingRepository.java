@@ -75,4 +75,7 @@ public interface EmployeeTrainingRepository extends JpaRepository<EmployeeTraini
 	
 	int countByEmployee(Employee emp);
 	
+	@Query("SELECT COUNT(eth.emp_train_id) FROM  EmployeeTraining eth ")
+	public int countTrainings();
+	
 }	

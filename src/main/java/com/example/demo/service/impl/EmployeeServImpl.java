@@ -154,7 +154,7 @@ public class EmployeeServImpl implements IEmployeeService {
 				emp.setDesignation(desig);
 				String dept_name = getCellValue(row.getCell(3));
 				String comp_name = getCellValue(row.getCell(4));
-				Department dept = deptrepo.getDepartmentByDeptNameAndCompName(dept_name.trim(), comp_name.trim());
+				Department dept = deptrepo.getDepartmentByDeptNameAndCompanyName(dept_name.trim(), comp_name.trim());
 
 				emp.setDepartment(dept);
 
@@ -204,6 +204,10 @@ public class EmployeeServImpl implements IEmployeeService {
 		 	 Page<EmployeeDTO> empdtos = null;
 		    // ✅ Default sort
 		    Sort sort = Sort.by(Sort.Direction.ASC, "empId");
+		    
+		    if(orderColumn.equals("company")) {
+		    	orderColumn= "comp_name";
+		    }
 
 		    // ✅ Apply DataTables sorting
 		    if (orderColumn != null && !orderColumn.isEmpty()) {
@@ -230,8 +234,8 @@ public class EmployeeServImpl implements IEmployeeService {
 		        	empdto.setJoiningDate(emp.getJoiningDate());
 		        	empdto.setEmpCode(emp.getEmpCode());
 		        	empdto.setDesignation(emp.getDesignation().getDesigName());
-		        	empdto.setDepartment(emp.getDepartment().getDept_name());
-		        	empdto.setCompany(emp.getDepartment().getCompany().getComp_name());
+		        	empdto.setDepartment(emp.getDepartment().getDeptName());
+		        	empdto.setCompany(emp.getDepartment().getCompany().getCompName());
 		        	empdto.setContractorName(emp.getContractorName());
 
 		        	empdto.setIsTrainingGiven(count > 0);
@@ -252,8 +256,8 @@ public class EmployeeServImpl implements IEmployeeService {
 		        	empdto.setJoiningDate(emp.getJoiningDate());
 		        	empdto.setEmpCode(emp.getEmpCode());
 		        	empdto.setDesignation(emp.getDesignation().getDesigName());
-		        	empdto.setDepartment(emp.getDepartment().getDept_name());
-		        	empdto.setCompany(emp.getDepartment().getCompany().getComp_name());
+		        	empdto.setDepartment(emp.getDepartment().getDeptName());
+		        	empdto.setCompany(emp.getDepartment().getCompany().getCompName());
 		        	empdto.setContractorName(emp.getContractorName());
 
 		        	empdto.setIsTrainingGiven(count > 0);

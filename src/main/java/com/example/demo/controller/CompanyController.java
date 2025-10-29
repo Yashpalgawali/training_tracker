@@ -51,7 +51,7 @@ public class CompanyController {
 	public ResponseEntity<ResponseDto> saveCompany(@RequestBody Company company) {
 		Company savedCompany = compserv.saveCompany(company);
 		return ResponseEntity.status(HttpStatus.CREATED)
-							 .body(new ResponseDto(HttpStatus.CREATED.toString(),"Company "+savedCompany.getComp_name()+" is saved Successfully"));
+							 .body(new ResponseDto(HttpStatus.CREATED.toString(),"Company "+savedCompany.getCompName()+" is saved Successfully"));
 	}
 	
 	@GetMapping("/{id}")	 
@@ -89,6 +89,6 @@ public class CompanyController {
 	public ResponseEntity<ResponseDto> updateCompany(@RequestBody Company company) {
 		var updatedCompany = compserv.saveCompany(company);
 		return ResponseEntity.status(HttpStatus.OK)
-							 .body(new ResponseDto(HttpStatus.OK.toString(),"Company "+updatedCompany.getComp_name()+" is Updated Successfully"));
+							 .body(new ResponseDto(HttpStatus.OK.toString(),"Company "+updatedCompany.getCompName()+" is Updated Successfully"));
 	}
 }

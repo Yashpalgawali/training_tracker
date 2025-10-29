@@ -247,6 +247,12 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 
 		Employee emp = emprepo.findById(emp_id).get();
 		return emptrainrepo.countByEmployee(emp);		
+	}
+
+	@Override
+	public int countTrainings() {
+		 
+		return emptrainrepo.countTrainings();
 	}	 
 
 }

@@ -43,30 +43,20 @@ public class EmployeeController {
 
 	private final IEmployeeService empserv;
 	private final IEmployeeTrainingService emptrainhistserv;
-	
-	
-public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emptrainhistserv,
-			ICategoryService categoryserv ) {
+
+	public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emptrainhistserv,
+			ICategoryService categoryserv) {
 		super();
 		this.empserv = empserv;
 		this.emptrainhistserv = emptrainhistserv;
-		 
+
 	}
-//	/**
-//	 * @param empserv
-//	 * @param emptrainhistserv
-//	 */
-//	public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emptrainhistserv) {
-//		super();
-//		this.empserv = empserv;
-//		this.emptrainhistserv = emptrainhistserv;
-//	}
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@PostMapping("/")
 	public ResponseEntity<ResponseDto> saveEmployee(@RequestBody Employee emp) {
-		
+
 		empserv.saveEmployee(emp);
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto(HttpStatus.CREATED.toString(),
 				"Employee " + emp.getEmpName() + " is saved successfully"));
@@ -80,37 +70,33 @@ public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emp
 			String training_names = emptrainhistserv.getEmployeesTrainingByEmployeeId(emp.getEmpId()).stream()
 					.map(hist -> hist.getTraining().getTraining_name()).filter(Objects::nonNull)
 					.collect(Collectors.joining(","));
-		
+
 			EmployeeDTO empdto = new EmployeeDTO();
-			
-			if(training_names!="") {
+
+			if (training_names != "") {
 				empdto.setIsTrainingGiven(true);
-			}
-			else {
+			} else {
 				empdto.setIsTrainingGiven(false);
 			}
-			
+
 			empdto.setEmpId(emp.getEmpId());
 			empdto.setEmpName(emp.getEmpName());
 			empdto.setEmpCode(emp.getEmpCode());
 			empdto.setJoiningDate(emp.getJoiningDate());
 			empdto.setContractorName(emp.getContractorName());
-			if(emp.getDepartment()!=null)
-			{
-				empdto.setCompany(emp.getDepartment().getCompany().getComp_name());
-				empdto.setDepartment(emp.getDepartment().getDept_name());
-			}
-			else {
+			if (emp.getDepartment() != null) {
+				empdto.setCompany(emp.getDepartment().getCompany().getCompName());
+				empdto.setDepartment(emp.getDepartment().getDeptName());
+			} else {
 				empdto.setCompany("");
 				empdto.setDepartment("");
 			}
-			if(emp.getDesignation()!=null) {
+			if (emp.getDesignation() != null) {
 				empdto.setDesignation(emp.getDesignation().getDesigName());
-			}
-			else {
+			} else {
 				empdto.setDesignation("");
 			}
-			 
+
 			empdto.setTrainings(training_names);
 			return empdto;
 
@@ -119,20 +105,16 @@ public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emp
 		return ResponseEntity.status(HttpStatus.OK).body(collect);
 
 	}
-	
-	@GetMapping("/paged")
-	public Map<String, Object> getEmployees(
-	            @RequestParam(defaultValue = "0") int start,
-	            @RequestParam(defaultValue = "10") int length,
-	            @RequestParam(required = false) String search,
-	            @RequestParam(required = false) String orderColumn,
-	            @RequestParam(required = false) String orderDir ) {
-	    	 
 
-	    		Map<String, Object> response = empserv.getAllEmployeesWithPagination(start ,length, search,orderColumn,orderDir);
-		        return response;
-	}	
-	
+	@GetMapping("/paged")
+	public Map<String, Object> getEmployees(@RequestParam(defaultValue = "0") int start,
+			@RequestParam(defaultValue = "10") int length, @RequestParam(required = false) String search,
+			@RequestParam(required = false) String orderColumn, @RequestParam(required = false) String orderDir) {
+
+		Map<String, Object> response = empserv.getAllEmployeesWithPagination(start, length, search, orderColumn,
+				orderDir);
+		return response;
+	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Employee> getEmployeebyEmployeeId(@PathVariable("id") Long empid) {
@@ -150,7 +132,7 @@ public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emp
 
 	@PutMapping("/")
 	public ResponseEntity<ResponseDto> updateEmployee(@RequestBody Employee employee) {
-		
+
 		empserv.updateEmployee(employee);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
 				"Employee " + employee.getEmpName() + " is UPDATED successfully"));
@@ -163,18 +145,18 @@ public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emp
 		return ResponseEntity.status(HttpStatus.OK).body(trainList);
 
 	}
-	
+
 	@GetMapping("/export/employee/list")
 //	@Operation(description = "This end point will Export the All assigned assets to excel file ", summary ="Export All Assigned Assets to the Excel")
 //	@ApiResponse(description = "This will export assigned assets to the Employee ", responseCode = "200" )		
 	public ResponseEntity<InputStreamResource> exportToExcel(HttpServletResponse response) throws IOException {
-		
+
 		// Set headers
 		HttpHeaders headers = new HttpHeaders();
 		headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Employee_List.xlsx");
 
-		List<EmployeeDTO> empDtoList = empserv.getAllEmployees().stream().map(emp -> {			 
-		
+		List<EmployeeDTO> empDtoList = empserv.getAllEmployees().stream().map(emp -> {
+
 			EmployeeDTO empdto = new EmployeeDTO();
 
 			empdto.setEmpId(emp.getEmpId());
@@ -182,28 +164,26 @@ public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emp
 			empdto.setEmpCode(emp.getEmpCode());
 			empdto.setJoiningDate(emp.getJoiningDate());
 			empdto.setContractorName(emp.getContractorName());
-			empdto.setCompany(emp.getDepartment().getCompany().getComp_name());
-			empdto.setDepartment(emp.getDepartment().getDept_name());
-			
-			if(emp.getDesignation()!=null) {
+			empdto.setCompany(emp.getDepartment().getCompany().getCompName());
+			empdto.setDepartment(emp.getDepartment().getDeptName());
+
+			if (emp.getDesignation() != null) {
 				empdto.setDesignation(emp.getDesignation().getDesigName());
-			}
-			else {
+			} else {
 				empdto.setDepartment("");
 			}
-			if(emp.getCategory()==null) {
-				empdto.setCategory("");							
-			}
-			else {
+			if (emp.getCategory() == null) {
+				empdto.setCategory("");
+			} else {
 				empdto.setCategory(emp.getCategory().getCategory());
 			}
-			 
+
 			return empdto;
 
-		}).collect(Collectors.toList());		 
-		 
-		logger.info("EMPLDTO LIST is {} ",empDtoList);
-		
+		}).collect(Collectors.toList());
+
+		logger.info("EMPLDTO LIST is {} ", empDtoList);
+
 		ExportAllEmployees excelExporter = new ExportAllEmployees(empDtoList);
 		byte[] excelContent = excelExporter.export(response);
 
@@ -213,15 +193,15 @@ public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emp
 						MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
 				.body(new InputStreamResource(new ByteArrayInputStream(excelContent)));
 	}
-	
-	
+
 	@GetMapping("/export/sample/employeelist")
-	public ResponseEntity<InputStreamResource> exportSampleToUploadEmployeesToExcel(HttpServletResponse response) throws IOException {
-		
+	public ResponseEntity<InputStreamResource> exportSampleToUploadEmployeesToExcel(HttpServletResponse response)
+			throws IOException {
+
 		// Set headers
 		HttpHeaders headers = new HttpHeaders();
 		headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Sample_To_Upload_Employee_List.xlsx");
-	
+
 		ExportSampleToUploadEmployees excelExporter = new ExportSampleToUploadEmployees();
 		byte[] excelContent = excelExporter.export(response);
 
@@ -231,25 +211,24 @@ public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emp
 						MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
 				.body(new InputStreamResource(new ByteArrayInputStream(excelContent)));
 	}
-	
+
 	@PostMapping("/upload")
 	public ResponseEntity<String> uploadEmployeeList(@RequestParam MultipartFile empListExcel) throws IOException {
-		
-		if(empListExcel.isEmpty())
-		{ return ResponseEntity.badRequest().body("Please get a file to upload"); }
+
+		if (empListExcel.isEmpty()) {
+			return ResponseEntity.badRequest().body("Please get a file to upload");
+		}
 
 		InputStream inputStream = empListExcel.getInputStream();
 		empserv.uploadEmployeeList(inputStream);
-		
+
 		return ResponseEntity.status(HttpStatus.OK).body("uploaded");
-			
+
 	}
-	
-	
+
 	@GetMapping("/employee/dto")
 	public ResponseEntity<List<EmployeeDTO>> getAllEmployeesDTO() {
-		
+
 		return ResponseEntity.status(HttpStatus.OK).body(null);
 	}
 }
-
