@@ -26,8 +26,9 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>  {
 	@Query("SELECT e FROM Employee e WHERE e.empName=:emp_name")
  	public Optional<Employee>findByEmp_name(String emp_name);
 
+	public Optional<Employee>findByEmpCode(String empcode);
 	
-	@Query("""
+ 	@Query("""
 		    SELECT e FROM Employee e
 		    WHERE 
 		        LOWER(e.empName) LIKE LOWER(CONCAT('%', :search, '%'))

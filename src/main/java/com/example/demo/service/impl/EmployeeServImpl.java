@@ -65,8 +65,9 @@ public class EmployeeServImpl implements IEmployeeService {
 	private DateTimeFormatter ttime = DateTimeFormatter.ofPattern("HH:mm:ss");
 
 	@Override
-	@CacheEvict(value = "emplist",allEntries = true)
 	public Employee saveEmployee(Employee emp) {
+
+		Employee employeeByCode = emprepo.getEmployeeByCode(emp.getEmpCode());
 
 		Employee savedEmployee = emprepo.save(emp);
 		if (savedEmployee != null) {
@@ -85,7 +86,6 @@ public class EmployeeServImpl implements IEmployeeService {
 
 	@Override
 	@Transactional
-	@CacheEvict(value = "emplist",allEntries = true)	
 	public int updateEmployee(Employee emp) {
 
 //		int result = emprepo.updateEmployee(emp.getEmp_id(), emp.getEmp_name(), emp.getEmp_code(),
@@ -103,7 +103,6 @@ public class EmployeeServImpl implements IEmployeeService {
 	}
 
 	@Override
-	@Cacheable(value = "emplist")
 	public List<Employee> getAllEmployees() {
 		 
 		var elist = emprepo.findAll();	
@@ -144,8 +143,9 @@ public class EmployeeServImpl implements IEmployeeService {
 
 				Employee emp = new Employee();
 
-				Optional<Employee> byEmp_name = emprepo.findByEmp_name(getCellValue(row.getCell(0)));
-				if(!byEmp_name.isPresent()) {					
+				//Optional<Employee> byEmp_name = emprepo.findByEmp_name(getCellValue(row.getCell(0)));
+				Optional<Employee> byEmp_code = emprepo.findByEmpCode(getCellValue(row.getCell(0)));
+				if(!byEmp_code.isPresent()) {					
 
 				emp.setEmpName(getCellValue(row.getCell(0)));
 				emp.setEmpCode(getCellValue(row.getCell(1)));

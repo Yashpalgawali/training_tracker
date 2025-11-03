@@ -182,11 +182,10 @@ public class EmployeeController {
 
 		}).collect(Collectors.toList());
 
-		logger.info("EMPLDTO LIST is {} ", empDtoList);
-
-		ExportAllEmployees excelExporter = new ExportAllEmployees(empDtoList);
+	 	ExportAllEmployees excelExporter = new ExportAllEmployees(empDtoList);
 		byte[] excelContent = excelExporter.export(response);
 
+		//excelExporter.export(response);
 		// Return the file as a ResponseEntity
 		return ResponseEntity.ok().headers(headers)
 				.contentType(
