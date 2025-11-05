@@ -1,5 +1,6 @@
 package com.example.demo.service.impl;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.dto.ChartDto;
 import com.example.demo.dto.EmployeeTrainingDto;
+import com.example.demo.entity.Activity;
 import com.example.demo.entity.Competency;
 import com.example.demo.entity.CompetencyScore;
 import com.example.demo.entity.Employee;
@@ -22,6 +24,7 @@ import com.example.demo.entity.TrainingTimeSlot;
 import com.example.demo.exception.GlobalException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.exception.ResourceNotModifiedException;
+import com.example.demo.repository.ActivityRepository;
 import com.example.demo.repository.CompetencyRepository;
 import com.example.demo.repository.EmployeeRepository;
 import com.example.demo.repository.EmployeeTrainingRepository;
@@ -39,10 +42,12 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 	private final EmployeeRepository emprepo;
 	private final CompetencyRepository competencyrepo;
 	private final ITrainingTimeSlotService traintimeslotserv;
+	private final ActivityRepository activityrepo;
 
 	public EmployeeTrainingServImpl(EmployeeTrainingRepository emptrainrepo, ITrainingService trainserv,
 			IEmployeeTrainingHistoryService emptrainhistserv, EmployeeRepository emprepo,
-			CompetencyRepository competencyrepo, ITrainingTimeSlotService traintimeslotserv) {
+			CompetencyRepository competencyrepo, ITrainingTimeSlotService traintimeslotserv,
+			ActivityRepository activityrepo) {
 		super();
 		this.emptrainrepo = emptrainrepo;
 		this.trainserv = trainserv;
@@ -50,6 +55,7 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 		this.emprepo = emprepo;
 		this.competencyrepo = competencyrepo;
 		this.traintimeslotserv = traintimeslotserv;
+		this.activityrepo = activityrepo;
 	}
 
 	private DateTimeFormatter dday = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -78,6 +84,9 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 		EmployeeTraining savedEmpTraining = emptrainrepo.save(train);
 
 		if (savedEmpTraining != null) {
+			Activity activity = Activity.builder().activity("Training "+training.getTraining().getTraining_name() +" is started of Employee "+training.getEmployee().getEmpName()).activityDate(dday.format(LocalDateTime.now()) ).activityTime(ttime.format(LocalDateTime.now())).build();
+			activityrepo.save(activity);
+			
 			EmployeeTrainingHistory emptrainhist = new EmployeeTrainingHistory();
 			emptrainhist.setTraining(savedEmpTraining.getTraining());
 			emptrainhist.setTraining_date(savedEmpTraining.getTraining_date());
@@ -89,8 +98,9 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 
 			return savedEmpTraining;
 		} else {
-			throw new GlobalException(
-					"No Training is assigned to the Employee " + training.getEmployee().getEmpName());
+			Activity activity = Activity.builder().activity("Training "+training.getTraining().getTraining_name() +" is not started of Employee "+training.getEmployee().getEmpName()).activityDate(dday.format(LocalDateTime.now()) ).activityTime(ttime.format(LocalDateTime.now())).build();
+			activityrepo.save(activity);
+			throw new GlobalException("No Training is assigned to the Employee " + training.getEmployee().getEmpName());
 		}
 	}
 
@@ -101,7 +111,7 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 
 	@Override
 	public List<EmployeeTraining> getEmployeesTrainingByEmployeeId(Long empid) {
-		 
+
 		List<EmployeeTraining> empHistList = Optional.ofNullable(emptrainrepo.findByEmployeeId(empid))
 				.orElse(Collections.emptyList());
 
@@ -112,8 +122,12 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 	public int updateCompletionTime(Long id, String completion_date) {
 		int result = emptrainrepo.updateCompletionTime(id, completion_date);
 		if (result > 0) {
+			Activity activity = Activity.builder().activity("Training time of training "+emptrainrepo.findById(id).get().getTraining().getTraining_name()+" is updated successfully").activityDate(dday.format(LocalDateTime.now()) ).activityTime(ttime.format(LocalDateTime.now())).build();
+			activityrepo.save(activity);
 			return result;
 		} else {
+			Activity activity = Activity.builder().activity("Training time of training "+emptrainrepo.findById(id).get().getTraining().getTraining_name()+" is not updated ").activityDate(dday.format(LocalDateTime.now()) ).activityTime(ttime.format(LocalDateTime.now())).build();
+			activityrepo.save(activity);
 			throw new ResourceNotModifiedException("Completion Time is not Updated");
 		}
 	}
@@ -222,37 +236,37 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 	}
 
 	@Override
-	public List<ChartDto> getAllEmployeesTrainingForCharts() { 
-		
+	public List<ChartDto> getAllEmployeesTrainingForCharts() {
+
 		List<Object[]> rows = emptrainrepo.getAllTrainingsWithCount();
-		
+
 		List<ChartDto> result = new ArrayList<>();
 
-        for (Object[] row : rows) {
-            String trainingName = (String) row[0];
-            // row[1] = totalEmployees (we won’t use directly in chart)
-            Long comp25 = ((Number) row[2]).longValue();
-            Long comp50 = ((Number) row[3]).longValue();
-            Long comp75 = ((Number) row[4]).longValue();
-            Long comp100 = ((Number) row[5]).longValue();
+		for (Object[] row : rows) {
+			String trainingName = (String) row[0];
+			// row[1] = totalEmployees (we won’t use directly in chart)
+			Long comp25 = ((Number) row[2]).longValue();
+			Long comp50 = ((Number) row[3]).longValue();
+			Long comp75 = ((Number) row[4]).longValue();
+			Long comp100 = ((Number) row[5]).longValue();
 
-            result.add(new ChartDto(trainingName, comp25, comp50, comp75, comp100)); 
-        }
-        
-        return result;
+			result.add(new ChartDto(trainingName, comp25, comp50, comp75, comp100));
+		}
+
+		return result;
 	}
 
 	@Override
 	public int countTrainingByEmpId(Long emp_id) {
 
 		Employee emp = emprepo.findById(emp_id).get();
-		return emptrainrepo.countByEmployee(emp);		
+		return emptrainrepo.countByEmployee(emp);
 	}
 
 	@Override
 	public int countTrainings() {
-		 
+
 		return emptrainrepo.countTrainings();
-	}	 
+	}
 
 }

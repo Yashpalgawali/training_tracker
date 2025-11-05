@@ -2,16 +2,15 @@ package com.example.demo.entity;
 
 import org.springframework.validation.annotation.Validated;
 
-import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,7 +20,7 @@ import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 
 @Entity
-@Table(name = "tbl_company")
+@Table(name = "tbl_employee_history")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -29,18 +28,35 @@ import lombok.experimental.FieldDefaults;
 @ToString
 @Validated
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Company {
+public class EmployeeHistory {
 
 	@Id
-	@SequenceGenerator(name="comp_seq" , allocationSize = 1,initialValue = 1)
-	@GeneratedValue(generator = "comp_seq",strategy = GenerationType.IDENTITY)
-	@Column(name="company_id")
-	Long companyId;
+	@SequenceGenerator(name = "emp_hist_seq",allocationSize = 1,initialValue = 1)
+	@GeneratedValue(strategy = GenerationType.IDENTITY,generator = "emp_hist_seq")
+	@Column(name = "emp_hist_id")
+	Long empHistId;
+
+	@ManyToOne
+	@JoinColumn(name = "emp_id")
+	Employee employee;
 	
-//	@NotEmpty(message = "Company Name can't be Empty")
-	@NotNull(message = "Company Name can't be Empty")
-	@Size(min = 2, max =200, message = "Please Enter company Name having at least 2 characters" )
-	@Column(name= "comp_name")
+	@Column(name="dept_name")
+	String deptName;
+	
+	@Column(name="comp_name")
 	String compName;
+	
+	String category;
+	
+	@Column(name="desig_name")
+	String desigName;
+	
+	@Column(name="joining_date")
+	String joiningDate;
+	
+	@Column(name="contractor_name")
+	String contractorName;
+	
+	int status;
 
 }

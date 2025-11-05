@@ -39,7 +39,6 @@ import com.nimbusds.jose.proc.SecurityContext;
 
 import jakarta.servlet.http.HttpServletResponse;
 
-
 @Configuration
 public class JwtAuthentication {
  	
@@ -51,9 +50,9 @@ public class JwtAuthentication {
 			auth.requestMatchers("/users/**","/authenticate","/error").permitAll();
 			auth.anyRequest().authenticated();
 		});
-		 
+
 		http.sessionManagement(session-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-		 
+
 	 	http.csrf(csrf-> csrf.disable());
 	 	http.cors(cors->{
 	 		cors.configurationSource(request->{
@@ -84,12 +83,12 @@ public class JwtAuthentication {
 
 		return http.build();
 	}
-	
+
 	@Bean
 	AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
 	    return config.getAuthenticationManager();
 	}
-	
+
 //	@Autowired
 //	public void configAuthentication(AuthenticationManagerBuilder authBuilder) throws Exception {
 //		authBuilder.jdbcAuthentication()
@@ -103,7 +102,7 @@ public class JwtAuthentication {
 //		
 //		.passwordEncoder(new BCryptPasswordEncoder());
 //	}
-	
+
 	@Bean
 	KeyPair keyPair() {
 	       KeyPairGenerator keypairgenerator = null;
@@ -125,8 +124,7 @@ public class JwtAuthentication {
 
 	@Bean
 	JWKSource<SecurityContext> jwkSource(RSAKey rsaKey){
-		var jwkset = new JWKSet(rsaKey);
- 
+		var jwkset = new JWKSet(rsaKey); 
 		return (jwkSelector , context) -> jwkSelector.select(jwkset);
 	}
 
@@ -135,11 +133,9 @@ public class JwtAuthentication {
 		return NimbusJwtDecoder.withPublicKey(rsaKey.toRSAPublicKey()).build();
 	} 
 
-	
 	@Bean
 	JwtEncoder jwtEncoder(JWKSource<SecurityContext> jwkSource) {
 		return new NimbusJwtEncoder(jwkSource);
 	}
- 
 
 }
