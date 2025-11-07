@@ -59,4 +59,7 @@ public class EmployeeTraining {
 	@ManyToOne
 	@JoinColumn(name="competency_id")
 	Competency competency;
+	
+	@Transient
+	Long trainingCount;
 }

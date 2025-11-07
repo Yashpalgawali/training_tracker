@@ -35,5 +35,6 @@ public interface IEmployeeTrainingService {
 	public List<ChartDto> getAllEmployeesTrainingForCharts();
 	
 	public int countTrainings();
-
+	
+ 
 }

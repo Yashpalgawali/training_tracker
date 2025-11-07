@@ -12,11 +12,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.demo.dto.ChartDto;
 import com.example.demo.entity.Employee;
 import com.example.demo.entity.EmployeeTraining;
+import com.example.demo.entity.Training;
+
 
 @Repository("emptrainrepo")
 public interface EmployeeTrainingRepository extends JpaRepository<EmployeeTraining, Long> {
 
-	@Query(value= "SELECT et.* FROM tbl_employee_training et "
+	@Query(value= "SELECT et.*,(select count(eth.emp_id) FROM tbl_employee_training_history eth where eth.emp_id=1 AND eth.training_id=2) as trainingCount FROM tbl_employee_training et "
 			+ " JOIN tbl_employee e ON et.emp_id=e.emp_id "
 			+ " JOIN tbl_training t ON t.training_id=et.training_id "
 			+"  JOIN tbl_training_time_slot sl ON sl.training_time_slot_id=et.training_time_slot_id"
@@ -77,5 +79,8 @@ public interface EmployeeTrainingRepository extends JpaRepository<EmployeeTraini
 	
 	@Query("SELECT COUNT(eth.emp_train_id) FROM  EmployeeTraining eth ")
 	public int countTrainings();
+	
+	
+
 	
 }	

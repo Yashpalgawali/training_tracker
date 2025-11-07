@@ -114,7 +114,8 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 
 		List<EmployeeTraining> empHistList = Optional.ofNullable(emptrainrepo.findByEmployeeId(empid))
 				.orElse(Collections.emptyList());
-
+		empHistList.stream().forEach(System.err::println);
+		
 		return empHistList;
 	}
 
@@ -265,8 +266,10 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 
 	@Override
 	public int countTrainings() {
-
+ 
 		return emptrainrepo.countTrainings();
 	}
+
+	 
 
 }

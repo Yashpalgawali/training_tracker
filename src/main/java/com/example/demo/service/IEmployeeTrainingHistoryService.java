@@ -10,4 +10,6 @@ public interface IEmployeeTrainingHistoryService {
 	
 	public List<EmployeeTrainingHistory> getAllEmployeeTrainingHistoryByEmployeeId(Long empid);
 	
+	public long getCountOfTrainingsByTrainId(Long train_id);
+	
 }

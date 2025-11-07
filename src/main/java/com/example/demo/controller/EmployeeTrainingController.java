@@ -61,13 +61,13 @@ public class EmployeeTrainingController {
 		return ResponseEntity.status(HttpStatus.OK).body(trainingHistory);
 	}
 
-//	private Logger logger = LoggerFactory.getLogger(getClass());
+	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@GetMapping("/{id}")
 	public ResponseEntity<List<EmployeeTraining>> getAllTrainingListByEmployeeId(@PathVariable Long id) {
 
 		List<EmployeeTraining> trainingHistory = emptrainserv.getEmployeesTrainingByEmployeeId(id);
-
+		logger.info("Training History found for empId are{} ",trainingHistory);
 		return ResponseEntity.status(HttpStatus.OK).body(trainingHistory);
 	}
 
@@ -174,35 +174,42 @@ public class EmployeeTrainingController {
 		byte[] excelContent = excelExporter.export(response);
 
 		// Return the file as a ResponseEntity
-		return ResponseEntity.ok().headers(headers)
-				.contentType(
-						MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+		return ResponseEntity
+				.ok()
+				.headers(headers)
+				.contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
 				.body(new InputStreamResource(new ByteArrayInputStream(excelContent)));
 
 	}
 
 	@GetMapping("/competencies/{id}")
-	public ResponseEntity<List<CompetencyScore>> getAllTrainingCompetencyiesByEmployeeId(@PathVariable Long id) {
+	public ResponseEntity<List<CompetencyScore>> getAllTrainingCompetenciesByEmployeeId(@PathVariable Long id) {
 		List<CompetencyScore> object = emptrainserv.getAllTrainingCompetenciesByEmpId(id);
 
 		return ResponseEntity.status(HttpStatus.OK).body(object);
 
 	}
 	
-	
-	
 	@GetMapping("/count/{id}")
 	public ResponseEntity<Integer> countEmployeesById(@PathVariable Long id) {
-		
+
 		int count = emptrainserv.countTrainingByEmpId(id);
 		System.err.println("training given count is "+count);
 		return ResponseEntity.status(HttpStatus.OK).body(count);
 	}
 	
 	@GetMapping("/count/trainings")
-	public ResponseEntity<Integer> countTrainings() {
-		
+	public ResponseEntity<Integer> countAllTrainings() {
+
 		int count = emptrainserv.countTrainings();
+		System.err.println("training given count is "+count);
+		return ResponseEntity.status(HttpStatus.OK).body(count);
+	}
+	
+	@GetMapping("/count/training/{id}")
+	public ResponseEntity<Long> countTrainings(@PathVariable String id) {
+
+		long count = emptrainhistserv.getCountOfTrainingsByTrainId(Long.valueOf(id));
 		System.err.println("training given count is "+count);
 		return ResponseEntity.status(HttpStatus.OK).body(count);
 	}
