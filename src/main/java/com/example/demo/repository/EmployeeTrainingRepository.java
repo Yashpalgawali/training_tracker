@@ -81,6 +81,7 @@ public interface EmployeeTrainingRepository extends JpaRepository<EmployeeTraini
 	public int countTrainings();
 	
 	
-
+	@Query("SELECT et FROM  EmployeeTraining et WHERE et.training.training_id=:tid AND et.competency.competency_id=:cid")
+	public List<EmployeeTraining> getEmployeesByTrainingAndCompetencyId(Long tid,Long cid);
 	
 }	

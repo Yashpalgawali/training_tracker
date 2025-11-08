@@ -35,6 +35,7 @@ public interface IEmployeeTrainingService {
 	public List<ChartDto> getAllEmployeesTrainingForCharts();
 	
 	public int countTrainings();
-	
+
+	public List<EmployeeTraining> getEmployeesByTrainingAndCompetencyId(Long training_id , Long competency_id);
  
 }

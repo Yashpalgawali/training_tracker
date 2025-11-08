@@ -24,3 +24,4 @@ public class EmployeeTrainingDto {
 	String time_slot;
 	String score;
 }
+  

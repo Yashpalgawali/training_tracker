@@ -270,6 +270,14 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 		return emptrainrepo.countTrainings();
 	}
 
+	@Override
+	public List<EmployeeTraining> getEmployeesByTrainingAndCompetencyId(Long training_id, Long competency_id) {
+		List<EmployeeTraining> trainList = emptrainrepo.getEmployeesByTrainingAndCompetencyId(training_id, competency_id);
+		System.err.println("Found trainings given with competency are \n");
+		trainList.stream().forEach(System.err::println);
+		return trainList;
+	}
+
 	 
 
 }
