@@ -57,6 +57,9 @@ public class EmployeeHistory {
 	@Column(name="contractor_name")
 	String contractorName;
 	
+	@Column(name="emp_code")
+	String empCode;
+	
 	int status;
 
 }

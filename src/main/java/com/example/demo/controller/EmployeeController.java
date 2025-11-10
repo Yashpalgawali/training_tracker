@@ -96,7 +96,12 @@ public class EmployeeController {
 			} else {
 				empdto.setDesignation("");
 			}
-
+			if(emp.getStatus()==1) {
+				empdto.setStatus("Active");
+			} else {
+				empdto.setStatus("InActive");
+			}
+			
 			empdto.setTrainings(training_names);
 			return empdto;
 
@@ -106,49 +111,49 @@ public class EmployeeController {
 
 	}
 	
-	@GetMapping("/training/${tid}/competency/${cid}")
-	public ResponseEntity<List<EmployeeDTO>> getAllEmployeesDtoByTrainingAndCompetencyId(@PathVariable("tid") Long tid,@PathVariable("cid") Long cid) {
-
-		List<Employee> empList = empserv.getAllEmployees();
-		List<EmployeeDTO> collect = empList.stream().map(emp -> {
-			String training_names = emptrainhistserv.getEmployeesTrainingByEmployeeId(emp.getEmpId()).stream()
-					.map(hist -> hist.getTraining().getTraining_name()).filter(Objects::nonNull)
-					.collect(Collectors.joining(","));
-
-			EmployeeDTO empdto = new EmployeeDTO();
-
-			if (training_names != "") {
-				empdto.setIsTrainingGiven(true);
-			} else {
-				empdto.setIsTrainingGiven(false);
-			}
-
-			empdto.setEmpId(emp.getEmpId());
-			empdto.setEmpName(emp.getEmpName());
-			empdto.setEmpCode(emp.getEmpCode());
-			empdto.setJoiningDate(emp.getJoiningDate());
-			empdto.setContractorName(emp.getContractorName());
-			if (emp.getDepartment() != null) {
-				empdto.setCompany(emp.getDepartment().getCompany().getCompName());
-				empdto.setDepartment(emp.getDepartment().getDeptName());
-			} else {
-				empdto.setCompany("");
-				empdto.setDepartment("");
-			}
-			if (emp.getDesignation() != null) {
-				empdto.setDesignation(emp.getDesignation().getDesigName());
-			} else {
-				empdto.setDesignation("");
-			}
-
-			empdto.setTrainings(training_names);
-			return empdto;
-
-		}).collect(Collectors.toList());
-
-		return ResponseEntity.status(HttpStatus.OK).body(collect);
-
-	}
+//	@GetMapping("/training/${tid}/competency/${cid}")
+//	public ResponseEntity<List<EmployeeDTO>> getAllEmployeesDtoByTrainingAndCompetencyId(@PathVariable Long tid,@PathVariable Long cid) {
+//
+//		List<Employee> empList = empserv.getAllEmployees();
+//		List<EmployeeDTO> collect = empList.stream().map(emp -> {
+//			String training_names = emptrainhistserv.getEmployeesTrainingByEmployeeId(emp.getEmpId()).stream()
+//					.map(hist -> hist.getTraining().getTraining_name()).filter(Objects::nonNull)
+//					.collect(Collectors.joining(","));
+//
+//			EmployeeDTO empdto = new EmployeeDTO();
+//
+//			if (training_names != "") {
+//				empdto.setIsTrainingGiven(true);
+//			} else {
+//				empdto.setIsTrainingGiven(false);
+//			}
+//
+//			empdto.setEmpId(emp.getEmpId());
+//			empdto.setEmpName(emp.getEmpName());
+//			empdto.setEmpCode(emp.getEmpCode());
+//			empdto.setJoiningDate(emp.getJoiningDate());
+//			empdto.setContractorName(emp.getContractorName());
+//			if (emp.getDepartment() != null) {
+//				empdto.setCompany(emp.getDepartment().getCompany().getCompName());
+//				empdto.setDepartment(emp.getDepartment().getDeptName());
+//			} else {
+//				empdto.setCompany("");
+//				empdto.setDepartment("");
+//			}
+//			if (emp.getDesignation() != null) {
+//				empdto.setDesignation(emp.getDesignation().getDesigName());
+//			} else {
+//				empdto.setDesignation("");
+//			}
+//
+//			empdto.setTrainings(training_names);
+//			return empdto;
+//
+//		}).collect(Collectors.toList());
+//
+//		return ResponseEntity.status(HttpStatus.OK).body(collect);
+//
+//	}
 
 	@GetMapping("/paged")
 	public Map<String, Object> getEmployees(@RequestParam(defaultValue = "0") int start,

@@ -68,5 +68,6 @@ public class Employee {
 	@ManyToOne
 	@JoinColumn(name= "category_id")
 	Category category;
- 
+
+	int status;
 } 

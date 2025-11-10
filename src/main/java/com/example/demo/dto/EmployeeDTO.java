@@ -25,6 +25,7 @@ public class EmployeeDTO {
 	String category;
 	String trainingDate;
 	String completionDate;
+	String status;
 	Boolean isTrainingGiven;
 	List<Long> training_ids = new ArrayList<>();
 }

@@ -29,6 +29,7 @@ import com.example.demo.entity.Category;
 import com.example.demo.entity.Department;
 import com.example.demo.entity.Designation;
 import com.example.demo.entity.Employee;
+import com.example.demo.entity.EmployeeHistory;
 import com.example.demo.entity.Training;
 import com.example.demo.exception.GlobalException;
 import com.example.demo.exception.ResourceNotFoundException;
@@ -38,6 +39,7 @@ import com.example.demo.repository.DepartmentRepository;
 import com.example.demo.repository.DesignationRepository;
 import com.example.demo.repository.EmployeeRepository;
 import com.example.demo.service.ICategoryService;
+import com.example.demo.service.IEmployeeHistoryService;
 import com.example.demo.service.IEmployeeService;
 import com.example.demo.service.IEmployeeTrainingService;
 
@@ -50,9 +52,11 @@ public class EmployeeServImpl implements IEmployeeService {
 	private final ICategoryService categoryserv;
 	private final IEmployeeTrainingService emptrainserv;
 	private final ActivityRepository activityrepo;
+	private final IEmployeeHistoryService emphistserv;
 
 	public EmployeeServImpl(EmployeeRepository emprepo, DesignationRepository desigrepo, DepartmentRepository deptrepo,
-			ICategoryService categoryserv, IEmployeeTrainingService emptrainserv, ActivityRepository activityrepo) {
+			ICategoryService categoryserv, IEmployeeTrainingService emptrainserv, ActivityRepository activityrepo,
+			IEmployeeHistoryService emphistserv) {
 		super();
 		this.emprepo = emprepo;
 		this.desigrepo = desigrepo;
@@ -60,8 +64,9 @@ public class EmployeeServImpl implements IEmployeeService {
 		this.categoryserv = categoryserv;
 		this.emptrainserv = emptrainserv;
 		this.activityrepo = activityrepo;
+		this.emphistserv = emphistserv;
 	}
-	
+
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	private DateTimeFormatter dday = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -72,7 +77,10 @@ public class EmployeeServImpl implements IEmployeeService {
 
 		Employee savedEmployee = emprepo.save(emp);
 		if (savedEmployee != null) {
-			Activity activity = Activity.builder().activity("Company "+savedEmployee.getEmpName() +" is saved successfully").activityDate(dday.format(LocalDateTime.now()) ).activityTime(ttime.format(LocalDateTime.now())).build();
+			Activity activity = Activity.builder()
+					.activity("Company " + savedEmployee.getEmpName() + " is saved successfully")
+					.activityDate(dday.format(LocalDateTime.now())).activityTime(ttime.format(LocalDateTime.now()))
+					.build();
 			activityrepo.save(activity);
 			return savedEmployee;
 		} else {
@@ -98,11 +106,16 @@ public class EmployeeServImpl implements IEmployeeService {
 		Employee updatedEmployee = emprepo.save(emp);
 
 		if (updatedEmployee != null) {
-			Activity activity = Activity.builder().activity("Company "+emp.getEmpName() +" is saved successfully").activityDate(dday.format(LocalDateTime.now()) ).activityTime(ttime.format(LocalDateTime.now())).build();
+			Activity activity = Activity.builder().activity("Company " + emp.getEmpName() + " is saved successfully")
+					.activityDate(dday.format(LocalDateTime.now())).activityTime(ttime.format(LocalDateTime.now()))
+					.build();
 			activityrepo.save(activity);
 			return 1;
 		} else {
-			Activity activity = Activity.builder().activity("Company "+emp.getEmpName() +" is not updated successfully").activityDate(dday.format(LocalDateTime.now()) ).activityTime(ttime.format(LocalDateTime.now())).build();
+			Activity activity = Activity.builder()
+					.activity("Company " + emp.getEmpName() + " is not updated successfully")
+					.activityDate(dday.format(LocalDateTime.now())).activityTime(ttime.format(LocalDateTime.now()))
+					.build();
 			activityrepo.save(activity);
 			throw new ResourceNotModifiedException("Employee " + emp.getEmpName() + " is not Updated");
 		}
@@ -173,7 +186,19 @@ public class EmployeeServImpl implements IEmployeeService {
 
 					emp.setCategory(category);
 
-					emprepo.save(emp);
+					Employee uploadedEmployee = emprepo.save(emp);
+					EmployeeHistory empHist = new EmployeeHistory();
+					empHist.setContractorName(uploadedEmployee.getContractorName());
+					empHist.setCategory(uploadedEmployee.getCategory().getCategory());
+					empHist.setDesigName(uploadedEmployee.getDesignation().getDesigName());
+					empHist.setEmployee(uploadedEmployee);
+					empHist.setJoiningDate(uploadedEmployee.getJoiningDate());
+					empHist.setEmpCode(uploadedEmployee.getEmpCode());
+					empHist.setDeptName(uploadedEmployee.getDepartment().getDeptName());
+					empHist.setCompName(uploadedEmployee.getDepartment().getCompany().getCompName());
+					empHist.setStatus(uploadedEmployee.getStatus());
+					
+					emphistserv.saveEmployeeHistory(empHist);
 				}
 			}
 		} catch (Exception e) {
@@ -244,6 +269,12 @@ public class EmployeeServImpl implements IEmployeeService {
 				empdto.setCompany(emp.getDepartment().getCompany().getCompName());
 				empdto.setContractorName(emp.getContractorName());
 
+				if (emp.getStatus() == 1) {
+					empdto.setStatus("Active");
+				} else {
+					empdto.setStatus("InActive");
+				}
+
 				empdto.setIsTrainingGiven(count > 0);
 				return empdto;
 
@@ -264,7 +295,11 @@ public class EmployeeServImpl implements IEmployeeService {
 				empdto.setDepartment(emp.getDepartment().getDeptName());
 				empdto.setCompany(emp.getDepartment().getCompany().getCompName());
 				empdto.setContractorName(emp.getContractorName());
-
+				if (emp.getStatus() == 1) {
+					empdto.setStatus("Active");
+				} else {
+					empdto.setStatus("InActive");
+				}
 				empdto.setIsTrainingGiven(count > 0);
 				return empdto;
 //		        	return EmployeeMapper.EmployeeToEmployeeDTO(emp, new EmployeeDTO());
