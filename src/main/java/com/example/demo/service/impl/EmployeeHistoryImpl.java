@@ -8,6 +8,7 @@ import com.example.demo.entity.Employee;
 import com.example.demo.entity.EmployeeHistory;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.EmployeeHistoryRepository;
+import com.example.demo.repository.EmployeeRepository;
 import com.example.demo.service.IEmployeeHistoryService;
 import com.example.demo.service.IEmployeeService;
 
@@ -15,13 +16,12 @@ import com.example.demo.service.IEmployeeService;
 public class EmployeeHistoryImpl implements IEmployeeHistoryService {
 
 	private final EmployeeHistoryRepository emphistrepo;
-	private final IEmployeeService empserv ;
-	
+	private final EmployeeRepository emprepo;
 
-	public EmployeeHistoryImpl(EmployeeHistoryRepository emphistrepo, IEmployeeService empserv) {
+	public EmployeeHistoryImpl(EmployeeHistoryRepository emphistrepo, EmployeeRepository emprepo) {
 		super();
 		this.emphistrepo = emphistrepo;
-		this.empserv = empserv;
+		this.emprepo = emprepo;
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public class EmployeeHistoryImpl implements IEmployeeHistoryService {
 
 	@Override
 	public List<EmployeeHistory> getEmployeeHistoryByEmployeeId(Long empid) {
-		 Employee emp = empserv.getEmployeeByEmployeeId(empid);
+		Employee emp = emprepo.findById(empid).get();
 		return emphistrepo.findByEmployee(emp);
 	}
 

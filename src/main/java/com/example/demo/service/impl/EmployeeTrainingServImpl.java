@@ -63,7 +63,7 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 
 	@Override
 	public EmployeeTraining saveEmployeeTraining(EmployeeTraining training) {
-
+	
 		Long training_ids = training.getTraining_ids();
 
 		Training trainingObject = trainserv.getTrainingById(training_ids);
@@ -84,7 +84,7 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 		EmployeeTraining savedEmpTraining = emptrainrepo.save(train);
 
 		if (savedEmpTraining != null) {
-			Activity activity = Activity.builder().activity("Training "+training.getTraining().getTraining_name() +" is started of Employee "+training.getEmployee().getEmpName()).activityDate(dday.format(LocalDateTime.now()) ).activityTime(ttime.format(LocalDateTime.now())).build();
+			Activity activity = Activity.builder().activity("Training "+trainingObject.getTraining_name() +" is started of Employee "+training.getEmployee().getEmpName()).activityDate(dday.format(LocalDateTime.now()) ).activityTime(ttime.format(LocalDateTime.now())).build();
 			activityrepo.save(activity);
 			
 			EmployeeTrainingHistory emptrainhist = new EmployeeTrainingHistory();
@@ -98,10 +98,11 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 
 			return savedEmpTraining;
 		} else {
-			Activity activity = Activity.builder().activity("Training "+training.getTraining().getTraining_name() +" is not started of Employee "+training.getEmployee().getEmpName()).activityDate(dday.format(LocalDateTime.now()) ).activityTime(ttime.format(LocalDateTime.now())).build();
+			Activity activity = Activity.builder().activity("Training "+trainingObject.getTraining_name() +" is not started of Employee "+training.getEmployee().getEmpName()).activityDate(dday.format(LocalDateTime.now()) ).activityTime(ttime.format(LocalDateTime.now())).build();
 			activityrepo.save(activity);
 			throw new GlobalException("No Training is assigned to the Employee " + training.getEmployee().getEmpName());
 		}
+		
 	}
 
 	@Override
@@ -220,7 +221,7 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 
 			return result;
 		} else {
-			throw new GlobalException("Training is not updated of the Employee");
+			throw new GlobalException(" ");
 		}
 
 	}

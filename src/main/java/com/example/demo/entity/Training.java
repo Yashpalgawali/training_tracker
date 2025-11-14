@@ -1,11 +1,15 @@
 package com.example.demo.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.springframework.validation.annotation.Validated;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -34,10 +38,9 @@ public class Training {
 
 	String training_name;
 
-//	@ManyToMany(mappedBy = "training")
-//	@JsonBackReference
+//	@ManyToMany(mappedBy = "employee")
 //	@ToString.Exclude
-//	List<Employee> employee = new ArrayList<>();
+//	private Set<EmployeeTraining> employees = new HashSet<EmployeeTraining>();
 	
 	/*
 	 * @OneToMany(mappedBy = "training") List<EmployeeTraining> employeeTrainings =

@@ -19,6 +19,8 @@ public interface IEmployeeService {
 	
 	public List<Employee> getAllEmployees();
 	
+	public List<Employee> getAllActiveEmployees();
+	
 //	public Map<String, Object> getAllEmployeesWithPagination(int page,int size,String searchValue);
 	
 	public Map<String, Object> getAllEmployeesWithPagination(int page,int size,String search,String orderColumn, String orderDir );

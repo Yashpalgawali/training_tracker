@@ -111,6 +111,13 @@ public class EmployeeController {
 
 	}
 	
+	
+	@GetMapping("/active")
+	public ResponseEntity<List<Employee>> getAllActiveEmployees() {
+
+		return ResponseEntity.status(HttpStatus.OK).body(empserv.getAllActiveEmployees());
+	}
+	
 //	@GetMapping("/training/${tid}/competency/${cid}")
 //	public ResponseEntity<List<EmployeeDTO>> getAllEmployeesDtoByTrainingAndCompetencyId(@PathVariable Long tid,@PathVariable Long cid) {
 //

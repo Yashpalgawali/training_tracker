@@ -45,7 +45,7 @@ public class EmployeeTrainingController {
 	private final IEmployeeTrainingService emptrainserv;
 	private final IEmployeeTrainingHistoryService emptrainhistserv;
 	private final IEmployeeService empserv;
-	
+
 	public EmployeeTrainingController(IEmployeeTrainingService emptrainserv,
 			IEmployeeTrainingHistoryService emptrainhistserv, IEmployeeService empserv) {
 		super();
@@ -67,7 +67,7 @@ public class EmployeeTrainingController {
 	public ResponseEntity<List<EmployeeTraining>> getAllTrainingListByEmployeeId(@PathVariable Long id) {
 
 		List<EmployeeTraining> trainingHistory = emptrainserv.getEmployeesTrainingByEmployeeId(id);
-		logger.info("Training History found for empId are{} ",trainingHistory);
+		logger.info("Training History found for empId are{} ", trainingHistory);
 		return ResponseEntity.status(HttpStatus.OK).body(trainingHistory);
 	}
 
@@ -85,28 +85,31 @@ public class EmployeeTrainingController {
 	@PostMapping("/")
 	public ResponseEntity<ResponseDto> saveEmployeeTraining(@RequestBody EmployeeTraining emptraining) {
 
+		System.err.println("EMployee trianing Object is " + emptraining.getEmployee());
+//		return null;
 		EmployeeTraining savedEmployeeTraining = emptrainserv.saveEmployeeTraining(emptraining);
 		return ResponseEntity.status(HttpStatus.CREATED)
-				.body(new ResponseDto(HttpStatus.CREATED.toString(), "Training "+savedEmployeeTraining.getTraining().getTraining_name()+" is started of "+savedEmployeeTraining.getEmployee().getEmpName()));
+				.body(new ResponseDto(HttpStatus.CREATED.toString(),
+						"Training " + savedEmployeeTraining.getTraining().getTraining_name() + " is started of "
+								+ emptraining.getEmployee().getEmpName()));
 	}
 
 	@PutMapping("/")
 	public ResponseEntity<ResponseDto> updateEmployeeTraining(@RequestBody EmployeeTraining emptraining) {
 
 		emptrainserv.updateEmployeeTraining(emptraining);
-		
+
 		Employee trainedEmployee = empserv.getEmployeeByEmployeeId(emptraining.getEmployee().getEmpId());
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
-				"Training is Updated of the Employee " + trainedEmployee.getEmpName() ) );
+				"Training is Updated of the Employee " + trainedEmployee.getEmpName()));
 	}
 
 	@GetMapping("/getalltrainingsforchart")
 	public ResponseEntity<List<ChartDto>> getAllEmployeeTrainings() {
-		
+
 		var list = emptrainserv.getAllEmployeesTrainingForCharts();
 		return ResponseEntity.status(HttpStatus.OK).body(list);
 	}
-
 
 	@PatchMapping("/training/{id}")
 	public ResponseEntity<ResponseDto> updateCompletionTime(@PathVariable Long id,
@@ -174,10 +177,9 @@ public class EmployeeTrainingController {
 		byte[] excelContent = excelExporter.export(response);
 
 		// Return the file as a ResponseEntity
-		return ResponseEntity
-				.ok()
-				.headers(headers)
-				.contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+		return ResponseEntity.ok().headers(headers)
+				.contentType(
+						MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
 				.body(new InputStreamResource(new ByteArrayInputStream(excelContent)));
 
 	}
@@ -189,28 +191,28 @@ public class EmployeeTrainingController {
 		return ResponseEntity.status(HttpStatus.OK).body(object);
 
 	}
-	
+
 	@GetMapping("/count/{id}")
 	public ResponseEntity<Integer> countEmployeesById(@PathVariable Long id) {
 
 		int count = emptrainserv.countTrainingByEmpId(id);
-		System.err.println("training given count is "+count);
+		System.err.println("training given count is " + count);
 		return ResponseEntity.status(HttpStatus.OK).body(count);
 	}
-	
+
 	@GetMapping("/count/trainings")
 	public ResponseEntity<Integer> countAllTrainings() {
 
 		int count = emptrainserv.countTrainings();
-		System.err.println("training given count is "+count);
+		System.err.println("training given count is " + count);
 		return ResponseEntity.status(HttpStatus.OK).body(count);
 	}
-	
+
 	@GetMapping("/count/training/{id}")
 	public ResponseEntity<Long> countTrainings(@PathVariable String id) {
 
 		long count = emptrainhistserv.getCountOfTrainingsByTrainId(Long.valueOf(id));
-		System.err.println("training given count is "+count);
+		System.err.println("training given count is " + count);
 		return ResponseEntity.status(HttpStatus.OK).body(count);
 	}
 }

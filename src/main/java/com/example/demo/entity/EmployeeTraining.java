@@ -1,5 +1,8 @@
 package com.example.demo.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.springframework.validation.annotation.Validated;
 
 import jakarta.persistence.Entity;
@@ -7,6 +10,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinColumns;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
@@ -39,6 +45,19 @@ public class EmployeeTraining {
 	@JoinColumn(name = "emp_id")
 	Employee employee;
 
+//	@ManyToMany
+//	@JoinTable(name = "tbl_employee_training_new",
+//		joinColumns= {
+//				@JoinColumn(name="emp_id")
+//		},
+//		inverseJoinColumns = {
+//				@JoinColumn(name="training_id")
+//		}
+//	)
+//	Set<Training> trainingSet = new HashSet<>();
+	
+
+	
 	@ManyToOne
 	@JoinColumn(name = "training_id")
 	Training training;

@@ -11,6 +11,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.example.demo.entity.Employee;
+import java.util.List;
+
 
 @Repository("emprepo")
 public interface EmployeeRepository extends JpaRepository<Employee, Long>  {
@@ -26,18 +28,26 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>  {
 	@Query("SELECT e FROM Employee e WHERE e.empName=:emp_name")
  	public Optional<Employee>findByEmp_name(String emp_name);
 
-	public Optional<Employee>findByEmpCode(String empcode);
+	List<Employee> findByStatus(int status);
 	
+	public Optional<Employee>findByEmpCode(String empcode);	
  	@Query("""
 		    SELECT e FROM Employee e
-		    WHERE 
+		    WHERE
+
 		        LOWER(e.empName) LIKE LOWER(CONCAT('%', :search, '%'))
-		        OR LOWER(e.empCode) LIKE LOWER(CONCAT('%', :search, '%'))
+
 		        OR LOWER(e.joiningDate) LIKE LOWER(CONCAT('%', :search, '%'))
 		        OR LOWER(e.contractorName) LIKE LOWER(CONCAT('%', :search, '%'))
 		        OR LOWER(e.designation.desigName) LIKE LOWER(CONCAT('%', :search, '%'))
 		        OR LOWER(e.department.deptName) LIKE LOWER(CONCAT('%', :search, '%'))
 		        OR LOWER(e.department.company.compName) LIKE LOWER(CONCAT('%', :search, '%'))
+		        OR (
+ 					 (LOWER(:search) LIKE CONCAT('%', 'active', '%') AND e.status = 1)
+		             OR (LOWER(:search) LIKE CONCAT('%', 'inactive', '%') AND e.status = 2)
+		             OR (:search = '1' AND e.status = 1)
+		             OR (:search = '2' AND e.status = 2)
+		       )
 		""")
 	Page<Employee> searchEmployees(@Param("search") String search,Pageable pageable);
 	

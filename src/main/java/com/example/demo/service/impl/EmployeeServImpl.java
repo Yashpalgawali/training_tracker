@@ -254,6 +254,7 @@ public class EmployeeServImpl implements IEmployeeService {
 		Page<Employee> employees;
 
 		if (search != null && !search.isEmpty()) {
+			search.trim();
 			employees = this.searchEmployees(search, pageable);
 
 			empdtos = employees.map(emp -> {
@@ -323,5 +324,15 @@ public class EmployeeServImpl implements IEmployeeService {
 		Page<Employee> searchEmployees = emprepo.searchEmployees(search, pageable);
 
 		return searchEmployees;
+	}
+
+	@Override
+	public List<Employee> getAllActiveEmployees() {
+
+		List<Employee> activeEmpList = emprepo.findByStatus(1);
+		if(activeEmpList.size()> 0 ) {
+			return activeEmpList;
+		}
+		throw new ResourceNotFoundException("No Active Employees found");		
 	}
 }
