@@ -1,7 +1,6 @@
 package com.example.demo.repository;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -9,23 +8,29 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.dto.ChartDto;
 import com.example.demo.entity.Employee;
 import com.example.demo.entity.EmployeeTraining;
-import com.example.demo.entity.Training;
+import com.example.demo.service.IEMployeeTrainingProjection;
 
 
 @Repository("emptrainrepo")
 public interface EmployeeTrainingRepository extends JpaRepository<EmployeeTraining, Long> {
-
-	@Query(value= "SELECT et.*,(select count(eth.emp_id) FROM tbl_employee_training_history eth where eth.emp_id=1 AND eth.training_id=2) as trainingCount FROM tbl_employee_training et "
+ 
+//	@Query(value= "SELECT et.*,(select count(eth.emp_id) FROM tbl_employee_training_history eth where eth.emp_id=:empid AND eth.training_id=et.training_id) as trainingCount FROM tbl_employee_training et "
+//			+ " JOIN tbl_employee e ON et.emp_id=e.emp_id "
+//			+ " JOIN tbl_training t ON t.training_id=et.training_id "
+//			+"  JOIN tbl_training_time_slot sl ON sl.training_time_slot_id=et.training_time_slot_id"
+//			+ " WHERE et.emp_id=:empid",nativeQuery = true)
+	@Query(value= "SELECT et.* FROM tbl_employee_training et "
 			+ " JOIN tbl_employee e ON et.emp_id=e.emp_id "
 			+ " JOIN tbl_training t ON t.training_id=et.training_id "
 			+"  JOIN tbl_training_time_slot sl ON sl.training_time_slot_id=et.training_time_slot_id"
-		 
 			+ " WHERE et.emp_id=:empid",nativeQuery = true)
+ 
+ 
 //	@Query("SELECT et FROM EmployeeTraining et JOIN et.employee JOIN et.training JOIN et.trainingTimeSlot WHERE et.employee.emp_id=:empid")
 	List<EmployeeTraining> findByEmployeeId(Long empid);
+	
 
 	@Query("UPDATE EmployeeTraining eth SET eth.completion_date=:completion_date WHERE eth.emp_train_id=:id")
 	@Modifying

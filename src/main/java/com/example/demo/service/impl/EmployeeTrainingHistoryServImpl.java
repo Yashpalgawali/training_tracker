@@ -43,4 +43,10 @@ public class EmployeeTrainingHistoryServImpl implements IEmployeeTrainingHistory
 		Long training_id = train.getTraining().getTraining_id();
 		return emptrainhistrepo.countByEmployeeAndTraining(empId, training_id);
 	}
+
+	@Override
+	public long getCountOfTrainingsByTrainingIdAndEmployeeId(Long train_id, Long emp_id) {
+
+		return emptrainhistrepo.countByEmployeeAndTraining(emp_id, train_id);
+	}
 }

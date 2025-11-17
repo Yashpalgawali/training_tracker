@@ -12,4 +12,6 @@ public interface IEmployeeTrainingHistoryService {
 	
 	public long getCountOfTrainingsByTrainId(Long train_id);
 	
+	public long getCountOfTrainingsByTrainingIdAndEmployeeId(Long train_id,Long emp_id);
+	
 }

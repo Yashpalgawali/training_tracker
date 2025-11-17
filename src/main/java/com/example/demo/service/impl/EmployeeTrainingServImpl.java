@@ -63,7 +63,7 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 
 	@Override
 	public EmployeeTraining saveEmployeeTraining(EmployeeTraining training) {
-	
+
 		Long training_ids = training.getTraining_ids();
 
 		Training trainingObject = trainserv.getTrainingById(training_ids);
@@ -84,9 +84,13 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 		EmployeeTraining savedEmpTraining = emptrainrepo.save(train);
 
 		if (savedEmpTraining != null) {
-			Activity activity = Activity.builder().activity("Training "+trainingObject.getTraining_name() +" is started of Employee "+training.getEmployee().getEmpName()).activityDate(dday.format(LocalDateTime.now()) ).activityTime(ttime.format(LocalDateTime.now())).build();
+			Activity activity = Activity.builder()
+					.activity("Training " + trainingObject.getTraining_name() + " is started of Employee "
+							+ training.getEmployee().getEmpName())
+					.activityDate(dday.format(LocalDateTime.now())).activityTime(ttime.format(LocalDateTime.now()))
+					.build();
 			activityrepo.save(activity);
-			
+
 			EmployeeTrainingHistory emptrainhist = new EmployeeTrainingHistory();
 			emptrainhist.setTraining(savedEmpTraining.getTraining());
 			emptrainhist.setTraining_date(savedEmpTraining.getTraining_date());
@@ -98,11 +102,15 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 
 			return savedEmpTraining;
 		} else {
-			Activity activity = Activity.builder().activity("Training "+trainingObject.getTraining_name() +" is not started of Employee "+training.getEmployee().getEmpName()).activityDate(dday.format(LocalDateTime.now()) ).activityTime(ttime.format(LocalDateTime.now())).build();
+			Activity activity = Activity.builder()
+					.activity("Training " + trainingObject.getTraining_name() + " is not started of Employee "
+							+ training.getEmployee().getEmpName())
+					.activityDate(dday.format(LocalDateTime.now())).activityTime(ttime.format(LocalDateTime.now()))
+					.build();
 			activityrepo.save(activity);
 			throw new GlobalException("No Training is assigned to the Employee " + training.getEmployee().getEmpName());
 		}
-		
+
 	}
 
 	@Override
@@ -113,22 +121,47 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 	@Override
 	public List<EmployeeTraining> getEmployeesTrainingByEmployeeId(Long empid) {
 
-		List<EmployeeTraining> empHistList = Optional.ofNullable(emptrainrepo.findByEmployeeId(empid))
-				.orElse(Collections.emptyList());
-		empHistList.stream().forEach(System.err::println);
+//		List<EmployeeTraining> empHistList = Optional.ofNullable(emptrainrepo.findByEmployeeId(empid))
+//				.orElse(Collections.emptyList());
+
+		Optional<List<EmployeeTraining>> empHistList = Optional.ofNullable(
+				emptrainrepo.findByEmployeeId(empid).stream().map(emph -> {
+					EmployeeTraining emhist = new EmployeeTraining();
+					
+					emhist.setTraining(emph.getTraining());
+					emhist.setEmployee(emph.getEmployee());
+					emhist.setTraining_date(emph.getTraining_date());
+					emhist.setCompletion_date(emph.getTraining_date());
+					emhist.setTrainingTimeSlot(emph.getTrainingTimeSlot());
+					emhist.setCompetency(emph.getCompetency());
+					
+//					emptrainhistserv.getCountOfTrainingsByTrainId(empid);
+					emhist.setTrainingCount(emptrainhistserv.getCountOfTrainingsByTrainingIdAndEmployeeId(emph.getTraining().getTraining_id(), empid));
+					return emhist;
+					
+				}).collect(Collectors.toList()));
 		
-		return empHistList;
+		return empHistList.get();
 	}
 
 	@Override
 	public int updateCompletionTime(Long id, String completion_date) {
 		int result = emptrainrepo.updateCompletionTime(id, completion_date);
 		if (result > 0) {
-			Activity activity = Activity.builder().activity("Training time of training "+emptrainrepo.findById(id).get().getTraining().getTraining_name()+" is updated successfully").activityDate(dday.format(LocalDateTime.now()) ).activityTime(ttime.format(LocalDateTime.now())).build();
+			Activity activity = Activity.builder()
+					.activity("Training time of training "
+							+ emptrainrepo.findById(id).get().getTraining().getTraining_name()
+							+ " is updated successfully")
+					.activityDate(dday.format(LocalDateTime.now())).activityTime(ttime.format(LocalDateTime.now()))
+					.build();
 			activityrepo.save(activity);
 			return result;
 		} else {
-			Activity activity = Activity.builder().activity("Training time of training "+emptrainrepo.findById(id).get().getTraining().getTraining_name()+" is not updated ").activityDate(dday.format(LocalDateTime.now()) ).activityTime(ttime.format(LocalDateTime.now())).build();
+			Activity activity = Activity.builder()
+					.activity("Training time of training "
+							+ emptrainrepo.findById(id).get().getTraining().getTraining_name() + " is not updated ")
+					.activityDate(dday.format(LocalDateTime.now())).activityTime(ttime.format(LocalDateTime.now()))
+					.build();
 			activityrepo.save(activity);
 			throw new ResourceNotModifiedException("Completion Time is not Updated");
 		}
@@ -267,18 +300,15 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 
 	@Override
 	public int countTrainings() {
- 
+
 		return emptrainrepo.countTrainings();
 	}
 
 	@Override
 	public List<EmployeeTraining> getEmployeesByTrainingAndCompetencyId(Long training_id, Long competency_id) {
-		List<EmployeeTraining> trainList = emptrainrepo.getEmployeesByTrainingAndCompetencyId(training_id, competency_id);
-		System.err.println("Found trainings given with competency are \n");
-		trainList.stream().forEach(System.err::println);
+		List<EmployeeTraining> trainList = emptrainrepo.getEmployeesByTrainingAndCompetencyId(training_id,
+				competency_id);
 		return trainList;
 	}
-
-	 
 
 }
