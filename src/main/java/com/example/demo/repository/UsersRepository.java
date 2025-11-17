@@ -14,12 +14,11 @@ import com.example.demo.entity.Users;
 public interface UsersRepository extends JpaRepository<Users, Long> {
 
 	@Query("UPDATE  Users u SET u.password=:pass WHERE u.user_id=:id")
-	@Transactional
 	@Modifying
 	public int updateUsersPassword(String pass, Long id);
 
-	// @Query("SELECT u FROM Users u WHERE u.email=?1")
-	@Query(value = "select * from tbl_users where email=?", nativeQuery = true)
+	@Query("SELECT u FROM Users u WHERE u.email=:email")
+	//@Query(value = "select * from tbl_users where email=?", nativeQuery = true)
 	public Users getUserByEmailId(String email);
 
 	@Query("SELECT u FROM Users u WHERE u.username=?1")
@@ -27,4 +26,5 @@ public interface UsersRepository extends JpaRepository<Users, Long> {
 	
 	@Query("SELECT u FROM Users u WHERE u.username=:username")
 	public Optional<Users> findByUsername(String username);
+	 
 }
