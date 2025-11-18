@@ -30,7 +30,21 @@ public class UserServImpl implements IUserService {
 		
 		String encryptedPass = passEncoder.encode(password);
 		
-		int result = userrepo.updateUsersPassword(encryptedPass, user.getUser_id());
+		Long id = user.getUser_id();
+	
+		String email = user.getEmail();
+		int result =0;
+		if(id!=null)
+		{
+			result = userrepo.updateUsersPassword(encryptedPass, id);
+		}
+		else if(!email.equals(""))
+		{
+			result = userrepo.updateUsersPasswordByEmail(encryptedPass, email); 
+		}
+		else {
+			
+		}
 		
 		if(result>0 ) {
 			return result;

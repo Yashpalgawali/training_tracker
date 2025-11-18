@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.entity.Users;
 
@@ -16,6 +15,10 @@ public interface UsersRepository extends JpaRepository<Users, Long> {
 	@Query("UPDATE  Users u SET u.password=:pass WHERE u.user_id=:id")
 	@Modifying
 	public int updateUsersPassword(String pass, Long id);
+	
+	@Query("UPDATE  Users u SET u.password=:pass WHERE u.email=:email")
+	@Modifying
+	public int updateUsersPasswordByEmail(String pass, String email);
 
 	@Query("SELECT u FROM Users u WHERE u.email=:email")
 	//@Query(value = "select * from tbl_users where email=?", nativeQuery = true)

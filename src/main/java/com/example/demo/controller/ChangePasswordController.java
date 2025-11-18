@@ -1,14 +1,17 @@
 package com.example.demo.controller;
 
+import java.time.LocalDateTime;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.ErrorResponseDto;
 import com.example.demo.dto.ResponseDto;
 import com.example.demo.entity.Users;
 import com.example.demo.service.IEmailService;
@@ -22,11 +25,9 @@ import jakarta.servlet.http.HttpSession;
 public class ChangePasswordController {
 
 	private final IUserService userserv;
-
 	private final IOtpService otpserv;
-
 	private final IEmailService emailserv;
-	
+
 	public ChangePasswordController(IUserService userserv, IOtpService otpserv, IEmailService emailserv) {
 		super();
 		this.userserv = userserv;
@@ -34,17 +35,16 @@ public class ChangePasswordController {
 		this.emailserv = emailserv;
 	}
 
-	@PostMapping("/change")
+	@PutMapping("/change")
 	public ResponseEntity<ResponseDto> changePassword(@RequestBody Users user) {
 
 		userserv.updateUserPassword(user);
-
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(new ResponseDto(HttpStatus.OK.toString(), "Password Changed Successfully"));
 	}
 
 	@GetMapping("/otp/{vemail}")
-	public ResponseEntity<String> otpForForgotPassword(@PathVariable String vemail, HttpSession sess) {
+	public ResponseEntity<?> otpForForgotPassword(@PathVariable String vemail, HttpSession sess) {
 		if (userserv.getUserByEmail(vemail) != null) {
 			otpserv.generateotp(vemail);
 			int otp = otpserv.getOtp(vemail);
@@ -54,7 +54,31 @@ public class ChangePasswordController {
 					"OTP for confirmation");
 			return new ResponseEntity<String>("" + otpserv.getOtp(vemail), HttpStatus.OK);
 		} else {
-			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponseDto("", HttpStatus.NOT_FOUND,
+					"No User found for given Email ID " + vemail, LocalDateTime.now().toString()));
 		}
+	}
+
+	@GetMapping("/email/{vemail:.+}/otp/{otp}")
+	public ResponseEntity<?> validateOtpForForgotPassword(@PathVariable String vemail, @PathVariable int otp,
+			HttpSession sess) {
+
+		int ootp = otpserv.getOtp(vemail);
+
+		if (!vemail.equals("") && (ootp == otp)) {
+
+			return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(), "Otp Matched"));
+		}
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponseDto("",
+				HttpStatus.INTERNAL_SERVER_ERROR, "OTP did not matched", LocalDateTime.now().toString()));
+
+	}
+
+	@PutMapping("/forgot")
+	public ResponseEntity<ResponseDto> forgotPasswordChange(@RequestBody Users user) {
+		userserv.updateUserPassword(user);
+
+		return ResponseEntity.status(HttpStatus.OK).body(
+				new ResponseDto(HttpStatus.OK.toString(), "Password Changed Successfully! Please Log in to continue."));
 	}
 }

@@ -47,7 +47,7 @@ public class JwtAuthentication {
 		http.httpBasic(basic->{});
 		http.authorizeHttpRequests(auth -> {
 		
-			auth.requestMatchers("/users/**","/authenticate","/error").permitAll();
+			auth.requestMatchers("/users/**","/authenticate","/error","/password/otp/*","/password/forgot","/password/email/*/otp/*").permitAll();
 			auth.anyRequest().authenticated();
 		});
 
