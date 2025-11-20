@@ -60,6 +60,9 @@ public class EmployeeHistory {
 	@Column(name="emp_code")
 	String empCode;
 	
+	@Column(name="emp_name")
+	String empName;
+	
 	int status;
 
 }

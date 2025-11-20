@@ -114,29 +114,59 @@ public class EmployeeServImpl implements IEmployeeService {
 	}
 
 	@Override
-	@Transactional
+//	@Transactional
 	public int updateEmployee(Employee emp) {
-
-//		int result = emprepo.updateEmployee(emp.getEmp_id(), emp.getEmp_name(), emp.getEmp_code(),
-//				emp.getContractor_name(), emp.getCategory().getCategory_id(), emp.getJoining_date(),
-//				emp.getDepartment().getDept_id(), emp.getDesignation().getDesig_id());
-
+ 
 		Employee updatedEmployee = emprepo.save(emp);
 
 		if (updatedEmployee != null) {
-			Activity activity = Activity.builder().activity("Company " + emp.getEmpName() + " is saved successfully")
-					.activityDate(dday.format(LocalDateTime.now())).activityTime(ttime.format(LocalDateTime.now()))
-					.build();
-			activityrepo.save(activity);
-			return 1;
-		} else {
-			Activity activity = Activity.builder()
-					.activity("Company " + emp.getEmpName() + " is not updated successfully")
-					.activityDate(dday.format(LocalDateTime.now())).activityTime(ttime.format(LocalDateTime.now()))
-					.build();
-			activityrepo.save(activity);
-			throw new ResourceNotModifiedException("Employee " + emp.getEmpName() + " is not Updated");
-		}
+			EmployeeHistory emphist =new EmployeeHistory();
+			emphist.setEmployee(updatedEmployee);
+			
+			if(updatedEmployee.getCategory()!=null) {
+				emphist.setCategory(updatedEmployee.getCategory().getCategory());
+			}
+			else {
+				emphist.setCategory("");
+			}
+			if(updatedEmployee.getDesignation()!=null) {
+				emphist.setDesigName(updatedEmployee.getDesignation().getDesigName());
+			}
+			else {
+				emphist.setDesigName("");
+			}
+			
+			if(updatedEmployee.getDepartment()!=null) {
+				emphist.setDeptName(updatedEmployee.getDepartment().getDeptName());
+				emphist.setCompName(updatedEmployee.getDepartment().getCompany().getCompName());
+			} 
+			else {
+				emphist.setDeptName("");
+				emphist.setCompName("");				
+			}
+			emphist.setContractorName(updatedEmployee.getContractorName());
+			emphist.setJoiningDate(updatedEmployee.getJoiningDate());
+			emphist.setEmpCode(updatedEmployee.getEmpCode());
+			emphist.setStatus(updatedEmployee.getStatus());
+			emphist.setEmpName(updatedEmployee.getEmpName());
+			
+			emphistserv.saveEmployeeHistory(emphist);
+			
+				Activity activity = Activity.builder().activity("Company " + emp.getEmpName() + " is saved successfully")
+						.activityDate(dday.format(LocalDateTime.now())).activityTime(ttime.format(LocalDateTime.now()))
+						.build();
+				activityrepo.save(activity);
+				return 1;
+			}	
+
+			else {
+				Activity activity = Activity.builder()
+						.activity("Company " + emp.getEmpName() + " is not updated successfully")
+						.activityDate(dday.format(LocalDateTime.now())).activityTime(ttime.format(LocalDateTime.now()))
+						.build();
+				activityrepo.save(activity);
+				throw new ResourceNotModifiedException("Employee " + emp.getEmpName() + " is not Updated");
+			}
 	}
 
 	@Override
@@ -222,40 +252,41 @@ public class EmployeeServImpl implements IEmployeeService {
 					emp.setStatus(1);
 
 					Employee uploadedEmployee = emprepo.save(emp);
+					if(uploadedEmployee!=null)
+					{	
+						EmployeeHistory empHist = new EmployeeHistory();
 
-					EmployeeHistory empHist = new EmployeeHistory();
-					empHist.setContractorName(uploadedEmployee.getContractorName());
-					if (category != null) {
-						empHist.setCategory(uploadedEmployee.getCategory().getCategory());
-					} else {
-						empHist.setCategory("");
-					}
-
-					if (desig != null) {
-						empHist.setDesigName(uploadedEmployee.getDesignation().getDesigName());
-					} else {
-						empHist.setDesigName("");
-					}
-					empHist.setEmployee(uploadedEmployee);
-					empHist.setJoiningDate(uploadedEmployee.getJoiningDate());
-					empHist.setEmpCode(uploadedEmployee.getEmpCode());
-
-					if (dept != null) {
-						empHist.setDeptName(uploadedEmployee.getDepartment().getDeptName());
-						empHist.setCompName(uploadedEmployee.getDepartment().getCompany().getCompName());
-					} else {
-						empHist.setDeptName("");
-						if(comp!=null) {
-							empHist.setCompName(comp.getCompName());
+						empHist.setEmpName(uploadedEmployee.getEmpName());
+						empHist.setContractorName(uploadedEmployee.getContractorName());
+						if (category != null) {
+							empHist.setCategory(uploadedEmployee.getCategory().getCategory());
+						} else {
+							empHist.setCategory("");
 						}
-						else {
-							empHist.setCompName("");
+
+						if (desig != null) {
+							empHist.setDesigName(uploadedEmployee.getDesignation().getDesigName());
+						} else {
+							empHist.setDesigName("");
 						}
-					}
+						empHist.setEmployee(uploadedEmployee);
+						empHist.setJoiningDate(uploadedEmployee.getJoiningDate());
+						empHist.setEmpCode(uploadedEmployee.getEmpCode());
 
-					empHist.setStatus(uploadedEmployee.getStatus());
-
-					emphistserv.saveEmployeeHistory(empHist);
+						if (dept != null) {
+							empHist.setDeptName(uploadedEmployee.getDepartment().getDeptName());
+							empHist.setCompName(uploadedEmployee.getDepartment().getCompany().getCompName());
+						} else {
+							empHist.setDeptName("");
+							if (comp != null) {
+								empHist.setCompName(comp.getCompName());
+							} else {
+								empHist.setCompName("");
+							}
+						}
+						empHist.setStatus(uploadedEmployee.getStatus());
+						emphistserv.saveEmployeeHistory(empHist);
+				  }
 				}
 			}
 		} catch (Exception e) {
