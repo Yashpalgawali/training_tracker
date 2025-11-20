@@ -44,6 +44,7 @@ public class ExportSampleToUploadEmployees {
 		createCell(row,6,"Joining Date",style);
 		createCell(row,7,"Contractor",style);
 		createCell(row,8,"Category",style);
+		createCell(row,9,"Status",style);
 		 
 	}
 	
@@ -85,33 +86,9 @@ public class ExportSampleToUploadEmployees {
 			createCell(row,i++, "" ,style);
 			createCell(row,i++, "" ,style);
 			createCell(row,i++, "" ,style);
+			createCell(row,i++, "" ,style);
 		}
-		
-		
-		
-//		if(EmployeeList.size() > 0 ) {
-//		for(EmployeeDTO employee : EmployeeList)
-//		{
-//			Row row = sheet.createRow(rowCount++);
-//			
-//			int columnCount = 0;
-//			
-//			createCell(row,columnCount++, sr++ ,style);
-//			createCell(row,columnCount++, employee.getEmp_name() , style);
-//			createCell(row,columnCount++, employee.getEmp_code() , style);
-//			createCell(row,columnCount++, employee.getDesignation() , style);
-//			createCell(row,columnCount++, employee.getDepartment() , style);
-//			createCell(row,columnCount++, employee.getCompany() , style);
-//			createCell(row,columnCount++, employee.getJoining_date(), style);
-//			createCell(row,columnCount++, employee.getContractor_name() ,style);
-//			createCell(row,columnCount++, employee.getCategory() ,style);
-//		  }
-//	    }
-//		else {
-//			Row row = sheet.createRow(rowCount++);			
-//			int columnCount = 0;			
-//			createCell(row,columnCount++, "No Data Found " ,style);
-//		}
+	 
 	}
 
 	public byte[] export(HttpServletResponse resp)throws IOException

@@ -33,15 +33,17 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>  {
 	public Optional<Employee>findByEmpCode(String empcode);	
  	@Query("""
 		    SELECT e FROM Employee e
+		    LEFT JOIN e.designation de
+		    LEFT JOIN e.department d
+		    LEFT JOIN d.company c
 		    WHERE
-
 		        LOWER(e.empName) LIKE LOWER(CONCAT('%', :search, '%'))
-
 		        OR LOWER(e.joiningDate) LIKE LOWER(CONCAT('%', :search, '%'))
 		        OR LOWER(e.contractorName) LIKE LOWER(CONCAT('%', :search, '%'))
-		        OR LOWER(e.designation.desigName) LIKE LOWER(CONCAT('%', :search, '%'))
-		        OR LOWER(e.department.deptName) LIKE LOWER(CONCAT('%', :search, '%'))
-		        OR LOWER(e.department.company.compName) LIKE LOWER(CONCAT('%', :search, '%'))
+		        OR LOWER(COALESCE(de.desigName,'')) LIKE LOWER(CONCAT('%', :search, '%'))
+		        OR LOWER(COALESCE(d.deptName,'')) LIKE LOWER(CONCAT('%', :search, '%'))
+		        OR LOWER(COALESCE(c.compName,'')) LIKE LOWER(CONCAT('%', :search, '%'))
+ 			    OR e.empCode LIKE CONCAT('%', :search, '%')
 		        OR (
  					 (LOWER(:search) LIKE CONCAT('%', 'active', '%') AND e.status = 1)
 		             OR (LOWER(:search) LIKE CONCAT('%', 'inactive', '%') AND e.status = 2)

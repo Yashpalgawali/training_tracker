@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.demo.dto.EmployeeDTO;
 import com.example.demo.entity.Activity;
 import com.example.demo.entity.Category;
+import com.example.demo.entity.Company;
 import com.example.demo.entity.Department;
 import com.example.demo.entity.Designation;
 import com.example.demo.entity.Employee;
@@ -39,6 +40,7 @@ import com.example.demo.repository.DepartmentRepository;
 import com.example.demo.repository.DesignationRepository;
 import com.example.demo.repository.EmployeeRepository;
 import com.example.demo.service.ICategoryService;
+import com.example.demo.service.ICompanyService;
 import com.example.demo.service.IEmployeeHistoryService;
 import com.example.demo.service.IEmployeeService;
 import com.example.demo.service.IEmployeeTrainingService;
@@ -53,10 +55,11 @@ public class EmployeeServImpl implements IEmployeeService {
 	private final IEmployeeTrainingService emptrainserv;
 	private final ActivityRepository activityrepo;
 	private final IEmployeeHistoryService emphistserv;
+	private final ICompanyService compserv;
 
 	public EmployeeServImpl(EmployeeRepository emprepo, DesignationRepository desigrepo, DepartmentRepository deptrepo,
 			ICategoryService categoryserv, IEmployeeTrainingService emptrainserv, ActivityRepository activityrepo,
-			IEmployeeHistoryService emphistserv) {
+			IEmployeeHistoryService emphistserv, ICompanyService compserv) {
 		super();
 		this.emprepo = emprepo;
 		this.desigrepo = desigrepo;
@@ -65,6 +68,7 @@ public class EmployeeServImpl implements IEmployeeService {
 		this.emptrainserv = emptrainserv;
 		this.activityrepo = activityrepo;
 		this.emphistserv = emphistserv;
+		this.compserv = compserv;
 	}
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
@@ -77,6 +81,20 @@ public class EmployeeServImpl implements IEmployeeService {
 
 		Employee savedEmployee = emprepo.save(emp);
 		if (savedEmployee != null) {
+
+			EmployeeHistory emphist = new EmployeeHistory();
+			emphist.setEmployee(savedEmployee);
+			emphist.setCategory(savedEmployee.getCategory().getCategory());
+			emphist.setCompName(savedEmployee.getDepartment().getCompany().getCompName());
+			emphist.setContractorName(savedEmployee.getContractorName());
+			emphist.setDeptName(savedEmployee.getDepartment().getDeptName());
+			emphist.setDesigName(savedEmployee.getDesignation().getDesigName());
+			emphist.setEmpCode(savedEmployee.getEmpCode());
+			emphist.setJoiningDate(savedEmployee.getJoiningDate());
+			emphist.setStatus(savedEmployee.getStatus());
+
+			emphistserv.saveEmployeeHistory(emphist);
+
 			Activity activity = Activity.builder()
 					.activity("Company " + savedEmployee.getEmpName() + " is saved successfully")
 					.activityDate(dday.format(LocalDateTime.now())).activityTime(ttime.format(LocalDateTime.now()))
@@ -170,34 +188,73 @@ public class EmployeeServImpl implements IEmployeeService {
 					emp.setEmpName(getCellValue(row.getCell(0)));
 					emp.setEmpCode(getCellValue(row.getCell(1)));
 
-					Designation desig = desigrepo.findByDesigName(getCellValue(row.getCell(2)));
+					Designation desig = null;
+					desig = desigrepo.findByDesigName(getCellValue(row.getCell(2)));
+
 					emp.setDesignation(desig);
+
 					String dept_name = getCellValue(row.getCell(3));
 					String comp_name = getCellValue(row.getCell(4));
-					Department dept = deptrepo.getDepartmentByDeptNameAndCompanyName(dept_name.trim(),
-							comp_name.trim());
+					Department dept = null;
+					Company comp =null;
+					
+					if (!dept_name.equals("")) {
+						 
+						dept = deptrepo.getDepartmentByDeptNameAndCompanyName(dept_name.trim(),
+									comp_name.trim());
+					}
+					if(!comp_name.equals("")) {
+						comp = compserv.getCompanyByName(comp_name);
+					}
 
 					emp.setDepartment(dept);
 
 					emp.setJoiningDate(getCellValue(row.getCell(5)));
 					emp.setContractorName(getCellValue(row.getCell(6)));
 
-					Category category = categoryserv.getCategoryByCategoryName(getCellValue(row.getCell(7)));
+					String categoryValue = getCellValue(row.getCell(7));
+					Category category = null;
+					if (!categoryValue.equals("")) {
+						category = categoryserv.getCategoryByCategoryName(categoryValue);
+					}
 
 					emp.setCategory(category);
+					emp.setStatus(1);
 
 					Employee uploadedEmployee = emprepo.save(emp);
+
 					EmployeeHistory empHist = new EmployeeHistory();
 					empHist.setContractorName(uploadedEmployee.getContractorName());
-					empHist.setCategory(uploadedEmployee.getCategory().getCategory());
-					empHist.setDesigName(uploadedEmployee.getDesignation().getDesigName());
+					if (category != null) {
+						empHist.setCategory(uploadedEmployee.getCategory().getCategory());
+					} else {
+						empHist.setCategory("");
+					}
+
+					if (desig != null) {
+						empHist.setDesigName(uploadedEmployee.getDesignation().getDesigName());
+					} else {
+						empHist.setDesigName("");
+					}
 					empHist.setEmployee(uploadedEmployee);
 					empHist.setJoiningDate(uploadedEmployee.getJoiningDate());
 					empHist.setEmpCode(uploadedEmployee.getEmpCode());
-					empHist.setDeptName(uploadedEmployee.getDepartment().getDeptName());
-					empHist.setCompName(uploadedEmployee.getDepartment().getCompany().getCompName());
+
+					if (dept != null) {
+						empHist.setDeptName(uploadedEmployee.getDepartment().getDeptName());
+						empHist.setCompName(uploadedEmployee.getDepartment().getCompany().getCompName());
+					} else {
+						empHist.setDeptName("");
+						if(comp!=null) {
+							empHist.setCompName(comp.getCompName());
+						}
+						else {
+							empHist.setCompName("");
+						}
+					}
+
 					empHist.setStatus(uploadedEmployee.getStatus());
-					
+
 					emphistserv.saveEmployeeHistory(empHist);
 				}
 			}
@@ -265,9 +322,19 @@ public class EmployeeServImpl implements IEmployeeService {
 				empdto.setEmpName(emp.getEmpName());
 				empdto.setJoiningDate(emp.getJoiningDate());
 				empdto.setEmpCode(emp.getEmpCode());
-				empdto.setDesignation(emp.getDesignation().getDesigName());
-				empdto.setDepartment(emp.getDepartment().getDeptName());
-				empdto.setCompany(emp.getDepartment().getCompany().getCompName());
+				if (emp.getDesignation() != null) {
+					empdto.setDesignation(emp.getDesignation().getDesigName());
+				} else {
+					empdto.setDesignation("");
+				}
+				if (emp.getDepartment() != null) {
+					empdto.setDepartment(emp.getDepartment().getDeptName());
+					empdto.setCompany(emp.getDepartment().getCompany().getCompName());
+				} else {
+					empdto.setDepartment("");
+					empdto.setCompany("");
+				}
+
 				empdto.setContractorName(emp.getContractorName());
 
 				if (emp.getStatus() == 1) {
@@ -292,9 +359,18 @@ public class EmployeeServImpl implements IEmployeeService {
 				empdto.setEmpName(emp.getEmpName());
 				empdto.setJoiningDate(emp.getJoiningDate());
 				empdto.setEmpCode(emp.getEmpCode());
-				empdto.setDesignation(emp.getDesignation().getDesigName());
-				empdto.setDepartment(emp.getDepartment().getDeptName());
-				empdto.setCompany(emp.getDepartment().getCompany().getCompName());
+				if (emp.getDesignation() != null) {
+					empdto.setDesignation(emp.getDesignation().getDesigName());
+				} else {
+					empdto.setDesignation("");
+				}
+				if (emp.getDepartment() != null) {
+					empdto.setDepartment(emp.getDepartment().getDeptName());
+					empdto.setCompany(emp.getDepartment().getCompany().getCompName());
+				} else {
+					empdto.setDepartment("");
+					empdto.setCompany("");
+				}
 				empdto.setContractorName(emp.getContractorName());
 				if (emp.getStatus() == 1) {
 					empdto.setStatus("Active");
@@ -330,9 +406,9 @@ public class EmployeeServImpl implements IEmployeeService {
 	public List<Employee> getAllActiveEmployees() {
 
 		List<Employee> activeEmpList = emprepo.findByStatus(1);
-		if(activeEmpList.size()> 0 ) {
+		if (activeEmpList.size() > 0) {
 			return activeEmpList;
 		}
-		throw new ResourceNotFoundException("No Active Employees found");		
+		throw new ResourceNotFoundException("No Active Employees found");
 	}
 }

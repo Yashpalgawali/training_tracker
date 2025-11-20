@@ -92,4 +92,9 @@ public class CompanyServImpl implements ICompanyService {
 		}
 	}
 
+	@Override
+	public Company getCompanyByName(String comp_name) {
+		return comprepo.findByCompName(comp_name);		
+	}
+
 }

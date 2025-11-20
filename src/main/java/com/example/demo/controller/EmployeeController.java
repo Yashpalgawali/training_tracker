@@ -167,10 +167,29 @@ public class EmployeeController {
 			@RequestParam(defaultValue = "10") int length, @RequestParam(required = false) String search,
 			@RequestParam(required = false) String orderColumn, @RequestParam(required = false) String orderDir) {
 
-		Map<String, Object> response = empserv.getAllEmployeesWithPagination(start, length, search, orderColumn,
+		String mappedColumn = mapSortColumn(orderColumn);
+
+		Map<String, Object> response = empserv.getAllEmployeesWithPagination(start, length, search, mappedColumn,
 				orderDir);
+
 		return response;
 	}
+	
+	private String mapSortColumn(String col) {
+	    return switch (col) {
+	        case "empId" -> "empId";
+	        case "empCode" -> "empCode";
+	        case "empName" -> "empName";
+	        case "joiningDate" -> "joiningDate";
+	        case "contractorName" -> "contractorName";
+
+	        case "department" -> "department.deptName";
+	        case "designation" -> "designation.desigName";
+	        case "company" -> "department.company.compName"; // <-- IMPORTANT
+
+	        default -> "empId"; // fallback
+	    };
+	} 
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Employee> getEmployeebyEmployeeId(@PathVariable("id") Long empid) {

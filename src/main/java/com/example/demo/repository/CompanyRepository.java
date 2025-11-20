@@ -1,11 +1,8 @@
 package com.example.demo.repository;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +17,8 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
 	@Transactional
 	public int updateCompany(Long compid,String compname);
 	
-	@Query("SELECT c FROM Company c WHERE c.compName=:comp_name")
-	Company findByComp_name(String comp_name);
+//	@Query("SELECT c FROM Company c WHERE c.compName=:comp_name")
+//	Company findByComp_name(String comp_name);
+	Company findByCompName(String compName);
 
 }

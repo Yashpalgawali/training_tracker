@@ -12,5 +12,7 @@ public interface ICompanyService {
 	
 	public Company getCompanyById(Long comp_id);
 	
+	public Company getCompanyByName(String comp_name);
+	
 	public int updateCompany(Company company);
 }
