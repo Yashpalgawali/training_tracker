@@ -28,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.demo.dto.EmployeeDTO;
 import com.example.demo.dto.ResponseDto;
 import com.example.demo.entity.Employee;
+import com.example.demo.entity.EmployeeHistory;
 import com.example.demo.entity.Training;
 import com.example.demo.export.ExportAllEmployees;
 import com.example.demo.export.ExportSampleToUploadEmployees;
@@ -220,6 +221,7 @@ public class EmployeeController {
 		return ResponseEntity.status(HttpStatus.OK).body(trainList);
 
 	}
+	 
 
 	@GetMapping("/export/employee/list")
 //	@Operation(description = "This end point will Export the All assigned assets to excel file ", summary ="Export All Assigned Assets to the Excel")
@@ -239,9 +241,15 @@ public class EmployeeController {
 			empdto.setEmpCode(emp.getEmpCode());
 			empdto.setJoiningDate(emp.getJoiningDate());
 			empdto.setContractorName(emp.getContractorName());
-			empdto.setCompany(emp.getDepartment().getCompany().getCompName());
-			empdto.setDepartment(emp.getDepartment().getDeptName());
-
+			if(emp.getDepartment()!=null)
+			{
+				empdto.setCompany(emp.getDepartment().getCompany().getCompName());
+				empdto.setDepartment(emp.getDepartment().getDeptName());
+			}
+			else {
+				empdto.setCompany("");
+				empdto.setDepartment("");
+				}
 			if (emp.getDesignation() != null) {
 				empdto.setDesignation(emp.getDesignation().getDesigName());
 			} else {
