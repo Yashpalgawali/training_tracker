@@ -37,7 +37,7 @@ public class ChangePasswordController {
 
 	@PutMapping("/change")
 	public ResponseEntity<ResponseDto> changePassword(@RequestBody Users user) {
-
+		
 		userserv.updateUserPassword(user);
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(new ResponseDto(HttpStatus.OK.toString(), "Password Changed Successfully"));

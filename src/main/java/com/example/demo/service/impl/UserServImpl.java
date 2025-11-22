@@ -42,9 +42,7 @@ public class UserServImpl implements IUserService {
 		{
 			result = userrepo.updateUsersPasswordByEmail(encryptedPass, email); 
 		}
-		else {
-			
-		}
+		else {		}
 		
 		if(result>0 ) {
 			return result;

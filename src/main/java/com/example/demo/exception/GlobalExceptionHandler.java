@@ -27,7 +27,7 @@ public class GlobalExceptionHandler {
 	}
 	
 	@ExceptionHandler(BadCredentialsException.class)
-	public ResponseEntity<ErrorResponseDto> handleResourceNotFoundException(BadCredentialsException exception , WebRequest request){
+	public ResponseEntity<ErrorResponseDto> handleBadCredentialsException(BadCredentialsException exception , WebRequest request){
 		
 		ErrorResponseDto error = new ErrorResponseDto(
 													request.getDescription(false),
