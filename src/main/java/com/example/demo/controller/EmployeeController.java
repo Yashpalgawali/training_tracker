@@ -112,6 +112,14 @@ public class EmployeeController {
 
 	}
 	
+	@GetMapping("/training/{training_id}/competency/{competency_id}")
+	public ResponseEntity<List<EmployeeDTO>> getAllEmployeesWithoutTrainingAndCompetency(@PathVariable Long training_id,@PathVariable Long competency_id ) {
+
+		List<EmployeeDTO> empList = empserv.getAllEmployeesWithoudTrainingAndCompetency(training_id, competency_id);
+		return ResponseEntity.status(HttpStatus.OK).body(empList);
+
+	}
+	
 	
 	@GetMapping("/active")
 	public ResponseEntity<List<Employee>> getAllActiveEmployees() {

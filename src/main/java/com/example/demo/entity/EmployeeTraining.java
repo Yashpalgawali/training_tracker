@@ -45,18 +45,6 @@ public class EmployeeTraining {
 	@JoinColumn(name = "emp_id")
 	Employee employee;
 
-//	@ManyToMany
-//	@JoinTable(name = "tbl_employee_training_new",
-//		joinColumns= {
-//				@JoinColumn(name="emp_id")
-//		},
-//		inverseJoinColumns = {
-//				@JoinColumn(name="training_id")
-//		}
-//	)
-//	Set<Training> trainingSet = new HashSet<>();
-	
-
 	
 	@ManyToOne
 	@JoinColumn(name = "training_id")
@@ -70,8 +58,6 @@ public class EmployeeTraining {
 	@JoinColumn(name="training_time_slot_id")
 	TrainingTimeSlot trainingTimeSlot;
 
-//	@Transient
-//	List<Long> training_ids;
 	@Transient
 	Long training_ids;
 	

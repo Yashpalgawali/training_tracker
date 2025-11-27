@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.example.demo.dto.ChartDto;
 import com.example.demo.dto.EmployeeTrainingDto;
+import com.example.demo.dto.TrainingAssignmentRequest;
 import com.example.demo.entity.CompetencyScore;
 import com.example.demo.entity.EmployeeTraining;
 import com.example.demo.entity.Training;
@@ -11,6 +12,9 @@ import com.example.demo.entity.Training;
 public interface IEmployeeTrainingService {
 
 	public EmployeeTraining saveEmployeeTraining(EmployeeTraining emp_training);
+	
+	public TrainingAssignmentRequest saveTrainingAssignmentRequest(TrainingAssignmentRequest emp_training); 
+	
 
 	public List<EmployeeTraining> getAllEmployeesTrainingHistory();
 
@@ -29,6 +33,8 @@ public interface IEmployeeTrainingService {
 	public List<CompetencyScore> getAllTrainingCompetenciesByEmpId(Long emp_id);
 
 	public int updateEmployeeTraining(EmployeeTraining emptraining);
+	
+	public int updateTrainingAssignmentRequest(TrainingAssignmentRequest emp_training); 
 	
 	public int countTrainingByEmpId(Long emp_id);
 	

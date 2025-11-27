@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.dto.ChartDto;
 import com.example.demo.dto.EmployeeTrainingDto;
 import com.example.demo.dto.ResponseDto;
+import com.example.demo.dto.TrainingAssignmentRequest;
 import com.example.demo.entity.Competency;
 import com.example.demo.entity.CompetencyScore;
 import com.example.demo.entity.Employee;
@@ -82,24 +83,49 @@ public class EmployeeTrainingController {
 		return ResponseEntity.status(HttpStatus.OK).body(trainingHistory);
 	}
 
+//	@PostMapping("/")
+//	public ResponseEntity<ResponseDto> saveEmployeeTraining(@RequestBody EmployeeTraining emptraining) {
+//
+//		System.err.println("EMployee trianing Object is " + emptraining.getEmployee());
+////		return null;
+//		EmployeeTraining savedEmployeeTraining = emptrainserv.saveEmployeeTraining(emptraining);
+//		return ResponseEntity.status(HttpStatus.CREATED)
+//				.body(new ResponseDto(HttpStatus.CREATED.toString(),
+//						"Training " + savedEmployeeTraining.getTraining().getTraining_name() + " is started of "
+//								+ emptraining.getEmployee().getEmpName()));
+//	}
+	
 	@PostMapping("/")
-	public ResponseEntity<ResponseDto> saveEmployeeTraining(@RequestBody EmployeeTraining emptraining) {
-
-		System.err.println("EMployee trianing Object is " + emptraining.getEmployee());
-//		return null;
-		EmployeeTraining savedEmployeeTraining = emptrainserv.saveEmployeeTraining(emptraining);
+	public ResponseEntity<ResponseDto> saveEmployeeTraining(@RequestBody TrainingAssignmentRequest emptraining) {
+		
+		System.err.println(emptraining.toString());
+		logger.info("Object is {} ",emptraining);
+	 
+		TrainingAssignmentRequest saveTrainingAssignmentRequest = emptrainserv.saveTrainingAssignmentRequest(emptraining);
+//		EmployeeTraining savedEmployeeTraining = emptrainserv.saveEmployeeTraining(emptraining);
 		return ResponseEntity.status(HttpStatus.CREATED)
 				.body(new ResponseDto(HttpStatus.CREATED.toString(),
-						"Training " + savedEmployeeTraining.getTraining().getTraining_name() + " is started of "
-								+ emptraining.getEmployee().getEmpName()));
+						"Training is started of All employees "));
 	}
 
+//	@PutMapping("/")
+//	public ResponseEntity<ResponseDto> updateEmployeeTraining(@RequestBody EmployeeTraining emptraining) {
+//
+//		emptrainserv.updateEmployeeTraining(emptraining);
+//		logger.info("Object is {} ",emptraining);
+//		
+//		Employee trainedEmployee  = empserv.getEmployeeByEmployeeId(emptraining.getEmployee().getEmpId());
+//		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
+//				"Training is Updated of the Employee " + trainedEmployee.getEmpName()));
+//	}
+	
 	@PutMapping("/")
-	public ResponseEntity<ResponseDto> updateEmployeeTraining(@RequestBody EmployeeTraining emptraining) {
+	public ResponseEntity<ResponseDto> updateEmployeeTraining(@RequestBody TrainingAssignmentRequest emp_training) {
 
-		emptrainserv.updateEmployeeTraining(emptraining);
-
-		Employee trainedEmployee = empserv.getEmployeeByEmployeeId(emptraining.getEmployee().getEmpId());
+		emptrainserv.updateTrainingAssignmentRequest(emp_training);
+		logger.info("Object is {} ",emp_training);
+		
+		Employee trainedEmployee  = empserv.getEmployeeByEmployeeId(emp_training.getEmployeeIds().getFirst());
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
 				"Training is Updated of the Employee " + trainedEmployee.getEmpName()));
 	}

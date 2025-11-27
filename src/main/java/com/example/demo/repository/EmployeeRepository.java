@@ -53,6 +53,11 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>  {
 		""")
 	Page<Employee> searchEmployees(@Param("search") String search,Pageable pageable);
 	
+ 	
+ 	// This query returns all employees who don't have matching training_id and competency_id less than or equal
+ 	@Query(value="SELECT e.*emp_id,e.emp_name FROM tbl_employee e  WHERE e.status=1 AND e.emp_id NOT IN (SELECT et.emp_id FROM tbl_employee_training et WHERE et.competency_id<=:competency_id and et.training_id=:training_id )",nativeQuery = true)
+ 	public List<Employee> getAllEmployeesNotHaveTrainingAndCompetency(Long training_id,Long competency_id);
+ 	
 //	Page<Employee> findByEmpNameContainingIgnoreCaseOrEmpCodeOrJoiningDateOrContractorNameContainingIgnoreCaseOrDesignationOrDepartment(
 //	        String empName, String empCode, String joiningDate,String contractor,Designation designation,Department department, Pageable pageable);
 

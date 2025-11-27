@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -441,5 +442,26 @@ public class EmployeeServImpl implements IEmployeeService {
 			return activeEmpList;
 		}
 		throw new ResourceNotFoundException("No Active Employees found");
+	}
+
+	@Override
+	public List<EmployeeDTO> getAllEmployeesWithoudTrainingAndCompetency(Long training_id, Long competency_id) {
+		var elist = emprepo.getAllEmployeesNotHaveTrainingAndCompetency(training_id, competency_id);
+
+		if (elist.size() > 0) {
+			List<EmployeeDTO> collect = elist.stream().map(emp -> {
+				 
+				EmployeeDTO empdto = new EmployeeDTO();
+
+				empdto.setEmpId(emp.getEmpId());
+				empdto.setEmpName(emp.getEmpName());
+				
+				return empdto;
+
+			}).collect(Collectors.toList());
+			return collect;
+		} else {
+			throw new ResourceNotFoundException("No Employees found !!!");
+		}
 	}
 }

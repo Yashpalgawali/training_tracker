@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+import com.example.demo.dto.EmployeeDTO;
 import com.example.demo.entity.Employee;
 import com.example.demo.entity.Training;
 
@@ -18,6 +19,8 @@ public interface IEmployeeService {
 	public int updateEmployee(Employee emp);
 	
 	public List<Employee> getAllEmployees();
+	
+	public List<EmployeeDTO> getAllEmployeesWithoudTrainingAndCompetency(Long training_id,Long competency_id);
 	
 	public List<Employee> getAllActiveEmployees();
 	

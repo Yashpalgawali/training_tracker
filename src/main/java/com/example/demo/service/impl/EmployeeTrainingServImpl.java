@@ -13,10 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.dto.ChartDto;
 import com.example.demo.dto.EmployeeTrainingDto;
+import com.example.demo.dto.TrainingAssignmentRequest;
 import com.example.demo.entity.Activity;
 import com.example.demo.entity.Competency;
 import com.example.demo.entity.CompetencyScore;
 import com.example.demo.entity.Employee;
+import com.example.demo.entity.EmployeeHistory;
 import com.example.demo.entity.EmployeeTraining;
 import com.example.demo.entity.EmployeeTrainingHistory;
 import com.example.demo.entity.Training;
@@ -128,6 +130,7 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 				emptrainrepo.findByEmployeeId(empid).stream().map(emph -> {
 					EmployeeTraining emhist = new EmployeeTraining();
 					
+					emhist.setEmp_train_id(emph.getEmp_train_id());
 					emhist.setTraining(emph.getTraining());
 					emhist.setEmployee(emph.getEmployee());
 					emhist.setTraining_date(emph.getTraining_date());
@@ -254,7 +257,7 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 
 			return result;
 		} else {
-			throw new GlobalException(" ");
+			throw new GlobalException("Training "+emptraining.getTraining().getTraining_name()+" is not updated");
 		}
 
 	}
@@ -309,6 +312,86 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 		List<EmployeeTraining> trainList = emptrainrepo.getEmployeesByTrainingAndCompetencyId(training_id,
 				competency_id);
 		return trainList;
+	}
+
+	@Override
+	public TrainingAssignmentRequest saveTrainingAssignmentRequest(TrainingAssignmentRequest emp_training) {
+
+		Optional<Competency> competencyObject =Optional.ofNullable(competencyrepo.findById(emp_training.getCompetencyId()).orElse(null));
+		
+		Competency competency = competencyObject.get();
+		
+	 	Training training = trainserv.getTrainingById(emp_training.getTrainingId());
+	 	
+	 	TrainingTimeSlot trainingTimeSlot = traintimeslotserv.getTrainingTimeSlotById(emp_training.getTrainingTimeSlotId());
+	 	
+	 	for(Long empid : emp_training.getEmployeeIds()) {
+	 		
+	 		Optional<Employee> empObject = Optional.ofNullable(emprepo.findById(empid).orElse(null));
+	 		
+	 		if(empObject!=null) {
+	 			
+	 			Employee employee = empObject.get();
+	 			
+	 			EmployeeTraining emptrain = new EmployeeTraining();
+	 			
+	 			emptrain.setCompetency(competency);	 			
+	 			emptrain.setEmployee(employee);
+	 			emptrain.setTraining(training);
+	 			emptrain.setTrainingTimeSlot(trainingTimeSlot);
+	 			
+	 			emptrain.setCompletion_date(emp_training.getCompletionDate());
+	 			emptrain.setTraining_date(emp_training.getTrainingDate());
+	 			
+	 			EmployeeTraining savedTraining = emptrainrepo.save(emptrain);
+	 			
+	 			if(savedTraining!=null) {
+	 				EmployeeTrainingHistory emptrainhist = new EmployeeTrainingHistory();
+	 				emptrainhist.setCompetency(savedTraining.getCompetency());
+	 				emptrainhist.setTraining(savedTraining.getTraining());
+	 				emptrainhist.setEmployee(savedTraining.getEmployee());
+	 				emptrainhist.setTraining_date(savedTraining.getTraining_date());
+	 				emptrainhist.setTrainingTimeSlot(savedTraining.getTrainingTimeSlot());
+	 				
+	 				emptrainhistserv.saveEmployeeTrainingHistory(emptrainhist);
+	 			}
+	 		}
+	 	}	
+	 	
+		return null;
+	}
+
+	@Override
+	public int updateTrainingAssignmentRequest(TrainingAssignmentRequest emp_training) {
+		
+		Competency compet = competencyrepo.findById(emp_training.getCompetencyId()).get();
+
+		TrainingTimeSlot traintimeslot = traintimeslotserv
+				.getTrainingTimeSlotById(emp_training.getTrainingTimeSlotId());
+
+		int result = emptrainrepo.updateEmployeeTrainingByEmpTrainId(emp_training.getEmp_train_id(),
+				compet.getCompetency_id(), traintimeslot.getTraining_time_slot_id(), emp_training.getTrainingDate(),
+				emp_training.getTrainingDate());
+		if (result > 0) {
+			EmployeeTraining savedEmpTraining = emptrainrepo.getEmployeeTrainingById(emp_training.getEmp_train_id());
+
+			EmployeeTrainingHistory emptrainhist = new EmployeeTrainingHistory();
+
+			emptrainhist.setTraining(savedEmpTraining.getTraining());
+			emptrainhist.setTraining_date(savedEmpTraining.getTraining_date());
+			emptrainhist.setTrainingTimeSlot(savedEmpTraining.getTrainingTimeSlot());
+			emptrainhist.setEmployee(savedEmpTraining.getEmployee());
+			emptrainhist.setCompetency(savedEmpTraining.getCompetency());
+
+			emptrainhistserv.saveEmployeeTrainingHistory(emptrainhist);
+
+			return result;
+		}
+		else {
+			throw new GlobalException("Training is not updated");
+		}
+		
+		 
 	}
 
 }
