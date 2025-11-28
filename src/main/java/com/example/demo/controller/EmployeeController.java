@@ -97,12 +97,12 @@ public class EmployeeController {
 			} else {
 				empdto.setDesignation("");
 			}
-			if(emp.getStatus()==1) {
+			if (emp.getStatus() == 1) {
 				empdto.setStatus("Active");
 			} else {
 				empdto.setStatus("InActive");
 			}
-			
+
 			empdto.setTrainings(training_names);
 			return empdto;
 
@@ -111,65 +111,21 @@ public class EmployeeController {
 		return ResponseEntity.status(HttpStatus.OK).body(collect);
 
 	}
-	
-	@GetMapping("/training/{training_id}/competency/{competency_id}")
-	public ResponseEntity<List<EmployeeDTO>> getAllEmployeesWithoutTrainingAndCompetency(@PathVariable Long training_id,@PathVariable Long competency_id ) {
 
+	@GetMapping("/training/{training_id}/competency/{competency_id}")
+	public ResponseEntity<List<EmployeeDTO>> getAllEmployeesWithoutTrainingAndCompetency(@PathVariable Long training_id,
+			@PathVariable Long competency_id) {
+		logger.warn("Training iID is {} and Competency Id {} ",training_id,competency_id);
 		List<EmployeeDTO> empList = empserv.getAllEmployeesWithoudTrainingAndCompetency(training_id, competency_id);
 		return ResponseEntity.status(HttpStatus.OK).body(empList);
 
 	}
-	
-	
+
 	@GetMapping("/active")
 	public ResponseEntity<List<Employee>> getAllActiveEmployees() {
 
 		return ResponseEntity.status(HttpStatus.OK).body(empserv.getAllActiveEmployees());
 	}
-	
-//	@GetMapping("/training/${tid}/competency/${cid}")
-//	public ResponseEntity<List<EmployeeDTO>> getAllEmployeesDtoByTrainingAndCompetencyId(@PathVariable Long tid,@PathVariable Long cid) {
-//
-//		List<Employee> empList = empserv.getAllEmployees();
-//		List<EmployeeDTO> collect = empList.stream().map(emp -> {
-//			String training_names = emptrainhistserv.getEmployeesTrainingByEmployeeId(emp.getEmpId()).stream()
-//					.map(hist -> hist.getTraining().getTraining_name()).filter(Objects::nonNull)
-//					.collect(Collectors.joining(","));
-//
-//			EmployeeDTO empdto = new EmployeeDTO();
-//
-//			if (training_names != "") {
-//				empdto.setIsTrainingGiven(true);
-//			} else {
-//				empdto.setIsTrainingGiven(false);
-//			}
-//
-//			empdto.setEmpId(emp.getEmpId());
-//			empdto.setEmpName(emp.getEmpName());
-//			empdto.setEmpCode(emp.getEmpCode());
-//			empdto.setJoiningDate(emp.getJoiningDate());
-//			empdto.setContractorName(emp.getContractorName());
-//			if (emp.getDepartment() != null) {
-//				empdto.setCompany(emp.getDepartment().getCompany().getCompName());
-//				empdto.setDepartment(emp.getDepartment().getDeptName());
-//			} else {
-//				empdto.setCompany("");
-//				empdto.setDepartment("");
-//			}
-//			if (emp.getDesignation() != null) {
-//				empdto.setDesignation(emp.getDesignation().getDesigName());
-//			} else {
-//				empdto.setDesignation("");
-//			}
-//
-//			empdto.setTrainings(training_names);
-//			return empdto;
-//
-//		}).collect(Collectors.toList());
-//
-//		return ResponseEntity.status(HttpStatus.OK).body(collect);
-//
-//	}
 
 	@GetMapping("/paged")
 	public Map<String, Object> getEmployees(@RequestParam(defaultValue = "0") int start,
@@ -183,22 +139,22 @@ public class EmployeeController {
 
 		return response;
 	}
-	
+
 	private String mapSortColumn(String col) {
-	    return switch (col) {
-	        case "empId" -> "empId";
-	        case "empCode" -> "empCode";
-	        case "empName" -> "empName";
-	        case "joiningDate" -> "joiningDate";
-	        case "contractorName" -> "contractorName";
+		return switch (col) {
+		case "empId" -> "empId";
+		case "empCode" -> "empCode";
+		case "empName" -> "empName";
+		case "joiningDate" -> "joiningDate";
+		case "contractorName" -> "contractorName";
 
-	        case "department" -> "department.deptName";
-	        case "designation" -> "designation.desigName";
-	        case "company" -> "department.company.compName"; // <-- IMPORTANT
+		case "department" -> "department.deptName";
+		case "designation" -> "designation.desigName";
+		case "company" -> "department.company.compName"; // <-- IMPORTANT
 
-	        default -> "empId"; // fallback
-	    };
-	} 
+		default -> "empId"; // fallback
+		};
+	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Employee> getEmployeebyEmployeeId(@PathVariable("id") Long empid) {
@@ -229,7 +185,6 @@ public class EmployeeController {
 		return ResponseEntity.status(HttpStatus.OK).body(trainList);
 
 	}
-	 
 
 	@GetMapping("/export/employee/list")
 //	@Operation(description = "This end point will Export the All assigned assets to excel file ", summary ="Export All Assigned Assets to the Excel")
@@ -249,15 +204,13 @@ public class EmployeeController {
 			empdto.setEmpCode(emp.getEmpCode());
 			empdto.setJoiningDate(emp.getJoiningDate());
 			empdto.setContractorName(emp.getContractorName());
-			if(emp.getDepartment()!=null)
-			{
+			if (emp.getDepartment() != null) {
 				empdto.setCompany(emp.getDepartment().getCompany().getCompName());
 				empdto.setDepartment(emp.getDepartment().getDeptName());
-			}
-			else {
+			} else {
 				empdto.setCompany("");
 				empdto.setDepartment("");
-				}
+			}
 			if (emp.getDesignation() != null) {
 				empdto.setDesignation(emp.getDesignation().getDesigName());
 			} else {
@@ -273,10 +226,10 @@ public class EmployeeController {
 
 		}).collect(Collectors.toList());
 
-	 	ExportAllEmployees excelExporter = new ExportAllEmployees(empDtoList);
+		ExportAllEmployees excelExporter = new ExportAllEmployees(empDtoList);
 		byte[] excelContent = excelExporter.export(response);
 
-		//excelExporter.export(response);
+		// excelExporter.export(response);
 		// Return the file as a ResponseEntity
 		return ResponseEntity.ok().headers(headers)
 				.contentType(

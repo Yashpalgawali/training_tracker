@@ -448,6 +448,9 @@ public class EmployeeServImpl implements IEmployeeService {
 	public List<EmployeeDTO> getAllEmployeesWithoudTrainingAndCompetency(Long training_id, Long competency_id) {
 		var elist = emprepo.getAllEmployeesNotHaveTrainingAndCompetency(training_id, competency_id);
 
+		logger.warn("employee found {} ",elist);
+		logger.error("Length of the result is {} ",elist.size());
+		
 		if (elist.size() > 0) {
 			List<EmployeeDTO> collect = elist.stream().map(emp -> {
 				 
