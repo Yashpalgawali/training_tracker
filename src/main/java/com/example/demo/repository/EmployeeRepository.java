@@ -1,3 +1,4 @@
+
 package com.example.demo.repository;
 
 import java.util.Optional;
@@ -55,17 +56,16 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>  {
 	
  	
  	// This query returns all employees who don't have matching training_id and competency_id less than or equal
-// 	@Query(value="SELECT e.* FROM tbl_employee e  WHERE e.status=1 AND e.emp_id NOT IN (SELECT et.emp_id FROM tbl_employee_training et WHERE et.competency_id<=:competency_id and et.training_id=:training_id )",nativeQuery = true)
  	@Query(value = """
  		    SELECT e.*
  		    FROM tbl_employee e
  		    WHERE e.status = 1
  		      AND NOT EXISTS (
  		          SELECT 1
- 		          FROM tbl_employee_training et
+ 		          FROM tbl_employee_training_history et
  		          WHERE et.emp_id = e.emp_id
  		            AND et.training_id = :training_id
- 		            AND et.competency_id <= :competency_id
+ 		            AND et.competency_id = :competency_id
  		      )
  		    """, nativeQuery = true)
  	public List<Employee> getAllEmployeesNotHaveTrainingAndCompetency(Long training_id,Long competency_id);
