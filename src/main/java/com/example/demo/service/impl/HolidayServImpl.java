@@ -1,6 +1,7 @@
 package com.example.demo.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -34,6 +35,15 @@ public class HolidayServImpl implements IHolidayService {
 			return holidayList;
 		}
 		throw new ResourceNotFoundException("No Holidays are found");
+	}
+
+	@Override
+	public Holiday getHoliday(String holidayDate) {
+		Optional<Holiday> result = holidayrepo.findByHolidayDate(holidayDate);
+		if(result.isPresent()) {
+			return result.get();
+		}
+		return null;
 	}
 
 }

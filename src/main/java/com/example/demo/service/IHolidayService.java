@@ -10,4 +10,6 @@ public interface IHolidayService {
 	
 	public List<Holiday> getAllHolidays();
 	
+	public Holiday getHoliday(String holidayDate);
+	
 }
