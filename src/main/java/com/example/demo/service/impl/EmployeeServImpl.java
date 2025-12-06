@@ -79,22 +79,40 @@ public class EmployeeServImpl implements IEmployeeService {
 
 	@Override
 	public Employee saveEmployee(Employee emp) {
-
+		
 		Employee savedEmployee = emprepo.save(emp);
 		if (savedEmployee != null) {
 
+			System.err.println("Employee is saved "+emp.getEmpName());
+
+			logger.error("Saved EMployee ios {} ",emp);
+
 			EmployeeHistory emphist = new EmployeeHistory();
+			
+			Department dept =deptrepo.findById(savedEmployee.getDepartment().getDeptId()).orElse(null);
+			
+			Designation desig = desigrepo.findById(savedEmployee.getDesignation().getDesigId()).orElse(null);
+			
+			Category category = categoryserv.getCategoryById(savedEmployee.getCategory().getCategory_id());
+			
 			emphist.setEmployee(savedEmployee);
-			emphist.setCategory(savedEmployee.getCategory().getCategory());
-			emphist.setCompName(savedEmployee.getDepartment().getCompany().getCompName());
+			emphist.setCategory(category.getCategory());
+			emphist.setCompName(dept.getCompany().getCompName());
 			emphist.setContractorName(savedEmployee.getContractorName());
-			emphist.setDeptName(savedEmployee.getDepartment().getDeptName());
-			emphist.setDesigName(savedEmployee.getDesignation().getDesigName());
+			emphist.setDeptName(dept.getDeptName());
+			emphist.setDesigName(desig.getDesigName());
 			emphist.setEmpCode(savedEmployee.getEmpCode());
 			emphist.setJoiningDate(savedEmployee.getJoiningDate());
 			emphist.setStatus(savedEmployee.getStatus());
 
-			emphistserv.saveEmployeeHistory(emphist);
+			EmployeeHistory savedHist = emphistserv.saveEmployeeHistory(emphist);
+			
+			if(savedHist!=null) {
+				System.err.println("Employee HISTORY is saved "+emp.getEmpName());
+			}
+			else {
+				System.err.println("Employee HISTORY is NOT saved ");
+			}
 
 			Activity activity = Activity.builder()
 					.activity("Company " + savedEmployee.getEmpName() + " is saved successfully")

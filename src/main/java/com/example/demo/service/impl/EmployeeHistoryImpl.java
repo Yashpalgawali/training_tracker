@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.Employee;
 import com.example.demo.entity.EmployeeHistory;
+import com.example.demo.exception.GlobalException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.EmployeeHistoryRepository;
 import com.example.demo.repository.EmployeeRepository;
@@ -23,7 +24,12 @@ public class EmployeeHistoryImpl implements IEmployeeHistoryService {
 	@Override
 	public EmployeeHistory saveEmployeeHistory(EmployeeHistory history) {
 
-		return emphistrepo.save(history);
+		EmployeeHistory savedHistory = emphistrepo.save(history);
+		if(savedHistory!=null)
+		{
+			return savedHistory;
+		}
+		throw new GlobalException("Employee History is not saved");
 	}
 
 	@Override

@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -34,7 +35,6 @@ import lombok.experimental.FieldDefaults;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 @Validated
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Employee {
@@ -61,27 +61,23 @@ public class Employee {
 	List<Long> training_ids;
 
 	@ManyToOne
+	@ToString.Exclude
 	@JoinColumn(name = "dept_id")
 	Department department;
 
 	@ManyToOne
+	@ToString.Exclude
 	@JoinColumn(name = "desig_id")
 	Designation designation;
  	
 	@Transient
 	List<String> training_name;
 	
-//	@ManyToMany(mappedBy = "employee")
-//	@ToString.Exclude
-//	private Set<EmployeeTraining> employees = new HashSet<EmployeeTraining>();
-	
 	@ManyToOne
+	@ToString.Exclude
 	@JoinColumn(name= "category_id")
 	Category category;
 
 	int status;
-	
-	 
-	
 	
 } 
