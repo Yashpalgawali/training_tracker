@@ -28,7 +28,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.demo.dto.EmployeeDTO;
 import com.example.demo.dto.ResponseDto;
 import com.example.demo.entity.Employee;
-import com.example.demo.entity.EmployeeHistory;
 import com.example.demo.entity.Training;
 import com.example.demo.export.ExportAllEmployees;
 import com.example.demo.export.ExportSampleToUploadEmployees;
@@ -115,7 +114,6 @@ public class EmployeeController {
 	@GetMapping("/training/{training_id}/competency/{competency_id}")
 	public ResponseEntity<List<EmployeeDTO>> getAllEmployeesWithoutTrainingAndCompetency(@PathVariable Long training_id,
 			@PathVariable Long competency_id) {
-		logger.warn("Training iID is {} and Competency Id {} ",training_id,competency_id);
 		List<EmployeeDTO> empList = empserv.getAllEmployeesWithoudTrainingAndCompetency(training_id, competency_id);
 		return ResponseEntity.status(HttpStatus.OK).body(empList);
 

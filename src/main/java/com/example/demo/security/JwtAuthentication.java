@@ -61,7 +61,7 @@ public class JwtAuthentication {
 	 		cors.configurationSource(request->{
 	 			 CorsConfiguration config = new CorsConfiguration();
 
-//	 			config.setAllowedOrigins(Arrays.asList("http://13.201.9.193")); // Your Angular app's URL
+//	 			config.setAllowedOrigins(Arrays.asList("http://3.1.9.1")); // Your Angular app's URL
 	 			 config.setAllowedOrigins(Arrays.asList("http://192.168.0.219:3000","http://localhost:8080","http://localhost:7878","http://192.168.0.219:8080","http://192.168.0.219:7878","http://localhost:8081","http://192.168.0.219:8081","http://localhost:3000")); // Your React app's URL
 //	 			 config.setAllowedOrigins(Arrays.asList("*")); // Your Angular app's URL
 	             config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS","PATCH"));
@@ -83,7 +83,7 @@ public class JwtAuthentication {
 				});
 			});
 	 	
-//	 	http.exceptionHandling(ex->ex.authenticationEntryPoint(authenticationEntryPoint));
+	 	http.exceptionHandling(ex->ex.authenticationEntryPoint(authenticationEntryPoint));
 		http.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);	
 
 		return http.build();
@@ -93,20 +93,7 @@ public class JwtAuthentication {
 	AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
 	    return config.getAuthenticationManager();
 	}
-
-//	@Autowired
-//	public void configAuthentication(AuthenticationManagerBuilder authBuilder) throws Exception {
-//		authBuilder.jdbcAuthentication()
-//		.dataSource(dataSource)
-//		
-//		//Following will select the username from database depending on the username from Login form
-//		.usersByUsernameQuery("SELECT username,password,enabled FROM tbl_users WHERE username=? ")
-//		
-//		//Following will select the authority(s) depending on the username
-//		.authoritiesByUsernameQuery("SELECT username,role FROM tbl_users WHERE username=?")
-//		
-//		.passwordEncoder(new BCryptPasswordEncoder());
-//	}
+ 
 
 	@Bean
 	KeyPair keyPair() {

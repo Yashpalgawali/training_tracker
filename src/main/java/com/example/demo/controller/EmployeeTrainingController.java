@@ -68,7 +68,6 @@ public class EmployeeTrainingController {
 	public ResponseEntity<List<EmployeeTraining>> getAllTrainingListByEmployeeId(@PathVariable Long id) {
 
 		List<EmployeeTraining> trainingHistory = emptrainserv.getEmployeesTrainingByEmployeeId(id);
-		logger.info("Training History found for empId are{} ", trainingHistory);
 		return ResponseEntity.status(HttpStatus.OK).body(trainingHistory);
 	}
 
@@ -76,7 +75,6 @@ public class EmployeeTrainingController {
 	public ResponseEntity<EmployeeTraining> getAllTrainingsByEmployeeIdAndTrainingId(@PathVariable("id") Long empid,
 			@PathVariable("tid") Long trainingId) {
 
-		System.err.println("Inside get Trainings by employee id " + empid + " and training ID= " + trainingId);
 		EmployeeTraining trainingHistory = emptrainserv.getEmployeesTrainingByEmployeeIdAndTrainingId(empid,
 				trainingId);
 
@@ -98,9 +96,6 @@ public class EmployeeTrainingController {
 	@PostMapping("/")
 	public ResponseEntity<ResponseDto> saveEmployeeTraining(@RequestBody TrainingAssignmentRequest emptraining) {
 		
-		System.err.println(emptraining.toString());
-		logger.info("Object is {} ",emptraining);
-	 
 		TrainingAssignmentRequest saveTrainingAssignmentRequest = emptrainserv.saveTrainingAssignmentRequest(emptraining);
 //		EmployeeTraining savedEmployeeTraining = emptrainserv.saveEmployeeTraining(emptraining);
 		return ResponseEntity.status(HttpStatus.CREATED)
@@ -123,8 +118,7 @@ public class EmployeeTrainingController {
 	public ResponseEntity<ResponseDto> updateEmployeeTraining(@RequestBody TrainingAssignmentRequest emp_training) {
 
 		emptrainserv.updateTrainingAssignmentRequest(emp_training);
-		logger.info("Object is {} ",emp_training);
-		
+			
 		Employee trainedEmployee  = empserv.getEmployeeByEmployeeId(emp_training.getEmployeeIds().getFirst());
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
 				"Training is Updated of the Employee " + trainedEmployee.getEmpName()));
@@ -158,9 +152,6 @@ public class EmployeeTrainingController {
 		employeeTraining.setTrainingTimeSlot(trainTimeSlot);
 
 		emptrainserv.updateEmployeeTraining(employeeTraining);
-
-//		EmployeeTraining afterEmployeeTraining = emptrainserv.getEmployeeTrainingByID(id);
-//		System.err.println("After updating the employee training " + afterEmployeeTraining.toString());
 
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(new ResponseDto(HttpStatus.OK.toString(),
@@ -222,7 +213,6 @@ public class EmployeeTrainingController {
 	public ResponseEntity<Integer> countEmployeesById(@PathVariable Long id) {
 
 		int count = emptrainserv.countTrainingByEmpId(id);
-		System.err.println("training given count is " + count);
 		return ResponseEntity.status(HttpStatus.OK).body(count);
 	}
 
@@ -230,7 +220,6 @@ public class EmployeeTrainingController {
 	public ResponseEntity<Integer> countAllTrainings() {
 
 		int count = emptrainserv.countTrainings();
-		System.err.println("training given count is " + count);
 		return ResponseEntity.status(HttpStatus.OK).body(count);
 	}
 
@@ -238,7 +227,6 @@ public class EmployeeTrainingController {
 	public ResponseEntity<Long> countTrainings(@PathVariable String id) {
 
 		long count = emptrainhistserv.getCountOfTrainingsByTrainId(Long.valueOf(id));
-		System.err.println("training given count is " + count);
 		return ResponseEntity.status(HttpStatus.OK).body(count);
 	}
 }

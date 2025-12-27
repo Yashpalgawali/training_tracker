@@ -41,8 +41,6 @@ public class JwtAuthenticationResource {
 	        // 1. Manually authenticate using AuthenticationManager
 	        Authentication authentication = authenticationManager.authenticate(
 	                new UsernamePasswordAuthenticationToken(request.username(), request.password()));
-
-	        //System.err.println("Inside authenticate () "+authentication.toString());
 	        // 2. Generate JWT
 	        return new JwtResponse(createToken(authentication));
 	      
@@ -50,11 +48,7 @@ public class JwtAuthenticationResource {
 
 	private String createToken(Authentication auth) {
 		
-		logger.info("Authentication Object {} ",auth);
 		CustomUserDetails user = (CustomUserDetails) auth.getPrincipal();
-
-//		logger.info("User is {} , ID is {} and the name is {} and authorites are {} ",user,user.getUserId(),user.getUsername(),user.getAuthorities());
-//		System.err.println("Inside create Token "+user.toString());
 		
 		var claims = JwtClaimsSet.builder().issuer("self")
 								.issuedAt(Instant.now())
