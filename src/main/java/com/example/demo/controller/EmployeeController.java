@@ -111,13 +111,23 @@ public class EmployeeController {
 
 	}
 
-	@GetMapping("/training/{training_id}/competency/{competency_id}")
+//	@GetMapping("/training/{training_id}/competency/{competency_id}")
+//	public ResponseEntity<List<EmployeeDTO>> getAllEmployeesWithoutTrainingAndCompetency(@PathVariable Long training_id,
+//			@PathVariable Long competency_id) {
+//		List<EmployeeDTO> empList = empserv.getAllEmployeesWithoudTrainingAndCompetency(training_id, competency_id);
+//		return ResponseEntity.status(HttpStatus.OK).body(empList);
+//
+//	}
+	
+	@GetMapping("/training/{training_id}/competency/{competency_id}/trainingdate/{tdate}/timeslot/{timeslot}")
 	public ResponseEntity<List<EmployeeDTO>> getAllEmployeesWithoutTrainingAndCompetency(@PathVariable Long training_id,
-			@PathVariable Long competency_id) {
-		List<EmployeeDTO> empList = empserv.getAllEmployeesWithoudTrainingAndCompetency(training_id, competency_id);
+			@PathVariable Long competency_id,@PathVariable String tdate,@PathVariable Long timeslot) {
+		List<EmployeeDTO> empList = empserv.getAllEmployeesWithoudTrainingAndCompetency(training_id, competency_id,tdate,timeslot);
 		return ResponseEntity.status(HttpStatus.OK).body(empList);
 
 	}
+	
+	 
 
 	@GetMapping("/active")
 	public ResponseEntity<List<Employee>> getAllActiveEmployees() {

@@ -56,7 +56,21 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>  {
 	
  	
  	// This query returns all employees who don't have matching training_id and competency_id less than or equal
- 	@Query(value = """
+// 	@Query(value = """
+// 		    SELECT e.*
+// 		    FROM tbl_employee e
+// 		    WHERE e.status = 1
+// 		      AND NOT EXISTS (
+// 		          SELECT 1
+// 		          FROM tbl_employee_training_history et
+// 		          WHERE et.emp_id = e.emp_id
+// 		            AND et.training_id = :training_id
+// 		            AND et.competency_id = :competency_id
+// 		      )limit 10
+// 		    """, nativeQuery = true)
+// 	public List<Employee> getAllEmployeesNotHaveTrainingAndCompetency(Long training_id,Long competency_id);
+ 	
+	@Query(value = """
  		    SELECT e.*
  		    FROM tbl_employee e
  		    WHERE e.status = 1
@@ -67,9 +81,17 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>  {
  		            AND et.training_id = :training_id
  		            AND et.competency_id = :competency_id
  		      )
+ 		      AND NOT EXISTS (
+ 		          SELECT 1
+ 		          FROM tbl_employee_training_history et
+ 		          WHERE et.emp_id = e.emp_id
+ 		            AND et.training_date = :training_date
+ 		            AND et.training_time_slot_id = :timeslot
+ 		      )
+ 		      limit 10
  		    """, nativeQuery = true)
- 	public List<Employee> getAllEmployeesNotHaveTrainingAndCompetency(Long training_id,Long competency_id);
- 	
+ 	public List<Employee> getAllEmployeesNotHaveTrainingAndCompetency(Long training_id,Long competency_id,String training_date,Long timeslot);
+
 //	Page<Employee> findByEmpNameContainingIgnoreCaseOrEmpCodeOrJoiningDateOrContractorNameContainingIgnoreCaseOrDesignationOrDepartment(
 //	        String empName, String empCode, String joiningDate,String contractor,Designation designation,Department department, Pageable pageable);
 

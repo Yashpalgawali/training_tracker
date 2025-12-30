@@ -456,12 +456,11 @@ public class EmployeeServImpl implements IEmployeeService {
 	}
 
 	@Override
-	public List<EmployeeDTO> getAllEmployeesWithoudTrainingAndCompetency(Long training_id, Long competency_id) {
-		var elist = emprepo.getAllEmployeesNotHaveTrainingAndCompetency(training_id, competency_id);
-
-		logger.warn("employee found {} ", elist);
-		logger.error("Length of the result is {} ", elist.size());
-
+//	public List<EmployeeDTO> getAllEmployeesWithoudTrainingAndCompetency(Long training_id, Long competency_id) {
+//		var elist = emprepo.getAllEmployeesNotHaveTrainingAndCompetency(training_id, competency_id);
+	public List<EmployeeDTO> getAllEmployeesWithoudTrainingAndCompetency(Long training_id, Long competency_id,String tdate, Long timeslot) {
+		var elist = emprepo.getAllEmployeesNotHaveTrainingAndCompetency(training_id, competency_id,tdate,timeslot);
+		
 		if (elist.size() > 0) {
 			List<EmployeeDTO> collect = elist.stream().map(emp -> {
 
@@ -469,7 +468,9 @@ public class EmployeeServImpl implements IEmployeeService {
 
 				empdto.setEmpId(emp.getEmpId());
 				empdto.setEmpName(emp.getEmpName());
-
+				
+				System.err.println("Found Employee "+empdto.toString());
+				
 				return empdto;
 
 			}).collect(Collectors.toList());

@@ -113,12 +113,12 @@ public class EmployeeTrainingController {
 //		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
 //				"Training is Updated of the Employee " + trainedEmployee.getEmpName()));
 //	}
-	
+
 	@PutMapping("/")
 	public ResponseEntity<ResponseDto> updateEmployeeTraining(@RequestBody TrainingAssignmentRequest emp_training) {
 
 		emptrainserv.updateTrainingAssignmentRequest(emp_training);
-			
+
 		Employee trainedEmployee  = empserv.getEmployeeByEmployeeId(emp_training.getEmployeeIds().getFirst());
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
 				"Training is Updated of the Employee " + trainedEmployee.getEmpName()));
