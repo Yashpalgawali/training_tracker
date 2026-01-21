@@ -20,9 +20,9 @@ public interface IEmployeeService {
 	
 	public List<Employee> getAllEmployees();
 	
-//	public List<EmployeeDTO> getAllEmployeesWithoudTrainingAndCompetency(Long training_id,Long competency_id);
-	
 	public List<EmployeeDTO> getAllEmployeesWithoudTrainingAndCompetency(Long training_id,Long competency_id,String tdate,Long timeslot);
+
+	public int checkEmployeeAttendedTrainingOnDateAndTimeSlot(Long id,Long timeslot,String training_date);
 	
 	public List<Employee> getAllActiveEmployees();
 	

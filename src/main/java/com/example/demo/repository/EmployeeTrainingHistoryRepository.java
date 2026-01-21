@@ -21,4 +21,7 @@ public interface EmployeeTrainingHistoryRepository extends JpaRepository<Employe
 	long countByEmployeeAndTraining(Long empid,Long training_id);
 
 	List<EmployeeTrainingHistory> findByEmployeeAndTraining(Employee emp,Training train );
+	
+	@Query("SELECT COUNT(eth.emp_train_hist_id) FROM EmployeeTrainingHistory eth WHERE eth.employee.empId=:id AND eth.trainingTimeSlot.training_time_slot_id=:training_time_slot_id AND eth.training_date=:training_date")
+	public int checkEmployeeAttendedTrainingOnDateAndTimeSlot(Long id, Long training_time_slot_id,String training_date);
 }

@@ -127,7 +127,14 @@ public class EmployeeController {
 
 	}
 	
-	 
+	
+	@GetMapping("/{id}/trainingdate/{tdate}/timeslot/{timeslot}")
+	public ResponseEntity<Integer> checkEmployeeAttendedTrainingOnDateAndTimeSlot(@PathVariable String tdate,
+				@PathVariable Long timeslot,@PathVariable Long id) {		
+		int count = empserv.checkEmployeeAttendedTrainingOnDateAndTimeSlot(id, timeslot, tdate);
+		return ResponseEntity.status(HttpStatus.OK).body(count);
+
+	}
 
 	@GetMapping("/active")
 	public ResponseEntity<List<Employee>> getAllActiveEmployees() {
@@ -141,10 +148,8 @@ public class EmployeeController {
 			@RequestParam(required = false) String orderColumn, @RequestParam(required = false) String orderDir) {
 
 		String mappedColumn = mapSortColumn(orderColumn);
-
 		Map<String, Object> response = empserv.getAllEmployeesWithPagination(start, length, search, mappedColumn,
 				orderDir);
-
 		return response;
 	}
 

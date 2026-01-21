@@ -40,13 +40,17 @@ import com.example.demo.repository.ActivityRepository;
 import com.example.demo.repository.DepartmentRepository;
 import com.example.demo.repository.DesignationRepository;
 import com.example.demo.repository.EmployeeRepository;
+import com.example.demo.repository.EmployeeTrainingHistoryRepository;
 import com.example.demo.service.ICategoryService;
 import com.example.demo.service.ICompanyService;
 import com.example.demo.service.IEmployeeHistoryService;
 import com.example.demo.service.IEmployeeService;
 import com.example.demo.service.IEmployeeTrainingService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service("empserv")
+@RequiredArgsConstructor
 public class EmployeeServImpl implements IEmployeeService {
 
 	private final EmployeeRepository emprepo;
@@ -57,21 +61,8 @@ public class EmployeeServImpl implements IEmployeeService {
 	private final ActivityRepository activityrepo;
 	private final IEmployeeHistoryService emphistserv;
 	private final ICompanyService compserv;
-
-	public EmployeeServImpl(EmployeeRepository emprepo, DesignationRepository desigrepo, DepartmentRepository deptrepo,
-			ICategoryService categoryserv, IEmployeeTrainingService emptrainserv, ActivityRepository activityrepo,
-			IEmployeeHistoryService emphistserv, ICompanyService compserv) {
-		super();
-		this.emprepo = emprepo;
-		this.desigrepo = desigrepo;
-		this.deptrepo = deptrepo;
-		this.categoryserv = categoryserv;
-		this.emptrainserv = emptrainserv;
-		this.activityrepo = activityrepo;
-		this.emphistserv = emphistserv;
-		this.compserv = compserv;
-	}
-
+	private final EmployeeTrainingHistoryRepository emptrainhistrepo;
+	
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	private DateTimeFormatter dday = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -469,8 +460,6 @@ public class EmployeeServImpl implements IEmployeeService {
 				empdto.setEmpId(emp.getEmpId());
 				empdto.setEmpName(emp.getEmpName());
 				
-				System.err.println("Found Employee "+empdto.toString());
-				
 				return empdto;
 
 			}).collect(Collectors.toList());
@@ -478,5 +467,10 @@ public class EmployeeServImpl implements IEmployeeService {
 		} else {
 			throw new ResourceNotFoundException("No Employees found !!!");
 		}
+	}
+
+	@Override
+	public int checkEmployeeAttendedTrainingOnDateAndTimeSlot(Long id, Long timeslot, String training_date) {
+		return emptrainhistrepo.checkEmployeeAttendedTrainingOnDateAndTimeSlot(id, timeslot, training_date);
 	}
 }
