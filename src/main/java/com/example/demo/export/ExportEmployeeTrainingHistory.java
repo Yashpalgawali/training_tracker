@@ -59,8 +59,9 @@ public class ExportEmployeeTrainingHistory {
 			createCell(row,1,"Training",style);
 			createCell(row,2,"Training Date",style);
 			createCell(row,3,"Completion Date",style);
-			createCell(row,4,"Competency Score",style);
-			createCell(row,5,"Employee",style);
+			createCell(row,4,"Training Time",style);
+			createCell(row,5,"Competency Score",style);
+			createCell(row,6,"Employee",style);
 			
 	
 	}
@@ -92,7 +93,7 @@ public class ExportEmployeeTrainingHistory {
 		font.setFontHeight(16);
 		int sr=1,cn=1;		
 		if(ahist.size() > 0) {
-      	for(EmployeeTrainingHistory hist : ahist)
+			for(EmployeeTrainingHistory hist : ahist)
 			{
 				Row row = sheet.createRow(rowCount++);				
 				int columnCount = 0;
@@ -107,6 +108,8 @@ public class ExportEmployeeTrainingHistory {
 				else {
 					createCell(row,columnCount++, "Not Completed" , style );
 				}
+				
+				createCell(row,columnCount++, hist.getTrainingTimeSlot().getTraining_time_slot() ,style);
 				createCell(row,columnCount++, hist.getCompetency().getScore() ,style);
 				
 				if(cn==1) {

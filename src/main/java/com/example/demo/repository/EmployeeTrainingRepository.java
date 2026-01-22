@@ -40,16 +40,26 @@ public interface EmployeeTrainingRepository extends JpaRepository<EmployeeTraini
 	@Query("SELECT eth FROM EmployeeTraining eth WHERE eth.emp_train_id=:emp_train_id")
 	EmployeeTraining getEmployeeTrainingById(Long emp_train_id);
 
-	@Query(value ="SELECT emp.emp_name,train.training_name,emptrain.training_date,emptrain.completion_date,"
-			+ "desig.desig_name,dept.dept_name,company.comp_name,competency.score FROM tbl_employee_training AS emptrain "
+//	@Query(value ="SELECT emp.emp_name,train.training_name,emptrain.training_date,emptrain.completion_date,"
+//			+ "desig.desig_name,dept.dept_name,company.comp_name,competency.score FROM tbl_employee_training AS emptrain "
+//			+ "JOIN tbl_employee AS emp ON emp.emp_id=emptrain.emp_id "
+//			+ "JOIN tbl_designation AS desig ON desig.desig_id=emp.desig_id "
+//			+ "JOIN tbl_training as train ON train.training_id=emptrain.training_id "
+//			+ "JOIN tbl_department AS dept ON dept.dept_id=emp.dept_id "
+//			+ "JOIN tbl_company AS company ON company.company_id=dept.company_id "
+//			+ "JOIN tbl_competency AS competency ON competency.competency_id=emptrain.competency_id ",nativeQuery = true)
+//	List<Object[]> getAllTrainingsOfAllEmployees();
+	
+	@Query(value ="SELECT emp.emp_name,train.training_name,emptrain.training_date,emptrain.training_date,slot.training_time_slot ,"
+			+ "desig.desig_name,dept.dept_name,company.comp_name,competency.score FROM tbl_employee_training_history AS emptrain "
 			+ "JOIN tbl_employee AS emp ON emp.emp_id=emptrain.emp_id "
 			+ "JOIN tbl_designation AS desig ON desig.desig_id=emp.desig_id "
 			+ "JOIN tbl_training as train ON train.training_id=emptrain.training_id "
 			+ "JOIN tbl_department AS dept ON dept.dept_id=emp.dept_id "
 			+ "JOIN tbl_company AS company ON company.company_id=dept.company_id "
-			+ "JOIN tbl_competency AS competency ON competency.competency_id=emptrain.competency_id ",nativeQuery = true)
+			+ "JOIN tbl_competency AS competency ON competency.competency_id=emptrain.competency_id "
+			+ "JOIN tbl_training_time_slot AS slot ON slot.training_time_slot_id=emptrain.training_time_slot_id",nativeQuery = true)
 	List<Object[]> getAllTrainingsOfAllEmployees();
-	
 	 
 	@Query("SELECT eth FROM EmployeeTraining eth WHERE eth.employee.empId=:empid")
 	List<EmployeeTraining> getTrainingAndScoreByEmployeeId(Long empid);

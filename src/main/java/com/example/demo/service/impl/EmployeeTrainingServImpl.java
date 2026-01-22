@@ -189,7 +189,7 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 		List<EmployeeTrainingDto> trainList = new ArrayList<>();
 
 		List<Object[]> objList = emptrainrepo.getAllTrainingsOfAllEmployees();
-
+ 		
 		if (objList.size() > 0) {
 			objList.forEach(train -> {
 				EmployeeTrainingDto dto = new EmployeeTrainingDto();
@@ -202,11 +202,14 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 				} else {
 					dto.setCompletion_date(train[3].toString());
 				}
-				dto.setDesig_name(train[4].toString());
-				dto.setDept_name(train[5].toString());
-				dto.setComp_name(train[6].toString());
-				dto.setScore(String.valueOf(train[7]));
+				dto.setTime_slot(train[4].toString());
+				dto.setDesig_name(train[5].toString());
+				dto.setDept_name(train[6].toString());
+				dto.setComp_name(train[7].toString());
+				dto.setScore(String.valueOf(train[8]));
+				
 				trainList.add(dto);
+//				System.err.println("Found trainings are "+trainList);
 			});
 		}
 
