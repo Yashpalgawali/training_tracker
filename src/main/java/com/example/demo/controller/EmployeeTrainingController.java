@@ -96,11 +96,18 @@ public class EmployeeTrainingController {
 	@PostMapping("/")
 	public ResponseEntity<ResponseDto> saveEmployeeTraining(@RequestBody TrainingAssignmentRequest emptraining) {
 		
-		TrainingAssignmentRequest saveTrainingAssignmentRequest = emptrainserv.saveTrainingAssignmentRequest(emptraining);
-//		EmployeeTraining savedEmployeeTraining = emptrainserv.saveEmployeeTraining(emptraining);
-		return ResponseEntity.status(HttpStatus.CREATED)
+		int result = emptrainserv.saveTrainingAssignmentRequest(emptraining);
+		if(result==1)
+		{  
+			return ResponseEntity.status(HttpStatus.CREATED)
 				.body(new ResponseDto(HttpStatus.CREATED.toString(),
 						"Training is started of All employees "));
+		}
+		else {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR.toString(),
+							"Training is not started of Employees "));
+		}
 	}
 
 //	@PutMapping("/")

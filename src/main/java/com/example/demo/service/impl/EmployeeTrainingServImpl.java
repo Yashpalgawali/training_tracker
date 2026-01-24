@@ -3,7 +3,6 @@ package com.example.demo.service.impl;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -18,7 +17,6 @@ import com.example.demo.entity.Activity;
 import com.example.demo.entity.Competency;
 import com.example.demo.entity.CompetencyScore;
 import com.example.demo.entity.Employee;
-import com.example.demo.entity.EmployeeHistory;
 import com.example.demo.entity.EmployeeTraining;
 import com.example.demo.entity.EmployeeTrainingHistory;
 import com.example.demo.entity.Training;
@@ -318,31 +316,30 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 	}
 
 	@Override
-	public TrainingAssignmentRequest saveTrainingAssignmentRequest(TrainingAssignmentRequest emp_training) {
-
+//	public TrainingAssignmentRequest saveTrainingAssignmentRequest(TrainingAssignmentRequest emp_training) {
+	public int saveTrainingAssignmentRequest(TrainingAssignmentRequest emp_training) {
 		Optional<Competency> competencyObject =Optional.ofNullable(competencyrepo.findById(emp_training.getCompetencyId()).orElse(null));
-		
+
 		Competency competency = competencyObject.get();
-		
+
 	 	Training training = trainserv.getTrainingById(emp_training.getTrainingId());
-	 	
+
 	 	TrainingTimeSlot trainingTimeSlot = traintimeslotserv.getTrainingTimeSlotById(emp_training.getTrainingTimeSlotId());
-	 	
+	 	int status = 0;
 	 	for(Long empid : emp_training.getEmployeeIds()) {
-	 		
+
 	 		Optional<Employee> empObject = Optional.ofNullable(emprepo.findById(empid).orElse(null));
-	 		
-	 		if(empObject!=null) {
-	 			
+
+	 		if(empObject.isPresent()) {
+
 	 			Employee employee = empObject.get();
-	 			
+
 	 			EmployeeTraining emptrain = new EmployeeTraining();
 	 			
 	 			emptrain.setCompetency(competency);	 			
 	 			emptrain.setEmployee(employee);
 	 			emptrain.setTraining(training);
 	 			emptrain.setTrainingTimeSlot(trainingTimeSlot);
-	 			
 	 			emptrain.setCompletion_date(emp_training.getCompletionDate());
 	 			emptrain.setTraining_date(emp_training.getTrainingDate());
 	 			
@@ -357,11 +354,12 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 	 				emptrainhist.setTrainingTimeSlot(savedTraining.getTrainingTimeSlot());
 	 				
 	 				emptrainhistserv.saveEmployeeTrainingHistory(emptrainhist);
+	 				status=1;
 	 			}
 	 		}
-	 	}	
-	 	
-		return null;
+	 	}
+	 	System.err.println("The status is = "+status);
+	 	return status;
 	}
 
 	@Override

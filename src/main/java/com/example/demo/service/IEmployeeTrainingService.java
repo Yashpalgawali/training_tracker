@@ -13,8 +13,8 @@ public interface IEmployeeTrainingService {
 
 	public EmployeeTraining saveEmployeeTraining(EmployeeTraining emp_training);
 	
-	public TrainingAssignmentRequest saveTrainingAssignmentRequest(TrainingAssignmentRequest emp_training); 
-	
+//	public TrainingAssignmentRequest saveTrainingAssignmentRequest(TrainingAssignmentRequest emp_training);	
+	public int saveTrainingAssignmentRequest(TrainingAssignmentRequest emp_training);
 
 	public List<EmployeeTraining> getAllEmployeesTrainingHistory();
 
