@@ -331,34 +331,55 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 	 		Optional<Employee> empObject = Optional.ofNullable(emprepo.findById(empid).orElse(null));
 
 	 		if(empObject.isPresent()) {
-
+	 			
 	 			Employee employee = empObject.get();
 
 	 			EmployeeTraining emptrain = new EmployeeTraining();
 	 			
-	 			emptrain.setCompetency(competency);	 			
-	 			emptrain.setEmployee(employee);
-	 			emptrain.setTraining(training);
-	 			emptrain.setTrainingTimeSlot(trainingTimeSlot);
-	 			emptrain.setCompletion_date(emp_training.getCompletionDate());
-	 			emptrain.setTraining_date(emp_training.getTrainingDate());
+	 			EmployeeTraining empTrainingObj = emptrainrepo.getTrainingByTrainingAndEmpId(empid, training.getTraining_id());
 	 			
-	 			EmployeeTraining savedTraining = emptrainrepo.save(emptrain);
-	 			
-	 			if(savedTraining!=null) {
-	 				EmployeeTrainingHistory emptrainhist = new EmployeeTrainingHistory();
-	 				emptrainhist.setCompetency(savedTraining.getCompetency());
-	 				emptrainhist.setTraining(savedTraining.getTraining());
-	 				emptrainhist.setEmployee(savedTraining.getEmployee());
-	 				emptrainhist.setTraining_date(savedTraining.getTraining_date());
-	 				emptrainhist.setTrainingTimeSlot(savedTraining.getTrainingTimeSlot());
+	 			if(empTrainingObj!=null) {
+	 				int result = emptrainrepo.updateEmployeeTrainingByEmpTrainId(empTrainingObj.getEmp_train_id(),
+	 						competency.getCompetency_id(), trainingTimeSlot.getTraining_time_slot_id(), emp_training.getTrainingDate(),
+	 						emp_training.getTrainingDate());
+	 				if(result > 0) {
 	 				
-	 				emptrainhistserv.saveEmployeeTrainingHistory(emptrainhist);
-	 				status=1;
+		 				EmployeeTrainingHistory emptrainhist = new EmployeeTrainingHistory();
+		 				emptrainhist.setCompetency(competency);
+		 				emptrainhist.setTraining(training);
+		 				emptrainhist.setEmployee(employee);
+		 				emptrainhist.setTraining_date(empTrainingObj.getTraining_date());
+		 				emptrainhist.setTrainingTimeSlot(trainingTimeSlot);
+		 				
+		 				emptrainhistserv.saveEmployeeTrainingHistory(emptrainhist);
+		 				status=1;
+		 			}
 	 			}
+	 			else {
+		 			emptrain.setCompetency(competency);	 			
+		 			emptrain.setEmployee(employee);
+		 			emptrain.setTraining(training);
+		 			emptrain.setTrainingTimeSlot(trainingTimeSlot);
+		 			emptrain.setCompletion_date(emp_training.getCompletionDate());
+		 			emptrain.setTraining_date(emp_training.getTrainingDate());
+		 			
+		 			EmployeeTraining savedTraining = emptrainrepo.save(emptrain);
+		 			
+		 			if(savedTraining!=null) {
+		 				EmployeeTrainingHistory emptrainhist = new EmployeeTrainingHistory();
+		 				emptrainhist.setCompetency(savedTraining.getCompetency());
+		 				emptrainhist.setTraining(savedTraining.getTraining());
+		 				emptrainhist.setEmployee(savedTraining.getEmployee());
+		 				emptrainhist.setTraining_date(savedTraining.getTraining_date());
+		 				emptrainhist.setTrainingTimeSlot(savedTraining.getTrainingTimeSlot());
+		 				
+		 				emptrainhistserv.saveEmployeeTrainingHistory(emptrainhist);
+		 				status=1;
+		 			}
+	 		  }
 	 		}
 	 	}
-	 	System.err.println("The status is = "+status);
+	 	
 	 	return status;
 	}
 
@@ -391,8 +412,6 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 		else {
 			throw new GlobalException("Training is not updated");
 		}
-		
-		 
 	}
 
 }

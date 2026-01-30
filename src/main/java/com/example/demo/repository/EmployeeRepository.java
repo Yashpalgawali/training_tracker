@@ -85,7 +85,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>  {
  		          SELECT 1
  		          FROM tbl_employee_training_history et
  		          WHERE et.emp_id = e.emp_id
- 		            AND et.training_date = :training_date
+ 		            AND TRIM(et.training_date) = TRIM(:training_date)
  		            AND et.training_time_slot_id = :timeslot
  		      )
  		      limit 10

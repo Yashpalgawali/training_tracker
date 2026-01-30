@@ -2,7 +2,6 @@ package com.example.demo.entity;
 
 import org.springframework.validation.annotation.Validated;
 
-import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

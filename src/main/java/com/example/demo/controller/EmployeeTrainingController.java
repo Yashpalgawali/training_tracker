@@ -84,7 +84,7 @@ public class EmployeeTrainingController {
 //	@PostMapping("/")
 //	public ResponseEntity<ResponseDto> saveEmployeeTraining(@RequestBody EmployeeTraining emptraining) {
 //
-//		System.err.println("EMployee trianing Object is " + emptraining.getEmployee());
+//		System.err.println("Employee Training Object is " + emptraining.getEmployee());
 ////		return null;
 //		EmployeeTraining savedEmployeeTraining = emptrainserv.saveEmployeeTraining(emptraining);
 //		return ResponseEntity.status(HttpStatus.CREATED)
