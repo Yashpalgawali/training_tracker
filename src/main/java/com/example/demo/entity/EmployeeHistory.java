@@ -65,4 +65,6 @@ public class EmployeeHistory {
 	
 	int status;
 
+	@Column(name="leave_date")
+	String leaveDate;
 }

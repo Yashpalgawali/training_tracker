@@ -22,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.dto.EmployeeDTO;
 import com.example.demo.entity.Activity;
@@ -94,7 +95,8 @@ public class EmployeeServImpl implements IEmployeeService {
 				emphist.setEmpCode(savedEmployee.getEmpCode());
 				emphist.setJoiningDate(savedEmployee.getJoiningDate());
 				emphist.setStatus(savedEmployee.getStatus());
-
+				emphist.setLeaveDate("");
+				
 				emphistserv.saveEmployeeHistory(emphist);
 
 				Activity activity = Activity.builder()
@@ -108,7 +110,6 @@ public class EmployeeServImpl implements IEmployeeService {
 						"Employee " + emp.getEmpName() + " is not saved and No trainings are provided");
 			}
 		} else {
-			
 			throw new GlobalException(
 					"Employee " + emp.getEmpName() + " is already present with the Employee Code " + emp.getEmpCode());
 		}
@@ -122,46 +123,61 @@ public class EmployeeServImpl implements IEmployeeService {
 	}
 
 	@Override
-//	@Transactional
+	@Transactional
 	public int updateEmployee(Employee emp) {
 
-		Employee updatedEmployee = emprepo.save(emp);
+		String leaveDate = "";
+		
+		if(emp.getStatus()==0) {
+			leaveDate= dday.format(LocalDateTime.now());
+		}
+		 
+		int result = emprepo.updateEmployee( emp.getEmpId(), emp.getEmpName(),emp.getEmpCode(), emp.getContractorName(), 
+											 emp.getCategory().getCategory_id(), emp.getJoiningDate(), emp.getDepartment().getDeptId(), 
+											 emp.getDesignation().getDesigId(),emp.getStatus(),leaveDate);
+		if (result > 0) {
+		EmployeeHistory emphist = new EmployeeHistory();
+			emphist.setEmployee(emp);
 
-		if (updatedEmployee != null) {
-			EmployeeHistory emphist = new EmployeeHistory();
-			emphist.setEmployee(updatedEmployee);
-
-			if (updatedEmployee.getCategory() != null) {
-				emphist.setCategory(updatedEmployee.getCategory().getCategory());
+			if (emp.getCategory() != null) {
+				Category category = categoryserv.getCategoryById(emp.getCategory().getCategory_id());
+				emphist.setCategory(category.getCategory());
 			} else {
 				emphist.setCategory("");
 			}
-			if (updatedEmployee.getDesignation() != null) {
-				emphist.setDesigName(updatedEmployee.getDesignation().getDesigName());
+			if (emp.getDesignation() != null) {
+				var desigObj = desigrepo.findById(emp.getDesignation().getDesigId());
+				emphist.setDesigName(desigObj.get().getDesigName());
 			} else {
 				emphist.setDesigName("");
 			}
 
-			if (updatedEmployee.getDepartment() != null) {
-				emphist.setDeptName(updatedEmployee.getDepartment().getDeptName());
-				emphist.setCompName(updatedEmployee.getDepartment().getCompany().getCompName());
+			if (emp.getDepartment() != null) {
+				Optional <Department> deptObj = deptrepo.findById(emp.getDepartment().getDeptId());
+				if(deptObj.isPresent())
+				{
+					emphist.setDeptName(deptObj.get().getDeptName());
+					emphist.setCompName(deptObj.get().getCompany().getCompName());
+			 	}
 			} else {
 				emphist.setDeptName("");
 				emphist.setCompName("");
 			}
-			emphist.setContractorName(updatedEmployee.getContractorName());
-			emphist.setJoiningDate(updatedEmployee.getJoiningDate());
-			emphist.setEmpCode(updatedEmployee.getEmpCode());
-			emphist.setStatus(updatedEmployee.getStatus());
-			emphist.setEmpName(updatedEmployee.getEmpName());
-
+			emphist.setContractorName(emp.getContractorName());
+			emphist.setJoiningDate(emp.getJoiningDate());
+			emphist.setEmpCode(emp.getEmpCode());
+			emphist.setStatus(emp.getStatus());
+			emphist.setEmpName(emp.getEmpName());
+			
+			emphist.setLeaveDate(leaveDate);
+			 
 			emphistserv.saveEmployeeHistory(emphist);
 
 			Activity activity = Activity.builder().activity("Company " + emp.getEmpName() + " is saved successfully")
 					.activityDate(dday.format(LocalDateTime.now())).activityTime(ttime.format(LocalDateTime.now()))
 					.build();
 			activityrepo.save(activity);
-			return 1;
+			return result;
 		}
 
 		else {
@@ -367,7 +383,13 @@ public class EmployeeServImpl implements IEmployeeService {
 					empdto.setDepartment("");
 					empdto.setCompany("");
 				}
-
+				if(emp.getLeaveDate()==null || emp.getLeaveDate()=="") {
+					empdto.setLeaveDate("");
+				}
+				else {
+					empdto.setLeaveDate(emp.getLeaveDate());
+				}
+				
 				empdto.setContractorName(emp.getContractorName());
 
 				if (emp.getStatus() == 1) {
@@ -404,6 +426,12 @@ public class EmployeeServImpl implements IEmployeeService {
 					empdto.setDepartment("");
 					empdto.setCompany("");
 				}
+				if(emp.getLeaveDate()==null || emp.getLeaveDate()=="") {
+					empdto.setLeaveDate("");
+				}
+				else {
+					empdto.setLeaveDate(emp.getLeaveDate());
+				}
 				empdto.setContractorName(emp.getContractorName());
 				if (emp.getStatus() == 1) {
 					empdto.setStatus("Active");
@@ -412,7 +440,6 @@ public class EmployeeServImpl implements IEmployeeService {
 				}
 				empdto.setIsTrainingGiven(count > 0);
 				return empdto;
-//		        	return EmployeeMapper.EmployeeToEmployeeDTO(emp, new EmployeeDTO());
 			});
 		}
 
@@ -431,7 +458,6 @@ public class EmployeeServImpl implements IEmployeeService {
 //                search, search,search,search,desigrepo.findByDesigName(search),departmentByDeptName, pageable);
 
 		Page<Employee> searchEmployees = emprepo.searchEmployees(search, pageable);
-
 		return searchEmployees;
 	}
 

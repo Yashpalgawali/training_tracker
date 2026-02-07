@@ -26,6 +26,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @Validated
+@ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Department {
 

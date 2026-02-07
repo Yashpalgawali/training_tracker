@@ -36,6 +36,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @Validated
+@ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Employee {
 
@@ -61,7 +62,6 @@ public class Employee {
 	List<Long> training_ids;
 
 	@ManyToOne
-	@ToString.Exclude
 	@JoinColumn(name = "dept_id")
 	Department department;
 
@@ -79,5 +79,9 @@ public class Employee {
 	Category category;
 
 	int status;
+	
+	@Column(name="leave_date")
+	String leaveDate;
+	
 	
 } 

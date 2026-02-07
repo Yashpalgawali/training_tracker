@@ -101,7 +101,12 @@ public class EmployeeController {
 			} else {
 				empdto.setStatus("InActive");
 			}
-
+			if(emp.getLeaveDate()==null || emp.getLeaveDate().equals("")) {
+				empdto.setLeaveDate("");
+			}
+			else {
+				empdto.setLeaveDate(emp.getLeaveDate());
+			}
 			empdto.setTrainings(training_names);
 			return empdto;
 
@@ -185,7 +190,7 @@ public class EmployeeController {
 
 	@PutMapping("/")
 	public ResponseEntity<ResponseDto> updateEmployee(@RequestBody Employee employee) {
-
+		System.err.println("Updating employee "+employee.toString());
 		empserv.updateEmployee(employee);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
 				"Employee " + employee.getEmpName() + " is UPDATED successfully"));

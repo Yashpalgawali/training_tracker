@@ -17,6 +17,7 @@ public class EmployeeDTO {
 	String empCode;
 	String empName;
 	String joiningDate;
+	String leaveDate;
 	String department;
 	String designation;
 	String company;	
