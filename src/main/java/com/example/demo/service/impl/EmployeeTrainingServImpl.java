@@ -374,10 +374,12 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 		 				emptrainhist.setTrainingTimeSlot(savedTraining.getTrainingTimeSlot());
 		 				
 		 				emptrainhistserv.saveEmployeeTrainingHistory(emptrainhist);
-		 				status=1;
+		 				
 		 			}
+		 			status=1;
 	 		  }
 	 		}
+	 		System.err.println("Status value is = "+status);
 	 	}
 	 	
 	 	return status;
