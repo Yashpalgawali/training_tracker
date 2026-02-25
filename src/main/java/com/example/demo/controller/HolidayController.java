@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,5 +45,19 @@ public class HolidayController {
 		
 		Holiday result = holidayserv.getHoliday(date);
 		return ResponseEntity.status(HttpStatus.OK).body(result);
+	}
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<Holiday> getHolidayById(@PathVariable Long id) {
+		
+		Holiday result = holidayserv.getHoliday(id);
+		return ResponseEntity.status(HttpStatus.OK).body(result);
+	}
+	
+	@PutMapping("/")
+	public ResponseEntity<ResponseDto> updateHoliday(@RequestBody Holiday holiday) {
+		
+		holidayserv.saveHoliday(holiday);		
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(), "Holiday "+holiday.getHoliday()+" is updated successfully"));
 	}
 }

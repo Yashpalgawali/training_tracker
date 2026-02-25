@@ -12,4 +12,7 @@ public interface IHolidayService {
 	
 	public Holiday getHoliday(String holidayDate);
 	
+	public void updateHoliday(Holiday holiday);
+	
+	public Holiday getHoliday(Long id);
 }
