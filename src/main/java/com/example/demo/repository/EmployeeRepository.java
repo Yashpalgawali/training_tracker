@@ -31,7 +31,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>  {
 
 	List<Employee> findByStatus(int status);
 	
-	public Optional<Employee>findByEmpCode(String empcode);	
+	public Optional<Employee>findByEmpCode(String empcode);		
  	@Query("""
 		    SELECT e FROM Employee e
 		    LEFT JOIN e.designation de
@@ -71,24 +71,43 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>  {
 // 		    """, nativeQuery = true)
 // 	public List<Employee> getAllEmployeesNotHaveTrainingAndCompetency(Long training_id,Long competency_id);
  	
+//	    SELECT e.*
+//	    FROM tbl_employee e
+//	    WHERE e.status = 1
+//	      AND NOT EXISTS (
+//	          SELECT 1
+//	          FROM tbl_employee_training_history et
+//	          WHERE et.emp_id = e.emp_id
+//	            AND et.training_id = :training_id
+//	            AND et.competency_id = :competency_id
+//	      )
+//	      AND NOT EXISTS (
+//	          SELECT 1
+//	          FROM tbl_employee_training_history et
+//	          WHERE et.emp_id = e.emp_id
+//	            AND TRIM(et.training_date) = :training_date
+//	            AND et.training_time_slot_id = :timeslot
+//	      )
+ 	
 	@Query(value = """
- 		    SELECT e.*
- 		    FROM tbl_employee e
- 		    WHERE e.status = 1
- 		      AND NOT EXISTS (
- 		          SELECT 1
- 		          FROM tbl_employee_training_history et
- 		          WHERE et.emp_id = e.emp_id
- 		            AND et.training_id = :training_id
- 		            AND et.competency_id = :competency_id
- 		      )
- 		      AND NOT EXISTS (
- 		          SELECT 1
- 		          FROM tbl_employee_training_history et
- 		          WHERE et.emp_id = e.emp_id
- 		            AND TRIM(et.training_date) = TRIM(:training_date)
- 		            AND et.training_time_slot_id = :timeslot
- 		      )
+
+			SELECT e.*
+			FROM tbl_employee e
+			WHERE e.status = 1
+			  AND NOT EXISTS (
+			      SELECT 1
+			      FROM tbl_employee_training_history et
+			      WHERE et.emp_id = e.emp_id
+			        AND et.training_id = :training_id
+			        AND et.competency_id = :competency_id
+			  )
+			  AND NOT EXISTS (
+			      SELECT 1
+			      FROM tbl_employee_training_history et
+			      WHERE et.emp_id = e.emp_id
+			        AND TRIM(et.training_date) = :training_date
+			        AND et.training_time_slot_id = :timeslot
+			  ) 
  		    """, nativeQuery = true)
  	public List<Employee> getAllEmployeesNotHaveTrainingAndCompetency(Long training_id,Long competency_id,String training_date,Long timeslot);
 
