@@ -89,7 +89,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>  {
  		            AND TRIM(et.training_date) = TRIM(:training_date)
  		            AND et.training_time_slot_id = :timeslot
  		      )
- 		      limit 10
  		    """, nativeQuery = true)
  	public List<Employee> getAllEmployeesNotHaveTrainingAndCompetency(Long training_id,Long competency_id,String training_date,Long timeslot);
 

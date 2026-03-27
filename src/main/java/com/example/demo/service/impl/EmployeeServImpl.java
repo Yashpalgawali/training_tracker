@@ -62,7 +62,7 @@ public class EmployeeServImpl implements IEmployeeService {
 	private final IEmployeeHistoryService emphistserv;
 	private final ICompanyService compserv;
 	private final EmployeeTrainingHistoryRepository emptrainhistrepo;
-	
+
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	private DateTimeFormatter dday = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -96,7 +96,7 @@ public class EmployeeServImpl implements IEmployeeService {
 				emphist.setJoiningDate(savedEmployee.getJoiningDate());
 				emphist.setStatus(savedEmployee.getStatus());
 				emphist.setLeaveDate("");
-				
+
 				emphistserv.saveEmployeeHistory(emphist);
 
 				Activity activity = Activity.builder()
@@ -127,16 +127,16 @@ public class EmployeeServImpl implements IEmployeeService {
 	public int updateEmployee(Employee emp) {
 
 		String leaveDate = "";
-		
-		if(emp.getStatus()==0) {
-			leaveDate= dday.format(LocalDateTime.now());
+
+		if (emp.getStatus() == 0) {
+			leaveDate = dday.format(LocalDateTime.now());
 		}
-		 
-		int result = emprepo.updateEmployee( emp.getEmpId(), emp.getEmpName(),emp.getEmpCode(), emp.getContractorName(), 
-											 emp.getCategory().getCategory_id(), emp.getJoiningDate(), emp.getDepartment().getDeptId(), 
-											 emp.getDesignation().getDesigId(),emp.getStatus(),leaveDate);
+
+		int result = emprepo.updateEmployee(emp.getEmpId(), emp.getEmpName(), emp.getEmpCode(), emp.getContractorName(),
+				emp.getCategory().getCategory_id(), emp.getJoiningDate(), emp.getDepartment().getDeptId(),
+				emp.getDesignation().getDesigId(), emp.getStatus(), leaveDate);
 		if (result > 0) {
-		EmployeeHistory emphist = new EmployeeHistory();
+			EmployeeHistory emphist = new EmployeeHistory();
 			emphist.setEmployee(emp);
 
 			if (emp.getCategory() != null) {
@@ -153,12 +153,11 @@ public class EmployeeServImpl implements IEmployeeService {
 			}
 
 			if (emp.getDepartment() != null) {
-				Optional <Department> deptObj = deptrepo.findById(emp.getDepartment().getDeptId());
-				if(deptObj.isPresent())
-				{
+				Optional<Department> deptObj = deptrepo.findById(emp.getDepartment().getDeptId());
+				if (deptObj.isPresent()) {
 					emphist.setDeptName(deptObj.get().getDeptName());
 					emphist.setCompName(deptObj.get().getCompany().getCompName());
-			 	}
+				}
 			} else {
 				emphist.setDeptName("");
 				emphist.setCompName("");
@@ -168,9 +167,9 @@ public class EmployeeServImpl implements IEmployeeService {
 			emphist.setEmpCode(emp.getEmpCode());
 			emphist.setStatus(emp.getStatus());
 			emphist.setEmpName(emp.getEmpName());
-			
+
 			emphist.setLeaveDate(leaveDate);
-			 
+
 			emphistserv.saveEmployeeHistory(emphist);
 
 			Activity activity = Activity.builder().activity("Company " + emp.getEmpName() + " is saved successfully")
@@ -231,7 +230,6 @@ public class EmployeeServImpl implements IEmployeeService {
 
 				Employee emp = new Employee();
 
-				 
 				Optional<Employee> byEmp_code = emprepo.findByEmpCode(getCellValue(row.getCell(0)));
 				if (!byEmp_code.isPresent()) {
 
@@ -383,13 +381,12 @@ public class EmployeeServImpl implements IEmployeeService {
 					empdto.setDepartment("");
 					empdto.setCompany("");
 				}
-				if(emp.getLeaveDate()==null || emp.getLeaveDate()=="") {
+				if (emp.getLeaveDate() == null || emp.getLeaveDate() == "") {
 					empdto.setLeaveDate("");
-				}
-				else {
+				} else {
 					empdto.setLeaveDate(emp.getLeaveDate());
 				}
-				
+
 				empdto.setContractorName(emp.getContractorName());
 
 				if (emp.getStatus() == 1) {
@@ -426,10 +423,9 @@ public class EmployeeServImpl implements IEmployeeService {
 					empdto.setDepartment("");
 					empdto.setCompany("");
 				}
-				if(emp.getLeaveDate()==null || emp.getLeaveDate()=="") {
+				if (emp.getLeaveDate() == null || emp.getLeaveDate() == "") {
 					empdto.setLeaveDate("");
-				}
-				else {
+				} else {
 					empdto.setLeaveDate(emp.getLeaveDate());
 				}
 				empdto.setContractorName(emp.getContractorName());
@@ -450,7 +446,7 @@ public class EmployeeServImpl implements IEmployeeService {
 
 		return result;
 	}
- 
+
 	public Page<Employee> searchEmployees(String search, Pageable pageable) {
 //        Department departmentByDeptName = deptrepo.getDepartmentByDeptName(search);
 //        System.err.println();
@@ -474,9 +470,10 @@ public class EmployeeServImpl implements IEmployeeService {
 	@Override
 //	public List<EmployeeDTO> getAllEmployeesWithoudTrainingAndCompetency(Long training_id, Long competency_id) {
 //		var elist = emprepo.getAllEmployeesNotHaveTrainingAndCompetency(training_id, competency_id);
-	public List<EmployeeDTO> getAllEmployeesWithoudTrainingAndCompetency(Long training_id, Long competency_id,String tdate, Long timeslot) {
-		var elist = emprepo.getAllEmployeesNotHaveTrainingAndCompetency(training_id, competency_id,tdate,timeslot);
-		
+	public List<EmployeeDTO> getAllEmployeesWithoudTrainingAndCompetency(Long training_id, Long competency_id,
+			String tdate, Long timeslot) {
+		var elist = emprepo.getAllEmployeesNotHaveTrainingAndCompetency(training_id, competency_id, tdate, timeslot);
+
 		if (elist.size() > 0) {
 			List<EmployeeDTO> collect = elist.stream().map(emp -> {
 
@@ -484,7 +481,7 @@ public class EmployeeServImpl implements IEmployeeService {
 
 				empdto.setEmpId(emp.getEmpId());
 				empdto.setEmpName(emp.getEmpName());
-				
+
 				return empdto;
 
 			}).collect(Collectors.toList());

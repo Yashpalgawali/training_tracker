@@ -35,6 +35,9 @@ import com.example.demo.service.ICategoryService;
 import com.example.demo.service.IEmployeeService;
 import com.example.demo.service.IEmployeeTrainingService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
@@ -55,6 +58,9 @@ public class EmployeeController {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@PostMapping("/")
+	@Operation(summary = "Save Employee", description = "This endpoint saves the Employee data in the database")
+	@ApiResponses(value = { @ApiResponse(responseCode = "201", description = "The Employee is saved Successfully "),
+			@ApiResponse(responseCode = "500", description = "The Employee is NOT Saved ") })
 	public ResponseEntity<ResponseDto> saveEmployee(@RequestBody Employee emp) {
 
 		empserv.saveEmployee(emp);
@@ -63,6 +69,9 @@ public class EmployeeController {
 	}
 
 	@GetMapping("/")
+	@Operation(summary = "Get All Employees", description = "This endpoint retrieves the List of Employees ")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Employee is saved Successfully "),
+			@ApiResponse(responseCode = "404", description = "The Employee List is NOT found ") })
 	public ResponseEntity<List<EmployeeDTO>> getAllEmployeesDtos() {
 
 		List<Employee> empList = empserv.getAllEmployees();
@@ -101,10 +110,9 @@ public class EmployeeController {
 			} else {
 				empdto.setStatus("InActive");
 			}
-			if(emp.getLeaveDate()==null || emp.getLeaveDate().equals("")) {
+			if (emp.getLeaveDate() == null || emp.getLeaveDate().equals("")) {
 				empdto.setLeaveDate("");
-			}
-			else {
+			} else {
 				empdto.setLeaveDate(emp.getLeaveDate());
 			}
 			empdto.setTrainings(training_names);
@@ -123,31 +131,55 @@ public class EmployeeController {
 //		return ResponseEntity.status(HttpStatus.OK).body(empList);
 //
 //	}
-	
+
 	@GetMapping("/training/{training_id}/competency/{competency_id}/trainingdate/{tdate}/timeslot/{timeslot}")
+	@Operation(summary = "Get Employees Without Training And Competency", description = "This endpoint retrieves the list of Employees Who have not completed the trainings or have no competency")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The list of trained Employees found"),
+			@ApiResponse(responseCode = "404", description = "No Employees found ") })
 	public ResponseEntity<List<EmployeeDTO>> getAllEmployeesWithoutTrainingAndCompetency(@PathVariable Long training_id,
-			@PathVariable Long competency_id,@PathVariable String tdate,@PathVariable Long timeslot) {
-		List<EmployeeDTO> empList = empserv.getAllEmployeesWithoudTrainingAndCompetency(training_id, competency_id,tdate,timeslot);
+			@PathVariable Long competency_id, @PathVariable String tdate, @PathVariable Long timeslot) {
+		List<EmployeeDTO> empList = empserv.getAllEmployeesWithoudTrainingAndCompetency(training_id, competency_id,
+				tdate, timeslot);
 		return ResponseEntity.status(HttpStatus.OK).body(empList);
 
 	}
-	
-	
+
 	@GetMapping("/{id}/trainingdate/{tdate}/timeslot/{timeslot}")
+	@Operation( summary = "Check Employee attended the other trainings or not", 
+				description = "This endpoint checks the Employee have attended any training on provided date and time" )
+	@ApiResponses(
+			value = {
+					@ApiResponse(responseCode = "200" ,description = "The Employee have attended the trainings on given date and time"),
+					@ApiResponse(responseCode = "500" ,description = "The Employee have not Attended the Trainings on given Date and Time ")
+			})
 	public ResponseEntity<Integer> checkEmployeeAttendedTrainingOnDateAndTimeSlot(@PathVariable String tdate,
-				@PathVariable Long timeslot,@PathVariable Long id) {		
+			@PathVariable Long timeslot, @PathVariable Long id) {
 		int count = empserv.checkEmployeeAttendedTrainingOnDateAndTimeSlot(id, timeslot, tdate);
 		return ResponseEntity.status(HttpStatus.OK).body(count);
 
 	}
 
 	@GetMapping("/active")
+	@Operation( summary = "Check Employee is active or not ", 
+				description = "This endpoint checks the Employee is active in the company or left the company" )
+	@ApiResponses(
+	value = {
+			@ApiResponse(responseCode = "200" ,description = "The Employee is Active"),
+			@ApiResponse(responseCode = "404" ,description = "The Employee is left")
+	})
 	public ResponseEntity<List<Employee>> getAllActiveEmployees() {
 
 		return ResponseEntity.status(HttpStatus.OK).body(empserv.getAllActiveEmployees());
 	}
 
 	@GetMapping("/paged")
+	@Operation( summary = "Get List of Employee in paged manner ", 
+				description = "This endpoint retrieves the List of Employees in pagination" )
+	@ApiResponses(
+			value = {
+			@ApiResponse(responseCode = "200" ,description = "The Employee is returned"),
+			@ApiResponse(responseCode = "404" ,description = "No Employees are present")
+	})
 	public Map<String, Object> getEmployees(@RequestParam(defaultValue = "0") int start,
 			@RequestParam(defaultValue = "10") int length, @RequestParam(required = false) String search,
 			@RequestParam(required = false) String orderColumn, @RequestParam(required = false) String orderDir) {
@@ -175,6 +207,13 @@ public class EmployeeController {
 	}
 
 	@GetMapping("/{id}")
+	@Operation( summary = "Retrieve Employee by ID", 
+		description = "This endpoint returns the details of the Employee based on ID" )
+	@ApiResponses(
+		value = {
+		@ApiResponse(responseCode = "200" ,description = "The Employee is found"),
+		@ApiResponse(responseCode = "404" ,description = "The Employee is not found")
+	})
 	public ResponseEntity<Employee> getEmployeebyEmployeeId(@PathVariable("id") Long empid) {
 
 		var emp = empserv.getEmployeeByEmployeeId(empid);
@@ -182,6 +221,13 @@ public class EmployeeController {
 	}
 
 	@GetMapping("/code/{empcode}")
+	@Operation( summary = "Retrieve Employee by Employee Code", 
+		description = "This endpoint returns the details of the Employee based on Employee Code" )
+	@ApiResponses(
+		value = {
+		@ApiResponse(responseCode = "200" ,description = "The Employee is found"),
+		@ApiResponse(responseCode = "404" ,description = "The Employee is not found")
+	})
 	public ResponseEntity<Employee> getEmployeebyEmployeeCode(@PathVariable String empcode) {
 
 		var emp = empserv.getEmployeeByEmployeeCode(empcode);
@@ -189,14 +235,23 @@ public class EmployeeController {
 	}
 
 	@PutMapping("/")
+	@Operation(summary = "Update Employee", description = "This endpoint updated the Employee data in the database")
+	@ApiResponses(value = { @ApiResponse(responseCode = "201", description = "The Employee is updated Successfully "),
+			@ApiResponse(responseCode = "500", description = "The Employee is NOT updated ") })
 	public ResponseEntity<ResponseDto> updateEmployee(@RequestBody Employee employee) {
-		System.err.println("Updating employee "+employee.toString());
 		empserv.updateEmployee(employee);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
 				"Employee " + employee.getEmpName() + " is UPDATED successfully"));
 	}
 
 	@GetMapping("/training/employee/{empid}")
+	@Operation( summary = "Get the list of trainings Based Employee ID", 
+		description = "This endpoint returns the details of the trainings given to the Employee using Employee ID" )
+	@ApiResponses(
+		value = {
+		@ApiResponse(responseCode = "200" ,description = "The Employee Trainings are found"),
+		@ApiResponse(responseCode = "404" ,description = "No Employee Trainings found")
+	})
 	public ResponseEntity<List<Training>> getAllTrainingsByEmployeeId(@PathVariable Long empid) {
 
 		List<Training> trainList = empserv.getAllTrainingsByEmployeeId(empid);
@@ -205,8 +260,9 @@ public class EmployeeController {
 	}
 
 	@GetMapping("/export/employee/list")
-//	@Operation(description = "This end point will Export the All assigned assets to excel file ", summary ="Export All Assigned Assets to the Excel")
-//	@ApiResponse(description = "This will export assigned assets to the Employee ", responseCode = "200" )		
+	@Operation(summary = "Download Employee List", description = "This endpoint downloads the Employee list in excel format")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Employee list is downloaded Successfully"),
+			@ApiResponse(responseCode = "500", description = "The Employee list is NOT downloaded") })
 	public ResponseEntity<InputStreamResource> exportToExcel(HttpServletResponse response) throws IOException {
 
 		// Set headers
@@ -256,6 +312,9 @@ public class EmployeeController {
 	}
 
 	@GetMapping("/export/sample/employeelist")
+	@Operation(summary = "Download Employee List", description = "This endpoint downloads the Employee list in excel format")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Employee list is downloaded Successfully"),
+			@ApiResponse(responseCode = "500", description = "The Employee list is NOT downloaded") })
 	public ResponseEntity<InputStreamResource> exportSampleToUploadEmployeesToExcel(HttpServletResponse response)
 			throws IOException {
 
@@ -274,6 +333,9 @@ public class EmployeeController {
 	}
 
 	@PostMapping("/upload")
+	@Operation(summary = "Upload Employee List", description = "This endpoint uploads the list of Employees in the database")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Employee list is uploaded Successfully "),
+			@ApiResponse(responseCode = "500", description = "The Employee list is NOT uploaded") })
 	public ResponseEntity<String> uploadEmployeeList(@RequestParam MultipartFile empListExcel) throws IOException {
 
 		if (empListExcel.isEmpty()) {

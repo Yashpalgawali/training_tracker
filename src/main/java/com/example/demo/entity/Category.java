@@ -27,12 +27,10 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Category {
 
-	 
-
 	@Id
 	@SequenceGenerator(name = "emp_category_seq", initialValue = 1, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "emp_category_seq")
 	Long category_id;
-	
+
 	String category;
 }
