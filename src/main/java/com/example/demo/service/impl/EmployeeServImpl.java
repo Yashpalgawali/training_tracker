@@ -230,7 +230,10 @@ public class EmployeeServImpl implements IEmployeeService {
 
 				Employee emp = new Employee();
 
-				Optional<Employee> byEmp_code = emprepo.findByEmpCode(getCellValue(row.getCell(0)));
+				Optional<Employee> byEmp_code = emprepo.findByEmpCode(getCellValue(row.getCell(1)));
+				
+				System.err.println("Is employee present with Code "+getCellValue(row.getCell(1)));
+				
 				if (!byEmp_code.isPresent()) {
 
 					emp.setEmpName(getCellValue(row.getCell(0)));
@@ -481,7 +484,8 @@ public class EmployeeServImpl implements IEmployeeService {
 
 				empdto.setEmpId(emp.getEmpId());
 				empdto.setEmpName(emp.getEmpName());
-
+				empdto.setEmpCode(emp.getEmpCode());
+				
 				return empdto;
 
 			}).collect(Collectors.toList());

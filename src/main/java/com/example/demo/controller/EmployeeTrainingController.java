@@ -38,22 +38,18 @@ import com.example.demo.service.IEmployeeTrainingHistoryService;
 import com.example.demo.service.IEmployeeTrainingService;
 
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("employee-training")
+@RequiredArgsConstructor
 public class EmployeeTrainingController {
 
 	private final IEmployeeTrainingService emptrainserv;
 	private final IEmployeeTrainingHistoryService emptrainhistserv;
 	private final IEmployeeService empserv;
-
-	public EmployeeTrainingController(IEmployeeTrainingService emptrainserv,
-			IEmployeeTrainingHistoryService emptrainhistserv, IEmployeeService empserv) {
-		super();
-		this.emptrainserv = emptrainserv;
-		this.emptrainhistserv = emptrainhistserv;
-		this.empserv = empserv;
-	}
+	
+	private Logger logger = LoggerFactory.getLogger(getClass());	
 
 	@GetMapping("/")
 	public ResponseEntity<List<EmployeeTraining>> getAllEmployeesTrainingList() {
@@ -61,8 +57,6 @@ public class EmployeeTrainingController {
 		List<EmployeeTraining> trainingHistory = emptrainserv.getAllEmployeesTrainingHistory();
 		return ResponseEntity.status(HttpStatus.OK).body(trainingHistory);
 	}
-
-	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@GetMapping("/{id}")
 	public ResponseEntity<List<EmployeeTraining>> getAllTrainingListByEmployeeId(@PathVariable Long id) {
@@ -109,17 +103,6 @@ public class EmployeeTrainingController {
 							"Training is not started of Employees "));
 		}
 	}
-
-//	@PutMapping("/")
-//	public ResponseEntity<ResponseDto> updateEmployeeTraining(@RequestBody EmployeeTraining emptraining) {
-//
-//		emptrainserv.updateEmployeeTraining(emptraining);
-//		logger.info("Object is {} ",emptraining);
-//		
-//		Employee trainedEmployee  = empserv.getEmployeeByEmployeeId(emptraining.getEmployee().getEmpId());
-//		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
-//				"Training is Updated of the Employee " + trainedEmployee.getEmpName()));
-//	}
 
 	@PutMapping("/")
 	public ResponseEntity<ResponseDto> updateEmployeeTraining(@RequestBody TrainingAssignmentRequest emp_training) {

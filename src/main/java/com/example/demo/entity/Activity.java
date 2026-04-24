@@ -14,13 +14,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Table(name="tbl_activity")
-@Entity
-@Getter
-@Setter
-@ToString
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@Entity @Getter @Setter @ToString @AllArgsConstructor @NoArgsConstructor @Builder
 public class Activity {
 
 	@Id
