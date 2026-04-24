@@ -1,10 +1,11 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.SequenceGenerator;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter @Setter @AllArgsConstructor @NoArgsConstructor
 public class Role {
 //	@Id
 //	@SequenceGenerator(name = "role_seq",allocationSize = 1,initialValue = 1)

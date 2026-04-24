@@ -471,8 +471,6 @@ public class EmployeeServImpl implements IEmployeeService {
 	}
 
 	@Override
-//	public List<EmployeeDTO> getAllEmployeesWithoudTrainingAndCompetency(Long training_id, Long competency_id) {
-//		var elist = emprepo.getAllEmployeesNotHaveTrainingAndCompetency(training_id, competency_id);
 	public List<EmployeeDTO> getAllEmployeesWithoudTrainingAndCompetency(Long training_id, Long competency_id,
 			String tdate, Long timeslot) {
 		var elist = emprepo.getAllEmployeesNotHaveTrainingAndCompetency(training_id, competency_id, tdate, timeslot);
@@ -485,7 +483,7 @@ public class EmployeeServImpl implements IEmployeeService {
 				empdto.setEmpId(emp.getEmpId());
 				empdto.setEmpName(emp.getEmpName());
 				empdto.setEmpCode(emp.getEmpCode());
-				
+
 				return empdto;
 
 			}).collect(Collectors.toList());

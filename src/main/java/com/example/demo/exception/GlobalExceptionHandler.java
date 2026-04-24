@@ -26,6 +26,17 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
 	}
 	
+	@ExceptionHandler(ResourceAlreadyExistsException.class)
+	public ResponseEntity<ErrorResponseDto> handleResourceAlreadyExistsException(ResourceAlreadyExistsException exception , WebRequest request){
+		
+		ErrorResponseDto error = new ErrorResponseDto(
+													request.getDescription(false),
+													HttpStatus.BAD_REQUEST,
+													exception.getMessage(),LocalDateTime.now().toString() );		
+		
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+	}
+	
 	@ExceptionHandler(BadCredentialsException.class)
 	public ResponseEntity<ErrorResponseDto> handleBadCredentialsException(BadCredentialsException exception , WebRequest request){
 		

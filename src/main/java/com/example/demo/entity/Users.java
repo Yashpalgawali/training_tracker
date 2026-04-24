@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,12 +17,7 @@ import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 
 @Table(name = "tbl_users")
-@Entity
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
+@Entity @Getter @Setter @AllArgsConstructor @NoArgsConstructor @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Users {
 
@@ -30,10 +26,12 @@ public class Users {
 	@GeneratedValue(generator = "user_seq", strategy = GenerationType.AUTO)
 	Long user_id;
 
+	@Column(unique = true)
 	String username;
 
 	String password;
 
+	@Column(unique = true)
 	String email;
 
 	int enabled;
