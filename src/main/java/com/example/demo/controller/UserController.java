@@ -9,14 +9,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.ResponseDto;
 import com.example.demo.entity.Users;
-import com.example.demo.service.ICompanyService;
 import com.example.demo.service.IUserService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -60,6 +58,7 @@ public class UserController {
 			@ApiResponse(responseCode = "404", description = "No Users are found") })
 	public ResponseEntity<List<Users>> getAllUsers() {
 		var users = userserv.getAllUsers();
+		logger.info("All users List {} ",users);
 		return ResponseEntity.status(HttpStatus.OK).body(users);
 	}
 

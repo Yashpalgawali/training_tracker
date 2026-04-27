@@ -22,7 +22,7 @@ public class UserServImpl implements IUserService {
 	private final UsersRepository userrepo;
 
 	private final BCryptPasswordEncoder passEncoder;
-	
+
 	@Override
 	@Transactional	
 	public int updateUserPassword(Users user) {
