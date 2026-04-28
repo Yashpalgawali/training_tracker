@@ -1,6 +1,12 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -13,8 +19,14 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Test {
 
+	@Id
+	@SequenceGenerator(name="test_seq",allocationSize = 1,initialValue = 1)
+	@GeneratedValue(generator = "test_seq",strategy = GenerationType.SEQUENCE)
 	Long testingId;
 	
 	String testName;
 	
+	@ManyToOne
+	@JoinColumn(name ="frequency_id")
+	Frequency frequency;
 }
