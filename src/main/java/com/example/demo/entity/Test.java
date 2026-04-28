@@ -26,7 +26,7 @@ public class Test {
 	
 	String testName;
 	
-	@ManyToOne
-	@JoinColumn(name ="frequency_id")
-	Frequency frequency;
+//	@ManyToOne
+//	@JoinColumn(name ="frequency_id")
+//	Frequency frequency;
 }

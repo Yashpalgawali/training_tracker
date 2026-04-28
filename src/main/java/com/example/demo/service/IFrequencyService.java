@@ -12,4 +12,5 @@ public interface IFrequencyService {
 	
 	public Frequency getFrequencyById(Long id);
 	
+	public void updateFrequency(Frequency frequency);
 }
