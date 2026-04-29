@@ -1,10 +1,14 @@
 package com.example.demo.service.impl;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.entity.Test;
 import com.example.demo.exception.GlobalException;
+import com.example.demo.exception.ResourceAlreadyExistsException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.TestRepository;
 import com.example.demo.service.ITestService;
@@ -19,6 +23,12 @@ public class TestServImpl implements ITestService {
 	
 	@Override
 	public void saveTest(Test test) {
+		String trimmedTestName = test.getTestName();
+		
+		Optional<Test> foundTest =	testrepo.findByTestName(trimmedTestName);
+		if(foundTest.isPresent()) {
+			throw new ResourceAlreadyExistsException("Test", "Test Name", trimmedTestName);
+		}
 		var savedTest = testrepo.save(test);
 
 		if(savedTest==null) 
@@ -27,8 +37,8 @@ public class TestServImpl implements ITestService {
 
 	@Override
 	public Test getTestById(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return testrepo.findById(id).orElseThrow(()-> new ResourceNotFoundException("No Test found for given ID "+id));
 	}
 
 	@Override
@@ -38,6 +48,14 @@ public class TestServImpl implements ITestService {
 		testrepo.findById(test.getTestingId()).orElseThrow(()-> new ResourceNotFoundException("No test found "));
 		return testrepo.updateTest(test.getTestingId(), test.getTestName());
 		
+	}
+
+	@Override
+	public List<Test> getAllTests() {
+		var testList = testrepo.findAll();
+		if(testList.size() > 0)
+			return testList;
+		throw new ResourceNotFoundException("No Tests are found");
 	}
 
 }

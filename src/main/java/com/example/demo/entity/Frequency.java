@@ -17,8 +17,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Frequency {
 	@Id
-	@SequenceGenerator(name="test_seq",allocationSize = 1,initialValue = 1)
-	@GeneratedValue(generator = "test_seq",strategy = GenerationType.SEQUENCE)
+	@SequenceGenerator(name="freq_seq",allocationSize = 1,initialValue = 1)
+	@GeneratedValue(generator = "freq_seq",strategy = GenerationType.SEQUENCE)
 	Long frequencyId;
 	
 	String frequency;

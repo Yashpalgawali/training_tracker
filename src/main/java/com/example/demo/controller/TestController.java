@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -36,7 +38,7 @@ public class TestController {
 	@Operation(summary = "Save Test", description = "This endpoint saves the Test object to the database")
 	@ApiResponses(value = { @ApiResponse(responseCode = "201", description = "The test is saved Successfully "),
 			@ApiResponse(responseCode = "500", description = "The test is NOT Saved ") })
-	public ResponseEntity<ResponseDto> saveCompany(@RequestBody Test test) {
+	public ResponseEntity<ResponseDto> saveTest(@RequestBody Test test) {
 		testserv.saveTest(test);
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto(HttpStatus.CREATED.toString(),
 				"Test " + test.getTestName() + " is saved Successfully"));
@@ -46,25 +48,25 @@ public class TestController {
 	@Operation(summary = "Find Test By ID", description = "This endpoint finds the Test object from the database by its ID")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The test is found Successfully "),
 			@ApiResponse(responseCode = "404", description = "The test is NOT FOUND") })
-	public ResponseEntity<Test> getCompanyById(@PathVariable("id") Long testid) {
+	public ResponseEntity<Test> getTestById(@PathVariable("id") Long testid) {
 		var test = testserv.getTestById(testid);
 		return ResponseEntity.status(HttpStatus.OK).body(test);
 	}
 
-//	@GetMapping("/")
-//	@Operation(summary = "Find List of Categories", description = "This endpoint finds the List of Categories from the database")
-//	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The companies are found Successfully "),
-//			@ApiResponse(responseCode = "404", description = "No companies are found") })
-//	public ResponseEntity<List<Test>> getAllCategories() {
-//		var test = testserv.getAllCategories();
-//		return ResponseEntity.status(HttpStatus.OK).body(test);
-//	}
+	@GetMapping("/")
+	@Operation(summary = "Find List of Tests", description = "This endpoint finds the List of Tests from the database")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Tests are found "),
+			@ApiResponse(responseCode = "404", description = "No Tests are found") })
+	public ResponseEntity<List<Test>> getAllTests() {
+		var test = testserv.getAllTests();
+		return ResponseEntity.status(HttpStatus.OK).body(test);
+	}
 
 	@PutMapping("/")
 	@Operation(summary = "Update Test", description = "This endpoint UPDATES the Test object to the database")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The test is updated Successfully "),
 			@ApiResponse(responseCode = "304", description = "The test is NOT updated ") })
-	public ResponseEntity<ResponseDto> updateCompany(@RequestBody Test test) {
+	public ResponseEntity<ResponseDto> updateTerst(@RequestBody Test test) {
 		testserv.updateTest(test);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
 				"Test " + test.getTestName() + " is Updated Successfully"));

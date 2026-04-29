@@ -63,6 +63,6 @@ public class FrequencyController {
 			@ApiResponse(responseCode = "404", description = "Frequency is not updated") })
 	public ResponseEntity<ResponseDto> updateFrequency(@RequestBody Frequency frequency) {
 		freqserv.updateFrequency(frequency);
-		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.CREATED.toString(), "Frequency "+frequency.getFrequency()+" is saved successfully"));
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.CREATED.toString(), "Frequency "+frequency.getFrequency()+" is updated successfully"));
 	}
 }

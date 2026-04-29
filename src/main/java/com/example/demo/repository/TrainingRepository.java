@@ -1,12 +1,11 @@
 package com.example.demo.repository;
 
-import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.entity.Training;
 
@@ -15,9 +14,9 @@ public interface TrainingRepository extends JpaRepository<Training, Long> {
 
 	@Query("UPDATE Training t SET t.training_name=:tname WHERE t.training_id=:tid")
 	@Modifying
-	@Transactional
 	public int updateTraining(Long tid,String tname);
 	
-	
+	@Query("SELECT t FROM Training t WHERE t.training_name=:training_name")
+	public Optional<Training> findByTraining_name(String training_name);
 	
 }

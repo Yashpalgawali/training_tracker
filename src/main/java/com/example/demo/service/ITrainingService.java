@@ -6,12 +6,12 @@ import com.example.demo.entity.Training;
 
 public interface ITrainingService {
 
-	public Training saveTraining(Training training);
+	public void saveTraining(Training training);
 
 	public Training getTrainingById(Long tid);
 
 	public List<Training> getAllTrainings();
 
-	public int updateTraining(Training training);
+	public void updateTraining(Training training);
 		
 }
