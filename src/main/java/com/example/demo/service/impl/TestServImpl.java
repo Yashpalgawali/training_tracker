@@ -23,7 +23,7 @@ public class TestServImpl implements ITestService {
 	
 	@Override
 	public void saveTest(Test test) {
-		String trimmedTestName = test.getTestName();
+		String trimmedTestName = test.getTestName().trim();
 		
 		Optional<Test> foundTest =	testrepo.findByTestName(trimmedTestName);
 		if(foundTest.isPresent()) {
