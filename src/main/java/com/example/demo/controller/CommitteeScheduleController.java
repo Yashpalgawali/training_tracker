@@ -1,7 +1,11 @@
 package com.example.demo.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.CommitteeScheduleDto;
 import com.example.demo.dto.ResponseDto;
+import com.example.demo.entity.Committee;
 import com.example.demo.entity.CommitteeSchedule;
 import com.example.demo.service.ICommitteeScheduleService;
 
@@ -52,10 +57,20 @@ public class CommitteeScheduleController {
 //		var committee = committeescheduleserv.getCommitteeById(id);
 //		return ResponseEntity.status(HttpStatus.OK).body(committee );
 //	}
+	
+	
+	@GetMapping("/year/{year}")
+	@Operation(summary = "Find the Committee Schedule Schedule using Year", description = "This endpoint finds the Committee Schedule Schedulefrom the database by using Year")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Committee Schedule Schedule is found  "),
+			@ApiResponse(responseCode = "404", description = "No Committee Schedule is found for the year") })
+	public ResponseEntity<List<CommitteeSchedule>> getCommitteeByYear(@PathVariable String year) {
+		var committee = committeescheduleserv.getCommitteeScheduleByYear(year);
+		return ResponseEntity.status(HttpStatus.OK).body(committee );
+	}
 //	
 //	@PutMapping("/")
 //	@Operation(summary = "Update the Committee Schedule", description = "This endpoint updates the Committee Schedule Schedulein the database")
-//	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Committee Schedule Scheduleis updated Successfully "),
+//	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Committee Schedule updated Successfully "),
 //			@ApiResponse(responseCode = "404", description = "Committee Schedule Scheduleis not updated") })
 //	public ResponseEntity<ResponseDto> updateCommittee(@RequestBody Committee Schedule Schedulecommittee) {
 //		committeescheduleserv.updateCommittee(committee);

@@ -11,8 +11,7 @@ public class CommitteeScheduleDto {
 	
 	Long committeeScheduleId;
 	
-	Long committeeId;
-	
+	Long committeeId;	
 	Long frequencyId;
 	
 	Long monthIndex;

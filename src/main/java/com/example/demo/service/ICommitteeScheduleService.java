@@ -13,7 +13,7 @@ public interface ICommitteeScheduleService {
 	
 	public CommitteeSchedule getCommitteeById(Long id);
 	
-	public CommitteeSchedule getCommitteeByYear(String year);
+	public List<CommitteeSchedule> getCommitteeScheduleByYear(String year);
 	
 	public List<CommitteeSchedule> getAllCommitteeSchedules();
 	

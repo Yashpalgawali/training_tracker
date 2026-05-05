@@ -14,7 +14,7 @@ public class CommitteeScheduleMapper {
 		committeeSchedule.setCheckedBy(committeeScheduleDto.getCheckedBy());
 		committeeSchedule.setDone(committeeScheduleDto.getStatus());
 		committeeSchedule.setPlan(committeeScheduleDto.getStatus());
-
+		
 		return committeeSchedule;
 	}
 

@@ -46,6 +46,17 @@ public class CommitteeSchedule {
 	String checkedBy;
 	String approvedBy;
 
-	String month;
+	String monthJan;
+	String monthFeb;
+	String monthMar;
+	String monthApr;
+	String monthMay;
+	String monthJun;
+	String monthJul;
+	String monthAug;
+	String monthSep;
+	String monthOct;
+	String monthNov;
+	String monthDec;
 
 }
