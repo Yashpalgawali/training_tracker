@@ -7,12 +7,15 @@ import org.springframework.stereotype.Service;
 import com.example.demo.dto.CommitteeScheduleDto;
 import com.example.demo.entity.Committee;
 import com.example.demo.entity.CommitteeSchedule;
+import com.example.demo.entity.CommitteeScheduleHistory;
 import com.example.demo.exception.GlobalException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.mapper.CommitteeScheduleMapper;
+import com.example.demo.repository.CommitteeScheduleHistRepo;
 import com.example.demo.repository.CommitteeScheduleRepository;
 import com.example.demo.service.ICommitteeScheduleService;
 import com.example.demo.service.ICommitteeService;
+import com.example.demo.service.IFrequencyService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,10 +25,17 @@ public class CommitteeScheduleServImpl implements ICommitteeScheduleService {
 
 	private final CommitteeScheduleRepository committeeshedulerepo;
 
+	private final CommitteeScheduleHistRepo committeeschedulehistrepo;
+	
 	private final ICommitteeService committeeserv;
 
+	private final IFrequencyService frequencyserv;
+	
 	@Override
 	public void saveCommitteeSchedule(CommitteeScheduleDto committee) {
+		var committeeObj = committeeserv.getCommitteeById(committee.getCommitteeId());
+		var frequencyObj = frequencyserv.getFrequencyById(committee.getFrequencyId());
+		
 		CommitteeSchedule mappedCommitteeSchedule = CommitteeScheduleMapper.MapToCommitteeSchedule(committee,
 				new CommitteeSchedule());
 		
@@ -88,7 +98,22 @@ public class CommitteeScheduleServImpl implements ICommitteeScheduleService {
 
 		Committee comm = committeeserv.getCommitteeById(committee.getCommitteeId());
 		mappedCommitteeSchedule.setCommittee(comm);
+		
 		CommitteeSchedule savedEntity = committeeshedulerepo.save(mappedCommitteeSchedule);
+
+		if (savedEntity != null) {
+			CommitteeScheduleHistory histObj = new CommitteeScheduleHistory();
+			histObj.setCommittee(committeeObj.getCommitteeName());
+			histObj.setCommitteeScheduleDate(committee.getCommitteeScheduleDate());
+			histObj.setApprovedBy(committee.getApprovedBy());
+			histObj.setCheckedBy(committee.getCheckedBy());
+			histObj.setDoneBy(committee.getDoneBy());
+			histObj.setFrequency(frequencyObj.getFrequency());
+			histObj.setStatus(committee.getStatus());
+
+			committeeschedulehistrepo.save(histObj);
+		}	
+		
 
 		if (savedEntity == null) {
 			throw new GlobalException("Committee meeting is not scheduled");

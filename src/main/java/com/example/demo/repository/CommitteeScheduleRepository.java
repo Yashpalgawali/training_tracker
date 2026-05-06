@@ -12,7 +12,7 @@ import com.example.demo.entity.CommitteeSchedule;
 @Repository("committeschedulerepo")
 public interface CommitteeScheduleRepository extends JpaRepository<CommitteeSchedule, Long> {
 
-	@Query("SELECT c FROM CommitteeSchedule c WHERE c.committeeScheduleDate LIKE CONCAT('%', :year, '%')")
+	@Query("SELECT c FROM CommitteeSchedule c WHERE c.committeeScheduleDate LIKE CONCAT('%', :year)")
 	public List<CommitteeSchedule> findCommitteeScheduleByYear(@Param("year") String year);
 	
 	
