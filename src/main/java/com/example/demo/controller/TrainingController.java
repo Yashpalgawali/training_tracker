@@ -18,18 +18,17 @@ import com.example.demo.dto.ResponseDto;
 import com.example.demo.entity.Training;
 import com.example.demo.service.ITrainingService;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("training")
+@RequiredArgsConstructor
 public class TrainingController {
 
 	private final ITrainingService trainserv;
-
-	public TrainingController(ITrainingService trainserv) {
-		super();
-		this.trainserv = trainserv;
-	}
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());
+
 	@PostMapping("/")
 	public ResponseEntity<ResponseDto> saveTraining(@RequestBody Training training) {
 

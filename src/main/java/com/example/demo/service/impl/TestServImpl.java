@@ -29,6 +29,8 @@ public class TestServImpl implements ITestService {
 		if(foundTest.isPresent()) {
 			throw new ResourceAlreadyExistsException("Test", "Test Name", trimmedTestName);
 		}
+		test.setTestName(trimmedTestName);
+		test.setFrequency(test.getFrequency().trim());
 		var savedTest = testrepo.save(test);
 
 		if(savedTest==null) 
@@ -44,6 +46,8 @@ public class TestServImpl implements ITestService {
 	@Override
 	@Transactional
 	public int updateTest(Test test) {
+		test.setTestName(test.getTestName().trim());
+		test.setFrequency(test.getFrequency().trim());
 		
 		testrepo.findById(test.getTestingId()).orElseThrow(()-> new ResourceNotFoundException("No test found "));
 		return testrepo.updateTest(test.getTestingId(), test.getTestName());

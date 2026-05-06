@@ -22,5 +22,7 @@ public class Test {
 	@GeneratedValue(generator = "test_seq",strategy = GenerationType.SEQUENCE)
 	Long testingId;
 	
-	String testName; 
+	String testName;
+	
+	String frequency;
 }

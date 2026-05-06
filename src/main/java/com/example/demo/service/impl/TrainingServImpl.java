@@ -30,6 +30,7 @@ public class TrainingServImpl implements ITrainingService {
 		if(byTraining_name.isPresent()) {
 			throw new ResourceAlreadyExistsException("Training", "Training Name ",trimmedTraining);
 		}
+		training.setFrequency(training.getFrequency().trim());
 		
 		training.setTraining_name(trimmedTraining);
 		var savedTraining = trainrepo.save(training);
@@ -42,7 +43,7 @@ public class TrainingServImpl implements ITrainingService {
 	public Training getTrainingById(Long tid) {
 
 		return trainrepo.findById(tid)
-				.orElseThrow(() -> new ResourceNotFoundException("No Traininig found for given ID " + tid));
+				.orElseThrow(() -> new ResourceNotFoundException("No Training found for given ID " + tid));
 	}
 
 	@Override
@@ -59,7 +60,9 @@ public class TrainingServImpl implements ITrainingService {
 	@Transactional
 	public void updateTraining(Training training) {
 		training.setTraining_name(training.getTraining_name().trim());
-		var res = trainrepo.updateTraining(training.getTraining_id(), training.getTraining_name());
+		training.setFrequency(training.getFrequency().trim());
+		
+		var res = trainrepo.updateTraining(training.getTraining_id(), training.getTraining_name(), training.getFrequency());
 		if (res < 0)
 			throw new ResourceNotFoundException("No Training found for given ID " + training.getTraining_id());
 	}
