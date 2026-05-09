@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.ResponseDto;
+import com.example.demo.dto.TestingDto;
 import com.example.demo.entity.Test;
 import com.example.demo.service.ITestService;
 
@@ -38,7 +39,7 @@ public class TestController {
 	@Operation(summary = "Save Test", description = "This endpoint saves the Test object to the database")
 	@ApiResponses(value = { @ApiResponse(responseCode = "201", description = "The test is saved Successfully "),
 			@ApiResponse(responseCode = "500", description = "The test is NOT Saved ") })
-	public ResponseEntity<ResponseDto> saveTest(@RequestBody Test test) {
+	public ResponseEntity<ResponseDto> saveTest(@RequestBody TestingDto test) {
 		testserv.saveTest(test);
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto(HttpStatus.CREATED.toString(),
 				"Test " + test.getTestName() + " is saved Successfully"));
@@ -57,7 +58,7 @@ public class TestController {
 	@Operation(summary = "Find List of Tests", description = "This endpoint finds the List of Tests from the database")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Tests are found "),
 			@ApiResponse(responseCode = "404", description = "No Tests are found") })
-	public ResponseEntity<List<Test>> getAllTests() {
+	public ResponseEntity<List<TestingDto>> getAllTests() {
 		var test = testserv.getAllTests();
 		return ResponseEntity.status(HttpStatus.OK).body(test);
 	}
@@ -66,7 +67,8 @@ public class TestController {
 	@Operation(summary = "Update Test", description = "This endpoint UPDATES the Test object to the database")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The test is updated Successfully "),
 			@ApiResponse(responseCode = "304", description = "The test is NOT updated ") })
-	public ResponseEntity<ResponseDto> updateTerst(@RequestBody Test test) {
+	public ResponseEntity<ResponseDto> updateTest(@RequestBody TestingDto test) {
+		System.err.println("Updated Object "+test.toString());
 		testserv.updateTest(test);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
 				"Test " + test.getTestName() + " is Updated Successfully"));

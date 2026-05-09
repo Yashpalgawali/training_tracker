@@ -9,14 +9,14 @@ import lombok.experimental.FieldDefaults;
 @Data @AllArgsConstructor @NoArgsConstructor @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TestingScheduleDto {
 	
-	Long trainingScheduleId;
+	Long testingScheduleId;
 	
-	Long trainingId;	
+	Long testId;	
 	String frequency;
 	
 	Long monthIndex;
 	
-	String trainingScheduleDate;
+	String testScheduleDate;
 	
 	String status;
 	

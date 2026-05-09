@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.ResponseDto;
-import com.example.demo.dto.TestingScheduleDto;
-import com.example.demo.entity.TestingSchedule;
-import com.example.demo.service.ITestingScheduleService;
+import com.example.demo.dto.TestingScheduleDto ;
+import com.example.demo.entity.TestSchedule;
+import com.example.demo.service.ITestScheduleService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -28,13 +28,13 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "Testing Schedule Controller", description = "This controller handles endpoints to perform operations like Find the Testing Schedule")
 public class TestingScheduleController {
 
-	private final ITestingScheduleService testingscheduleserv;
+	private final ITestScheduleService testingscheduleserv;
 
 //	@GetMapping("/")
 //	@Operation(summary = "Find List of Testing Schedule", description = "This endpoint finds the List of Testing Schedule Schedulefrom the database")
 //	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Testing Schedule Scheduleare found Successfully "),
 //			@ApiResponse(responseCode = "404", description = "No Testing Schedule Scheduleare found") })
-//	public ResponseEntity<List<TestingSchedule>> getAllFrequencies() {
+//	public ResponseEntity<List<TestSchedule>> getAllFrequencies() {
 //		var testingList = testingscheduleserv.getAllTestings();
 //		return ResponseEntity.status(HttpStatus.OK).body(testingList);
 //	}
@@ -43,9 +43,9 @@ public class TestingScheduleController {
 	@Operation(summary = "Save the Testing Schedule", description = "This endpoint saved the Testing Schedule in the Database")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Testing Schedule is saved Successfully "),
 			@ApiResponse(responseCode = "404", description = "No Testing Schedule Scheduleare found") })
-	public ResponseEntity<ResponseDto> saveTesting(@RequestBody TestingScheduleDto testingSchedule) {
-		testingscheduleserv.saveTestingSchedule(testingSchedule);
-		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.CREATED.toString(), "Testing Scheduled dated on "+testingSchedule.getTestingScheduleDate()));
+	public ResponseEntity<ResponseDto> saveTestingSchedule(@RequestBody TestingScheduleDto  testingSchedule) {
+		testingscheduleserv.saveTestSchedule(testingSchedule);
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.CREATED.toString(), "Testing Scheduled dated on "+testingSchedule.getTestScheduleDate() ));
 	}
 //	
 //	@GetMapping("/{id}")
@@ -62,8 +62,8 @@ public class TestingScheduleController {
 	@Operation(summary = "Find the Testing Schedule using Year", description = "This endpoint finds the Testing Schedule from the database by using Year")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Testing Schedule is found  "),
 			@ApiResponse(responseCode = "404", description = "No Testing Schedule is found for the year") })
-	public ResponseEntity<List<TestingSchedule>> getTestingScheduleByYear(@PathVariable String year) {
-		var testing = testingscheduleserv.getTestingScheduleByYear(year);
+	public ResponseEntity<List<TestingScheduleDto>> getTestScheduleByYear(@PathVariable String year) {
+		var testing = testingscheduleserv.getTestScheduleByYear(year);
 		return ResponseEntity.status(HttpStatus.OK).body(testing );
 	}
 //	

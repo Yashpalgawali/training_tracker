@@ -13,9 +13,9 @@ import com.example.demo.entity.Test;
 @Repository("testrepo")
 public interface TestRepository extends JpaRepository<Test, Long> {
 
-	@Query("UPDATE Test t SET t.testName=:name WHERE t.testingId=:id ")
+	@Query("UPDATE Test t SET t.testName=:name, t.frequency=:freq WHERE t.testingId=:id ")
 	@Modifying
-	public int updateTest(Long id, String name);
+	public int updateTest(Long id, String name, String freq);
 	
 	public Optional<Test> findByTestName(String testName);
 }

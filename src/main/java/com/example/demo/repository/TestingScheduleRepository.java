@@ -9,10 +9,10 @@ import org.springframework.stereotype.Repository;
 
 import com.example.demo.entity.TestSchedule;
 
-@Repository("trainingschedulerepo")
+@Repository("testschedulerepo")
 public interface TestingScheduleRepository extends JpaRepository<TestSchedule, Long> {
 
-	@Query("SELECT c FROM TestingSchedule c WHERE c.trainingScheduleDate LIKE CONCAT('%', :year)")
+	@Query("SELECT c FROM TestSchedule c WHERE c.testScheduleDate LIKE CONCAT('%', :year)")
 	public List<TestSchedule> findTestingScheduleByYear(@Param("year") String year);
 
 }

@@ -13,7 +13,7 @@ public interface ITestScheduleService {
 	
 	public TestSchedule getTestScheduleById(Long id);
 	
-	public List<TestSchedule> getTestScheduleByYear(String year);
+	public List<TestingScheduleDto> getTestScheduleByYear(String year);
 	
 	public List<TestSchedule> getAllTestSchedules();
 	

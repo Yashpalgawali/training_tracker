@@ -1,13 +1,17 @@
 package com.example.demo.dto;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-@Data
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@Data @AllArgsConstructor @NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE) 
 public class TestingDto {
 	Long testingId;
 
 	String testName;
+	
+	String frequency;
 }

@@ -1,0 +1,168 @@
+package com.example.demo.service.impl;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
+import com.example.demo.dto.TestingScheduleDto;
+import com.example.demo.entity.Test;
+import com.example.demo.entity.TestSchedule;
+import com.example.demo.entity.TestScheduleHistory;
+import com.example.demo.exception.GlobalException;
+import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.mapper.TestingScheduleMapper;
+import com.example.demo.repository.TestingScheduleRepository;
+import com.example.demo.service.ITestScheduleService;
+import com.example.demo.service.ITestService;
+
+import lombok.RequiredArgsConstructor;
+
+@Service("testscheduleserv")
+@RequiredArgsConstructor
+public class TestingScheduleServImpl implements ITestScheduleService {
+
+	private final TestingScheduleRepository testshedulerepo;
+
+	private final TestScheduleHistRepo testschedulehistrepo;
+	
+	private final ITestService testserv;
+	
+	@Override
+	public void saveTestSchedule(TestingScheduleDto testScheduleDto) {
+		var testScheduleDtoObj = testserv.getTestById(testScheduleDto.getTestId());
+		
+		TestSchedule mappedTestingSchedule = TestingScheduleMapper.MapToTestingSchedule(testScheduleDto,
+				new TestSchedule());
+		
+		String status = testScheduleDto.getStatus();
+
+		if(status.equals("PLAN")) {
+			mappedTestingSchedule.setPlan(status);
+			mappedTestingSchedule.setDone("");
+		}
+		if(status.equals("DONE")) {
+			mappedTestingSchedule.setDone(status);
+			mappedTestingSchedule.setPlan("");
+		}
+		
+		String year = testScheduleDto.getTestScheduleDate().substring(8, 10);
+		Integer in = testScheduleDto.getMonthIndex().intValue();
+
+		switch (in) {
+		// Case statements
+		case 1:
+			mappedTestingSchedule.setMonthJan("Jan" + year);
+			break;
+		case 2:
+			mappedTestingSchedule.setMonthFeb("Feb" + year);
+			break;
+		case 3:
+			mappedTestingSchedule.setMonthMar("Mar" + year);
+			break;
+		case 4:
+			mappedTestingSchedule.setMonthApr("Apr" + year);
+			break;
+		case 5:
+			mappedTestingSchedule.setMonthMay("May" + year);
+			break;
+		case 6:
+			mappedTestingSchedule.setMonthJun("Jun" + year);
+			break;
+		case 7:
+			mappedTestingSchedule.setMonthJul("Jul" + year);
+			break;
+		case 8:
+			mappedTestingSchedule.setMonthAug("Aug" + year);
+			break;
+		case 9:
+			mappedTestingSchedule.setMonthSep("Sep" + year);
+			break;
+		case 10:
+			mappedTestingSchedule.setMonthOct("Oct" + year);
+			break;
+		case 11:
+			mappedTestingSchedule.setMonthNov("Nov" + year);
+			break;
+		case 12:
+			mappedTestingSchedule.setMonthDec("Dec" + year);
+			break;
+		// Default case statement
+		default:
+			mappedTestingSchedule.setMonthDec("Dec" + year);
+		}
+
+		Test comm = testserv.getTestById(testScheduleDto.getTestId());
+		mappedTestingSchedule.setTest(comm);
+		
+		TestSchedule savedEntity = testshedulerepo.save(mappedTestingSchedule);
+
+		if (savedEntity != null) {
+			TestScheduleHistory histObj = new TestScheduleHistory();
+			
+			histObj.setTest(testScheduleDtoObj.getTestName());
+			histObj.setTestScheduleDate(testScheduleDto.getTestScheduleDate());
+			histObj.setApprovedBy(testScheduleDto.getApprovedBy());
+			histObj.setCheckedBy(testScheduleDto.getCheckedBy());
+			histObj.setDoneBy(testScheduleDto.getDoneBy());
+			histObj.setFrequency(testScheduleDto.getFrequency());
+			histObj.setStatus(testScheduleDto.getStatus());
+
+			testschedulehistrepo.save(histObj);
+		}
+
+		if (savedEntity == null) {
+			throw new GlobalException("Testing meeting is not scheduled");
+		}
+	}
+
+	@Override
+	public void updateTestSchedule(TestingScheduleDto testScheduleDto) {
+
+	}
+
+	@Override
+	public TestSchedule getTestScheduleById(Long id) {
+
+		return testshedulerepo.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("No Testing schedule was found for given ID " + id));
+	}
+
+	@Override
+	public List<TestingScheduleDto> getTestScheduleByYear(String year) {
+		List<TestSchedule>  scheduleList = testshedulerepo.findTestingScheduleByYear(year);
+		if(scheduleList.size() > 0 ) {
+			List<TestingScheduleDto>  scheduleListDto = scheduleList.stream().map(test-> {
+				TestingScheduleDto testDto = new TestingScheduleDto();
+					testDto.setTestingScheduleId(test.getTestScheduleId());
+					testDto.setTestId(test.getTest().getTestingId());
+					testDto.setApprovedBy(test.getApprovedBy());
+					testDto.setDoneBy(test.getDoneBy());
+					testDto.setCheckedBy(test.getCheckedBy());
+					testDto.setFrequency(test.getFrequency());
+					if(test.getDone().equalsIgnoreCase("done"))
+					{
+						testDto.setStatus(test.getDone());
+					}
+					
+					if(test.getPlan().equalsIgnoreCase("plan"))
+					{
+						testDto.setStatus(test.getPlan());
+					}
+					testDto.setTestScheduleDate(test.getTestScheduleDate());
+				return testDto;
+				
+			}).collect(Collectors.toList());
+			return scheduleListDto;
+		}		
+		
+		throw new ResourceNotFoundException("No Testing Schedule was found for given year " + year);
+	}
+
+	@Override
+	public List<TestSchedule> getAllTestSchedules() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}
