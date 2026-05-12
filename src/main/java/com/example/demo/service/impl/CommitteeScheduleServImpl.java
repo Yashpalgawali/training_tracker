@@ -1,6 +1,7 @@
 package com.example.demo.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -144,6 +145,24 @@ public class CommitteeScheduleServImpl implements ICommitteeScheduleService {
 	public List<CommitteeSchedule> getAllCommitteeSchedules() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void updateCommitteeScheduleSignatureByYear(Map<String, String> body, String year) {
+		
+		getCommitteeScheduleByYear(year);
+		
+
+		String doneBy = body.get("doneBy");
+		String checkedBy = body.get("checkedBy");
+		String approvedBy = body.get("approvedBy");
+		
+		CommitteeSchedule commiteeSchedule = new CommitteeSchedule();
+		
+		commiteeSchedule.setApprovedBy(approvedBy);
+		commiteeSchedule.setCheckedBy(checkedBy);
+		commiteeSchedule.setDoneBy(doneBy);
+		
 	}
 
 }

@@ -1,10 +1,12 @@
 package com.example.demo.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -60,12 +62,24 @@ public class CommitteeScheduleController {
 	
 	
 	@GetMapping("/year/{year}")
-	@Operation(summary = "Find the Committee Schedule Schedule using Year", description = "This endpoint finds the Committee Schedule Schedulefrom the database by using Year")
-	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Committee Schedule Schedule is found  "),
+	@Operation(summary = "Find the Committee Schedule using Year", description = "This endpoint finds the Committee Schedule Schedulefrom the database by using Year")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Committee  Schedule is found  "),
 			@ApiResponse(responseCode = "404", description = "No Committee Schedule is found for the year") })
 	public ResponseEntity<List<CommitteeSchedule>> getCommitteeByYear(@PathVariable String year) {
 		var committee = committeescheduleserv.getCommitteeScheduleByYear(year);
 		return ResponseEntity.status(HttpStatus.OK).body(committee );
+	}
+	
+	@PatchMapping("/year/{year}")
+	public ResponseEntity<ResponseDto> updateSignaturesByYear(@PathVariable String year,
+			@RequestBody Map<String, String> body) {
+		
+		committeescheduleserv.updateCommitteeScheduleSignatureByYear(body, year);
+
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(new ResponseDto(HttpStatus.OK.toString(),
+						"The signature for year " + year
+								+ " is updated Successfully"));
 	}
 //	
 //	@PutMapping("/")

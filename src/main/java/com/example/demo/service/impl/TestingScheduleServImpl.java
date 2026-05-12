@@ -1,9 +1,11 @@
 package com.example.demo.service.impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.dto.TestingScheduleDto;
 import com.example.demo.entity.Test;
@@ -11,6 +13,7 @@ import com.example.demo.entity.TestSchedule;
 import com.example.demo.entity.TestScheduleHistory;
 import com.example.demo.exception.GlobalException;
 import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.exception.ResourceNotModifiedException;
 import com.example.demo.mapper.TestingScheduleMapper;
 import com.example.demo.repository.TestingScheduleRepository;
 import com.example.demo.service.ITestScheduleService;
@@ -128,33 +131,43 @@ public class TestingScheduleServImpl implements ITestScheduleService {
 				.orElseThrow(() -> new ResourceNotFoundException("No Testing schedule was found for given ID " + id));
 	}
 
+//	@Override
+//	public List<TestingScheduleDto> getTestScheduleByYear(String year) {
+//		List<TestSchedule>  scheduleList = testshedulerepo.findTestingScheduleByYear(year);
+//		if(scheduleList.size() > 0 ) {
+//			List<TestingScheduleDto>  scheduleListDto = scheduleList.stream().map(test-> {
+//				TestingScheduleDto testDto = new TestingScheduleDto();
+//					testDto.setTestingScheduleId(test.getTestScheduleId());
+//					testDto.setTestId(test.getTest().getTestingId());
+//					testDto.setApprovedBy(test.getApprovedBy());
+//					testDto.setDoneBy(test.getDoneBy());
+//					testDto.setCheckedBy(test.getCheckedBy());
+//					testDto.setFrequency(test.getFrequency());
+//					if(test.getDone().equalsIgnoreCase("done"))
+//					{
+//						testDto.setStatus(test.getDone());
+//					}
+//					
+//					if(test.getPlan().equalsIgnoreCase("plan"))
+//					{
+//						testDto.setStatus(test.getPlan());
+//					}
+//					testDto.setTestScheduleDate(test.getTestScheduleDate());
+//				return testDto;
+//				
+//			}).collect(Collectors.toList());
+//			return scheduleListDto;
+//		}		
+//		
+//		throw new ResourceNotFoundException("No Testing Schedule was found for given year " + year);
+//	}
+	
 	@Override
-	public List<TestingScheduleDto> getTestScheduleByYear(String year) {
+	public List<TestSchedule> getTestScheduleByYear(String year) {
 		List<TestSchedule>  scheduleList = testshedulerepo.findTestingScheduleByYear(year);
-		if(scheduleList.size() > 0 ) {
-			List<TestingScheduleDto>  scheduleListDto = scheduleList.stream().map(test-> {
-				TestingScheduleDto testDto = new TestingScheduleDto();
-					testDto.setTestingScheduleId(test.getTestScheduleId());
-					testDto.setTestId(test.getTest().getTestingId());
-					testDto.setApprovedBy(test.getApprovedBy());
-					testDto.setDoneBy(test.getDoneBy());
-					testDto.setCheckedBy(test.getCheckedBy());
-					testDto.setFrequency(test.getFrequency());
-					if(test.getDone().equalsIgnoreCase("done"))
-					{
-						testDto.setStatus(test.getDone());
-					}
-					
-					if(test.getPlan().equalsIgnoreCase("plan"))
-					{
-						testDto.setStatus(test.getPlan());
-					}
-					testDto.setTestScheduleDate(test.getTestScheduleDate());
-				return testDto;
-				
-			}).collect(Collectors.toList());
-			return scheduleListDto;
-		}		
+		 if(scheduleList.size() > 0 ) {
+			 return scheduleList;
+		 }
 		
 		throw new ResourceNotFoundException("No Testing Schedule was found for given year " + year);
 	}
@@ -163,6 +176,28 @@ public class TestingScheduleServImpl implements ITestScheduleService {
 	public List<TestSchedule> getAllTestSchedules() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	@Transactional
+	public void updateTestScheduleSignatureByYear(Map<String , String> body,String year){
+		
+		List<TestSchedule> testScheduleByYear = getTestScheduleByYear(year);
+		
+		String doneBy = body.get("doneBy");
+		String checkedBy = body.get("checkedBy");
+		String approvedBy = body.get("approvedBy");
+		
+		TestSchedule testSchedule = new TestSchedule();
+		
+		testSchedule.setApprovedBy(approvedBy);
+		testSchedule.setCheckedBy(checkedBy);
+		testSchedule.setDoneBy(doneBy);
+		
+		int res = testshedulerepo.updateTestingScheduleSignatureByYear(doneBy, checkedBy, approvedBy, year);
+		if(res < 0)
+			throw new ResourceNotModifiedException("The signature for year "+year+" is not updated");
+		
 	}
 
 }
