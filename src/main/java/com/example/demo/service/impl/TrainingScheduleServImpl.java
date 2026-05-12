@@ -100,13 +100,16 @@ public class TrainingScheduleServImpl implements ITrainingScheduleService {
 
 		if (savedEntity != null) {
 			TrainingScheduleHistory histObj = new TrainingScheduleHistory();
+			
 			histObj.setTraining(trainingObj.getTraining_name());
 			histObj.setTrainingScheduleDate(training.getTrainingScheduleDate());
+			histObj.setTrainingScheduleEndDate(training.getTrainingScheduleEndDate() );
 			histObj.setApprovedBy(training.getApprovedBy());
 			histObj.setCheckedBy(training.getCheckedBy());
 			histObj.setDoneBy(training.getDoneBy());
 			histObj.setFrequency(training.getFrequency());
 			histObj.setStatus(training.getStatus());
+			
 
 			trainingschedulehistrepo.save(histObj);
 		}	

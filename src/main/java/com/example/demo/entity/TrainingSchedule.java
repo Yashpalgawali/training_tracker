@@ -37,6 +37,8 @@ public class TrainingSchedule {
 
 	String trainingScheduleDate;
 	
+	String trainingScheduleEndDate;
+	
 	String plan;
 	String done;
 

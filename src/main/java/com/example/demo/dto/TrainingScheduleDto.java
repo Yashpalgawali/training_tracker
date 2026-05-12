@@ -18,6 +18,8 @@ public class TrainingScheduleDto {
 	
 	String trainingScheduleDate;
 	
+	String trainingScheduleEndDate;
+	
 	String status;
 	
 	String doneBy;

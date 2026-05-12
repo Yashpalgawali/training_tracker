@@ -9,6 +9,7 @@ public class TrainingScheduleMapper {
 			TrainingSchedule trainingSchedule) {
 
 		trainingSchedule.setTrainingScheduleDate(trainingScheduleDto.getTrainingScheduleDate());
+		trainingSchedule.setTrainingScheduleEndDate(trainingScheduleDto.getTrainingScheduleEndDate());
 		trainingSchedule.setApprovedBy(trainingScheduleDto.getApprovedBy());
 		trainingSchedule.setDoneBy(trainingScheduleDto.getDoneBy());
 		trainingSchedule.setCheckedBy(trainingScheduleDto.getCheckedBy());
@@ -23,6 +24,7 @@ public class TrainingScheduleMapper {
 									TrainingScheduleDto trainingScheduleDto) {
 
 		trainingScheduleDto.setTrainingScheduleDate(trainingSchedule.getTrainingScheduleDate());
+		trainingScheduleDto.setTrainingScheduleEndDate(trainingSchedule.getTrainingScheduleEndDate());
 		trainingScheduleDto.setApprovedBy(trainingSchedule.getApprovedBy());
 		trainingScheduleDto.setDoneBy(trainingSchedule.getDoneBy());
 		trainingScheduleDto.setCheckedBy(trainingSchedule.getCheckedBy());

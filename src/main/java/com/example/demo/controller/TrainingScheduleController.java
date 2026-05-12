@@ -61,7 +61,7 @@ public class TrainingScheduleController {
 	@GetMapping("/year/{year}")
 	@Operation(summary = "Find the Training Schedule using Year", description = "This endpoint finds the Training Schedule from the database by using Year")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Training Schedule is found  "),
-			@ApiResponse(responseCode = "404", description = "No Training Schedule is found for the year") })
+			@ApiResponse(responseCode = "404", description = "No Training Schedule found for the given year") })
 	public ResponseEntity<List<TrainingSchedule>> getTrainingScheduleByYear(@PathVariable String year) {
 		var training = trainingscheduleserv.getTrainingScheduleByYear(year);
 		return ResponseEntity.status(HttpStatus.OK).body(training );
