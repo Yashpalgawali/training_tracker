@@ -14,5 +14,8 @@ public interface TrainingScheduleRepository extends JpaRepository<TrainingSchedu
 
 	@Query("SELECT c FROM TrainingSchedule c WHERE c.trainingScheduleDate LIKE CONCAT('%', :year)")
 	public List<TrainingSchedule> findTrainingScheduleByYear(@Param("year") String year);
+	
+	@Query("SELECT c FROM TrainingSchedule c WHERE c.training.training_id=:training_id")
+	public List<TrainingSchedule> findTrainingScheduleByTrainingId(@Param("training_id") Long  training_id);
 
 }

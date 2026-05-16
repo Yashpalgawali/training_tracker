@@ -20,4 +20,11 @@ public interface CommitteeScheduleRepository extends JpaRepository<CommitteeSche
 	@Query("UPDATE CommitteeSchedule t SET t.doneBy=:doneBy,t.checkedBy=:checkedBy, t.approvedBy=:approvedBy WHERE t.committeeScheduleDate LIKE CONCAT('%', :year) ")
 	@Modifying
 	public int updateTestingScheduleSignatureByYear(String doneBy,String checkedBy,String approvedBy,String year);
+	
+	
+	@Query("UPDATE CommitteeSchedule t SET t.committeeScheduleDate=:committeeScheduleDate,t.done=:done,t.plan=:plan WHERE t.committeeScheduleId=:commiteeScheduleId")
+	@Modifying
+	public int updateCommitteeScheduleById(Long commiteeScheduleId,String committeeScheduleDate,String plan, String done);
+
+
 }

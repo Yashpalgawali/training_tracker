@@ -5,17 +5,18 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.CommitteeScheduleDto;
 import com.example.demo.dto.ResponseDto;
-import com.example.demo.entity.Committee;
 import com.example.demo.entity.CommitteeSchedule;
 import com.example.demo.service.ICommitteeScheduleService;
 
@@ -81,13 +82,22 @@ public class CommitteeScheduleController {
 						"The signature for year " + year
 								+ " is updated Successfully"));
 	}
-//	
-//	@PutMapping("/")
-//	@Operation(summary = "Update the Committee Schedule", description = "This endpoint updates the Committee Schedule Schedulein the database")
-//	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Committee Schedule updated Successfully "),
-//			@ApiResponse(responseCode = "404", description = "Committee Schedule Scheduleis not updated") })
-//	public ResponseEntity<ResponseDto> updateCommittee(@RequestBody Committee Schedule Schedulecommittee) {
-//		committeescheduleserv.updateCommittee(committee);
-//		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.CREATED.toString(), "Committee Schedule Schedule"+committee.getCommitteeName()+" is updated successfully"));
-//	}
+	
+	@PutMapping("/")
+	@Operation(summary = "Update the Committee Schedule", description = "This endpoint updates the Committee Schedule Schedulein the database")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Committee Schedule updated Successfully "),
+			@ApiResponse(responseCode = "404", description = "Committee Schedule is not updated") })
+	public ResponseEntity<ResponseDto> updateCommittee(@RequestBody CommitteeScheduleDto schedulecommittee) {
+		committeescheduleserv.updateCommitteeSchedule(schedulecommittee);
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.CREATED.toString(), "Committee Schedule is updated successfully"));
+	}
+	
+	@DeleteMapping("/{id}")
+	@Operation(summary = "Delete the Committee Schedule", description = "This endpoint delete the Committee Schedule from the database by using its ID")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Committee Schedule deleted Successfully "),
+			@ApiResponse(responseCode = "404", description = "Committee Schedule is not deleted") })
+	public ResponseEntity<ResponseDto> updateCommittee(@PathVariable Long id) {
+		committeescheduleserv.deleteCommitteeScheduleById(id);
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.CREATED.toString(), "Committee Schedule is Deleted successfully"));
+	}
 }

@@ -8,6 +8,7 @@ public class CommitteeScheduleMapper {
 	public static CommitteeSchedule MapToCommitteeSchedule(CommitteeScheduleDto committeeScheduleDto,
 			CommitteeSchedule committeeSchedule) {
 
+		committeeSchedule.setCommitteeScheduleId(committeeScheduleDto.getCommitteeScheduleId());
 		committeeSchedule.setCommitteeScheduleDate(committeeScheduleDto.getCommitteeScheduleDate());
 		committeeSchedule.setApprovedBy(committeeScheduleDto.getApprovedBy());
 		committeeSchedule.setDoneBy(committeeScheduleDto.getDoneBy());
@@ -21,6 +22,7 @@ public class CommitteeScheduleMapper {
 	public static CommitteeScheduleDto MapToCommitteeScheduleDto(CommitteeSchedule committeeSchedule,
 									CommitteeScheduleDto committeeScheduleDto) {
 
+		committeeScheduleDto.setCommitteeScheduleId(committeeSchedule.getCommitteeScheduleId());
 		committeeScheduleDto.setCommitteeScheduleDate(committeeSchedule.getCommitteeScheduleDate());
 		committeeScheduleDto.setApprovedBy(committeeSchedule.getApprovedBy());
 		committeeScheduleDto.setDoneBy(committeeSchedule.getDoneBy());

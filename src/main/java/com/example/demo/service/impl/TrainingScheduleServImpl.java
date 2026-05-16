@@ -142,8 +142,19 @@ public class TrainingScheduleServImpl implements ITrainingScheduleService {
 
 	@Override
 	public List<TrainingSchedule> getAllTrainingSchedules() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		var scheduleList = trainingshedulerepo.findAll();
+		if(scheduleList.size() > 0 )
+			return scheduleList;
+		throw new ResourceNotFoundException("No Training Schedules found");
+	}
+
+	@Override
+	public List<TrainingSchedule> getTrainingScheduleByTrainingId(Long training_id) {
+		List<TrainingSchedule>  scheduleList = trainingshedulerepo.findTrainingScheduleByTrainingId(training_id);
+		if(scheduleList.size() > 0 )
+			return scheduleList;
+		throw new ResourceNotFoundException("No Training schedule was found for given Training ID " + training_id);
 	}
 
 }

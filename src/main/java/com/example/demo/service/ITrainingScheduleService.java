@@ -17,4 +17,5 @@ public interface ITrainingScheduleService {
 	
 	public List<TrainingSchedule> getAllTrainingSchedules();
 	
+	public List<TrainingSchedule> getTrainingScheduleByTrainingId(Long training_id);
 }

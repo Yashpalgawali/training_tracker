@@ -19,5 +19,7 @@ public interface ICommitteeScheduleService {
 	public List<CommitteeSchedule> getAllCommitteeSchedules();
 
 	public void updateCommitteeScheduleSignatureByYear(Map<String , String> body,String year);
-	
+
+	public void deleteCommitteeScheduleById(Long committeeId);
+
 }

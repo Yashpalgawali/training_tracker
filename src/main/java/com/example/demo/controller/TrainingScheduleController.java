@@ -30,15 +30,15 @@ public class TrainingScheduleController {
 
 	private final ITrainingScheduleService trainingscheduleserv;
 
-//	@GetMapping("/")
-//	@Operation(summary = "Find List of Training Schedule", description = "This endpoint finds the List of Training Schedule Schedulefrom the database")
-//	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Training Schedule Scheduleare found Successfully "),
-//			@ApiResponse(responseCode = "404", description = "No Training Schedule Scheduleare found") })
-//	public ResponseEntity<List<TrainingSchedule>> getAllFrequencies() {
-//		var trainingList = trainingscheduleserv.getAllTrainings();
-//		return ResponseEntity.status(HttpStatus.OK).body(trainingList);
-//	}
-//	
+	@GetMapping("/")
+	@Operation(summary = "Find List of Training Schedule", description = "This endpoint finds the List of Training Schedule Schedulefrom the database")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Training Schedule Scheduleare found Successfully "),
+			@ApiResponse(responseCode = "404", description = "No Training Schedule Scheduleare found") })
+	public ResponseEntity<List<TrainingSchedule>> getAllTrainingSchdules() {
+		var trainingList = trainingscheduleserv.getAllTrainingSchedules();
+		return ResponseEntity.status(HttpStatus.OK).body(trainingList);
+	}
+	
 	@PostMapping("/")
 	@Operation(summary = "Save the Training Schedule", description = "This endpoint saved the Training Schedule in the Database")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Training Schedule is saved Successfully "),
@@ -64,6 +64,16 @@ public class TrainingScheduleController {
 			@ApiResponse(responseCode = "404", description = "No Training Schedule found for the given year") })
 	public ResponseEntity<List<TrainingSchedule>> getTrainingScheduleByYear(@PathVariable String year) {
 		var training = trainingscheduleserv.getTrainingScheduleByYear(year);
+		return ResponseEntity.status(HttpStatus.OK).body(training );
+	}
+	
+	
+	@GetMapping("/training/{training_id}")
+	@Operation(summary = "Find the Training Schedule using Year", description = "This endpoint finds the Training Schedule from the database by using Year")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Training Schedule is found  "),
+			@ApiResponse(responseCode = "404", description = "No Training Schedule found for the given year") })
+	public ResponseEntity<List<TrainingSchedule>> getTrainingScheduleByTrainingId(@PathVariable Long training_id) {
+		var training = trainingscheduleserv.getTrainingScheduleByTrainingId(training_id);
 		return ResponseEntity.status(HttpStatus.OK).body(training );
 	}
 //	
