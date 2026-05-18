@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,10 +35,10 @@ public class UserController {
 	private Logger logger = LoggerFactory.getLogger(UserController.class);
 
 	@PostMapping("/")
-	@Operation(summary = "Save Users", description = "This endpoint saves the Users object to the database")
-	@ApiResponses(value = { @ApiResponse(responseCode = "201", description = "The users is saved Successfully "),
-			@ApiResponse(responseCode = "500", description = "The users is NOT Saved ") })
-	public ResponseEntity<ResponseDto> saveCompany(@RequestBody Users users) {
+	@Operation(summary = "Create User", description = "This endpoint created the User object to the database")
+	@ApiResponses(value = { @ApiResponse(responseCode = "201", description = "The users is created Successfully "),
+			@ApiResponse(responseCode = "500", description = "The users is NOT created ") })
+	public ResponseEntity<ResponseDto> createUser(@RequestBody Users users) {
 		userserv.createUser(users);
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto(HttpStatus.CREATED.toString(),
 				"User " + users.getUsername() + " is saved Successfully"));
@@ -47,7 +48,7 @@ public class UserController {
 	@Operation(summary = "Find Users By Email", description = "This endpoint finds the Users object from the database by its Email")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The users is found Successfully "),
 			@ApiResponse(responseCode = "404", description = "The users is NOT FOUND") })
-	public ResponseEntity<Users> getUserById(@PathVariable String email) {
+	public ResponseEntity<Users> getUserByEmailId(@PathVariable String email) {
 		var users = userserv.getUserByEmail(email);
 		return ResponseEntity.status(HttpStatus.OK).body(users);
 	}
@@ -62,13 +63,22 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.OK).body(users);
 	}
 
-//	@PutMapping("/")
-//	@Operation(summary = "Update Users", description = "This endpoint UPDATES the Users object to the database")
-//	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The users is updated Successfully "),
-//			@ApiResponse(responseCode = "304", description = "The users is NOT updated ") })
-//	public ResponseEntity<ResponseDto> updateCompany(@RequestBody Users users) {
-//		var updatedCompany = userserv.saveCompany(users);
-//		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
-//				"Users " + updatedCompany.getCompName() + " is Updated Successfully"));
-//	}
+	@PutMapping("/")
+	@Operation(summary = "Update User", description = "This endpoint UPDATES the Users object to the database")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The users is updated Successfully "),
+			@ApiResponse(responseCode = "304", description = "The user is NOT updated ") })
+	public ResponseEntity<ResponseDto> updateUser(@RequestBody Users users) {
+		userserv.updateUser(users);
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
+				"Users " + users.getUsername()+ " is Updated Successfully"));
+	}
+	
+	@GetMapping("/id/{id}")
+	@Operation(summary = "Find User By ID", description = "This endpoint finds the Users object from the database by its ID")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The users is found Successfully "),
+			@ApiResponse(responseCode = "404", description = "The users is NOT FOUND") })
+	public ResponseEntity<Users> getUserById(@PathVariable Long id) {
+		var user = userserv.getUserById(id);
+		return ResponseEntity.status(HttpStatus.OK).body(user);
+	}
 }

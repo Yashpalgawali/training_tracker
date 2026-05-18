@@ -1,8 +1,14 @@
 package com.example.demo.service.impl;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,14 +17,17 @@ import com.example.demo.dto.CommitteeScheduleDto;
 import com.example.demo.entity.Committee;
 import com.example.demo.entity.CommitteeSchedule;
 import com.example.demo.entity.CommitteeScheduleHistory;
+import com.example.demo.entity.Users;
 import com.example.demo.exception.GlobalException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.exception.ResourceNotModifiedException;
 import com.example.demo.mapper.CommitteeScheduleMapper;
 import com.example.demo.repository.CommitteeScheduleHistRepo;
 import com.example.demo.repository.CommitteeScheduleRepository;
+import com.example.demo.repository.UsersRepository;
 import com.example.demo.service.ICommitteeScheduleService;
 import com.example.demo.service.ICommitteeService;
+import com.example.demo.service.IEmailService;
 import com.example.demo.service.IFrequencyService;
 
 import lombok.RequiredArgsConstructor;
@@ -34,6 +43,10 @@ public class CommitteeScheduleServImpl implements ICommitteeScheduleService {
 	private final ICommitteeService committeeserv;
 
 	private final IFrequencyService frequencyserv;
+
+	private final IEmailService emailserv;
+	
+	private final UsersRepository userrepo;
 	
 	@Override
 	public void saveCommitteeSchedule(CommitteeScheduleDto committee) {
@@ -295,5 +308,67 @@ public class CommitteeScheduleServImpl implements ICommitteeScheduleService {
 		}
 	}
 	 
+
+	@Override
+	public List<String> sendUpcomingMeetingReminders() {
+	    LocalDate today = LocalDate.now();
+	    LocalDate threeDaysAhead = today.plusDays(3);
+
+	    // Fetch all committee schedules for current year
+	    String year = ""+today.getYear();
+	    List<CommitteeSchedule> schedules = committeeshedulerepo.findCommitteeScheduleByYear(year);
+ 
+	    // Filter meetings within the next 0–3 days
+	    List<CommitteeSchedule> upcoming = schedules.stream()
+	        .filter(s -> {
+	        	 LocalDate meetingDate = LocalDate.parse(
+	     	    	    s.getCommitteeScheduleDate(),
+	     	    	    DateTimeFormatter.ofPattern("dd-MM-yyyy")
+	     	    	);
+	            return !meetingDate.isBefore(today) && !meetingDate.isAfter(threeDaysAhead);
+	        })
+	        .collect(Collectors.toList());
+
+	    if (upcoming.isEmpty()) {
+	        return Collections.emptyList();
+	    }
+
+	    // Build email body
+	    StringBuilder body = new StringBuilder();
+	    body.append("Dear Admin,\n\n");
+	    body.append("This is a reminder that the following committee meetings are scheduled in the next 3 days:\n\n");
+
+	    for (CommitteeSchedule s : upcoming) {
+//	        long daysLeft = ChronoUnit.DAYS.between(today, s.getCommitteeScheduleDate());
+	    	  LocalDate meetingDate = LocalDate.parse(s.getCommitteeScheduleDate(),  DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+	    	    long daysLeft = ChronoUnit.DAYS.between(today, meetingDate);
+	        String when = daysLeft == 0 ? "TODAY"
+	                    : daysLeft == 1 ? "Tomorrow"
+	                    : "In " + daysLeft + " days";
+
+	        body.append("  • ").append(s.getCommittee().getCommitteeName())
+	            .append(" — ").append(s.getCommitteeScheduleDate())
+	            .append(" (").append(when).append(")\n");
+	    }
+
+	    body.append("\nPlease ensure all arrangements are in place.\n\nRegards,\nTraining Tracker System");
+
+	    // Fetch all admin users and send emails
+	    List<Users> admins = userrepo.findAll(); // or findByRole("ADMIN")
+	    List<String> sentTo = new ArrayList<>();
+
+	    for (Users admin : admins) {
+	        if (admin.getEmail() != null && !admin.getEmail().isBlank()) {
+	            emailserv.sendSimpleEmail(
+	                admin.getEmail(),
+	                body.toString(),
+	                "⚠️ Committee Meeting Reminder — " + upcoming.size() + " meeting(s) upcoming"
+	            );
+	            sentTo.add(admin.getEmail());
+	        }
+	    }
+
+	    return sentTo;
+	}
 
 }

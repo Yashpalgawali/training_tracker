@@ -22,4 +22,5 @@ public interface ICommitteeScheduleService {
 
 	public void deleteCommitteeScheduleById(Long committeeId);
 
+	public List<String> sendUpcomingMeetingReminders();
 }

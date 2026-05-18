@@ -13,4 +13,8 @@ public interface IUserService {
 	public void createUser(Users user);
 
 	public List<Users> getAllUsers();
+	
+	public void updateUser(Users user);
+	
+	public Users getUserById(Long id);
 }

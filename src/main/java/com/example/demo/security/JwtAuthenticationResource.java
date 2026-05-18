@@ -28,13 +28,7 @@ public class JwtAuthenticationResource {
 	    }
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());
-
-	//This is for Angular
-//	@PostMapping("/authenticate")
-//	public 	JwtResponse authenticate(Authentication auth) {
-//		return new JwtResponse(createToken(auth));
-//	}
-	
+ 	
 	 @PostMapping("/authenticate")
 	    public JwtResponse authenticate(@RequestBody LoginRequest request) {
 		 logger.info("Username is {} and password is {} ",request.username(),request.password());
@@ -56,6 +50,7 @@ public class JwtAuthenticationResource {
 								.subject(auth.getName()).claim("scope", createScope(auth))
 								.claim("userId", user.getUserId()) // 👈 Custom claim: adds user_id to the payload of the token.
 								.claim("username", user.getUsername()) // 👈 Custom claim: adds username to the payload of the token.
+								.claim("role", createScope(auth))
 								.build() ;
 								
 		return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();

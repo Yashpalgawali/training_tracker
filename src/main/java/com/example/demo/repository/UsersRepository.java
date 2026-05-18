@@ -29,5 +29,8 @@ public interface UsersRepository extends JpaRepository<Users, Long> {
 	
 	@Query("SELECT u FROM Users u WHERE u.username=:username")
 	public Optional<Users> findByUsername(String username);
-	 
+	
+	@Query("UPDATE Users u SET u.username=:username,u.password=:password,u.email=:email,u.enabled=:enabled,u.role=:role WHERE u.user_id=:id")
+	@Modifying
+	public int updateUser(Long id, String username,String password ,int enabled,String role,String email);
 }

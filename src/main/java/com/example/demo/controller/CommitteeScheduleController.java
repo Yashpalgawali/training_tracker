@@ -100,4 +100,15 @@ public class CommitteeScheduleController {
 		committeescheduleserv.deleteCommitteeScheduleById(id);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.CREATED.toString(), "Committee Schedule is Deleted successfully"));
 	}
+	
+	
+	@PostMapping("/notify")
+	@Operation(summary = "Update the Committee Schedule", description = "This endpoint updates the Committee Schedule Schedulein the database")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Committee Schedule updated Successfully "),
+			@ApiResponse(responseCode = "404", description = "Committee Schedule is not updated") })
+	public ResponseEntity<List<String>> sendCommitteeScheduleNotificationEmail() {
+		
+		  List<String> result = committeescheduleserv.sendUpcomingMeetingReminders();
+		return ResponseEntity.status(HttpStatus.OK).body(result);
+	}
 }
