@@ -2,7 +2,7 @@ package com.example.demo.service.impl;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -115,7 +115,7 @@ public class TestingScheduleServImpl implements ITestScheduleService {
 		}
 
 		if (savedEntity == null) {
-			throw new GlobalException("Testing meeting is not scheduled");
+			throw new GlobalException("Testing  is not scheduled");
 		}
 	}
 
@@ -135,24 +135,24 @@ public class TestingScheduleServImpl implements ITestScheduleService {
 //	public List<TestingScheduleDto> getTestScheduleByYear(String year) {
 //		List<TestSchedule>  scheduleList = testshedulerepo.findTestingScheduleByYear(year);
 //		if(scheduleList.size() > 0 ) {
-//			List<TestingScheduleDto>  scheduleListDto = scheduleList.stream().map(test-> {
+//			List<TestingScheduleDto>  scheduleListDto = scheduleList.stream().map(-> {
 //				TestingScheduleDto testDto = new TestingScheduleDto();
-//					testDto.setTestingScheduleId(test.getTestScheduleId());
-//					testDto.setTestId(test.getTest().getTestingId());
-//					testDto.setApprovedBy(test.getApprovedBy());
-//					testDto.setDoneBy(test.getDoneBy());
-//					testDto.setCheckedBy(test.getCheckedBy());
-//					testDto.setFrequency(test.getFrequency());
-//					if(test.getDone().equalsIgnoreCase("done"))
+//					testDto.setTestingScheduleId(.getTestScheduleId());
+//					testDto.setTestId(.getTest().getTestingId());
+//					testDto.setApprovedBy(.getApprovedBy());
+//					testDto.setDoneBy(.getDoneBy());
+//					testDto.setCheckedBy(.getCheckedBy());
+//					testDto.setFrequency(.getFrequency());
+//					if(.getDone().equalsIgnoreCase("done"))
 //					{
-//						testDto.setStatus(test.getDone());
+//						testDto.setStatus(.getDone());
 //					}
 //					
-//					if(test.getPlan().equalsIgnoreCase("plan"))
+//					if(.getPlan().equalsIgnoreCase("plan"))
 //					{
-//						testDto.setStatus(test.getPlan());
+//						testDto.setStatus(.getPlan());
 //					}
-//					testDto.setTestScheduleDate(test.getTestScheduleDate());
+//					testDto.setTestScheduleDate(.getTestScheduleDate());
 //				return testDto;
 //				
 //			}).collect(Collectors.toList());
@@ -198,6 +198,34 @@ public class TestingScheduleServImpl implements ITestScheduleService {
 		if(res < 0)
 			throw new ResourceNotModifiedException("The signature for year "+year+" is not updated");
 		
+	}
+
+	@Override
+	public void deleteTestScheduleById(Long testScheduleId) {
+		Optional<TestSchedule> found = testshedulerepo.findById(testScheduleId);  
+		if(!found.isPresent()){
+			throw new ResourceNotFoundException("No Test schedule is found!!");
+		}
+
+		TestSchedule testSchedule = found.get();
+		
+		TestScheduleHistory histObj = new TestScheduleHistory();
+		histObj.setTest(testSchedule.getTest().getTestName());
+		histObj.setTestScheduleDate(testSchedule.getTestScheduleDate());
+		histObj.setApprovedBy(testSchedule.getApprovedBy());
+		histObj.setCheckedBy(testSchedule.getCheckedBy());
+		histObj.setDoneBy(testSchedule.getDoneBy());
+		histObj.setFrequency(testSchedule.getFrequency());
+		histObj.setStatus("Deleted");
+		 
+		testschedulehistrepo.save(histObj);
+		
+		testshedulerepo.deleteById(testScheduleId);
+		
+		Optional<TestSchedule> testById = testshedulerepo.findById(testScheduleId);
+		if(testById.isPresent()) {
+			throw new ResourceNotModifiedException("Test Schedule is not deleted");
+		}
 	}
 
 }

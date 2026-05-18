@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,15 +33,7 @@ public class TestingScheduleController {
 
 	private final ITestScheduleService testingscheduleserv;
 
-//	@GetMapping("/")
-//	@Operation(summary = "Find List of Testing Schedule", description = "This endpoint finds the List of Testing Schedule Schedulefrom the database")
-//	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Testing Schedule Scheduleare found Successfully "),
-//			@ApiResponse(responseCode = "404", description = "No Testing Schedule Scheduleare found") })
-//	public ResponseEntity<List<TestSchedule>> getAllFrequencies() {
-//		var testingList = testingscheduleserv.getAllTestings();
-//		return ResponseEntity.status(HttpStatus.OK).body(testingList);
-//	}
-//	
+
 	@PostMapping("/")
 	@Operation(summary = "Save the Testing Schedule", description = "This endpoint saved the Testing Schedule in the Database")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Testing Schedule is saved Successfully "),
@@ -80,6 +73,16 @@ public class TestingScheduleController {
 						"The signature for year " + year
 								+ " is updated Successfully"));
 	}
+	
+	@DeleteMapping("/{id}")
+	@Operation(summary = "Delete Testing Schedule", description = "This endpoint deletes the Testing Schedule from the database")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Testing Schedule is deleted Successfully "),
+			@ApiResponse(responseCode = "404", description = "No Testing Schedule is deleted ") })
+	public ResponseEntity<ResponseDto> deleteTestingScheduleById(@PathVariable Long id) {
+		testingscheduleserv.deleteTestScheduleById(id);
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(), "Testing schedule is deleted"));
+	}
+	
 	
 //	@PutMapping("/")
 //	@Operation(summary = "Update the Testing Schedule", description = "This endpoint updates the Testing Schedule Schedulein the database")

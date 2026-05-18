@@ -267,6 +267,26 @@ public class CommitteeScheduleServImpl implements ICommitteeScheduleService {
 			throw new ResourceNotFoundException("No committee schedule is found!!");
 		}		 
 
+		CommitteeSchedule committeeSchedule = found.get();
+		var frequencyObj = frequencyserv.getFrequencyById(committeeSchedule.getFrequency().getFrequencyId());
+		
+		CommitteeScheduleHistory histObj = new CommitteeScheduleHistory();
+		histObj.setCommittee(committeeSchedule.getCommittee().getCommitteeName());
+		histObj.setCommitteeScheduleDate(committeeSchedule.getCommitteeScheduleDate());
+		histObj.setApprovedBy(committeeSchedule.getApprovedBy());
+		histObj.setCheckedBy(committeeSchedule.getCheckedBy());
+		histObj.setDoneBy(committeeSchedule.getDoneBy());
+		histObj.setFrequency(frequencyObj.getFrequency());
+		if(committeeSchedule.getPlan().equals("plan")) {
+			histObj.setStatus("plan");
+		}
+		
+		if(committeeSchedule.getDone().equals("done")) {
+			histObj.setStatus("done");
+		}
+		 
+		committeeschedulehistrepo.save(histObj);
+		
 		committeeshedulerepo.deleteById(committeeId);
 		CommitteeSchedule committeeById = getCommitteeById(committeeId);
 		 

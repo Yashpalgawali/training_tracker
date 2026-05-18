@@ -20,4 +20,6 @@ public interface ITestScheduleService {
 	public List<TestSchedule> getAllTestSchedules();
 	
 	public void updateTestScheduleSignatureByYear(Map<String , String> body,String year);
+	
+	public void deleteTestScheduleById(Long testScheduleId); 
 }
