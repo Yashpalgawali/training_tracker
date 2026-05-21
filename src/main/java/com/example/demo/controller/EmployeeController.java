@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -334,19 +333,30 @@ public class EmployeeController {
 
 	@PostMapping("/upload")
 	@Operation(summary = "Upload Employee List", description = "This endpoint uploads the list of Employees in the database")
-	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Employee list is uploaded Successfully "),
-			@ApiResponse(responseCode = "500", description = "The Employee list is NOT uploaded") })
+	@ApiResponses(value = { @ApiResponse(responseCode = "202", description = "Upload accepted – processing in background"),
+			@ApiResponse(responseCode = "400", description = "No file provided or file is empty"),
+			@ApiResponse(responseCode = "500", description = "Failed to read the uploaded file") })
 	public ResponseEntity<String> uploadEmployeeList(@RequestParam MultipartFile empListExcel) throws IOException {
 
 		if (empListExcel.isEmpty()) {
-			return ResponseEntity.badRequest().body("Please get a file to upload");
+			return ResponseEntity.badRequest().body("Please select a file to upload");
 		}
 
-		InputStream inputStream = empListExcel.getInputStream();
-		empserv.uploadEmployeeList(inputStream);
+		// Read bytes BEFORE calling the service.
+		// The MultipartFile InputStream is bound to this HTTP request and will be
+		// closed once the request ends. The @Async background thread would get a
+		// 'Stream closed' error if we passed the raw InputStream.
+		byte[] fileBytes = empListExcel.getBytes();
 
-		return ResponseEntity.status(HttpStatus.OK).body("uploaded");
+		// Fire-and-forget: returns immediately while processing runs in the background.
+		empserv.uploadEmployeeList(fileBytes);
 
+		logger.info("Upload request accepted – file='{}', size={} bytes – processing in background",
+				empListExcel.getOriginalFilename(), fileBytes.length);
+
+		return ResponseEntity.status(HttpStatus.ACCEPTED)
+				.body("Upload accepted. Your file is being processed in the background. " +
+					  "Check server logs for progress and completion status.");
 	}
 
 	@GetMapping("/employee/dto")

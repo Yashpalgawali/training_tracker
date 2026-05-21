@@ -80,5 +80,5 @@ public class UserController {
 	public ResponseEntity<Users> getUserById(@PathVariable Long id) {
 		var user = userserv.getUserById(id);
 		return ResponseEntity.status(HttpStatus.OK).body(user);
-	}
+	}  
 }

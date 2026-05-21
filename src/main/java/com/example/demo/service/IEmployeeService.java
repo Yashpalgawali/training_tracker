@@ -1,6 +1,5 @@
 package com.example.demo.service;
 
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +31,13 @@ public interface IEmployeeService {
 	
 	public List<Training> getAllTrainingsByEmployeeId(Long empid);
 	
-	public void uploadEmployeeList(InputStream is);
+	/**
+	 * Processes the uploaded Excel file in a background thread (@Async).
+	 * The controller must pass the raw bytes (not an InputStream) because
+	 * the MultipartFile stream is closed once the HTTP request completes.
+	 *
+	 * @param fileBytes raw bytes of the uploaded .xlsx file
+	 */
+	public void uploadEmployeeList(byte[] fileBytes);
 		
 }

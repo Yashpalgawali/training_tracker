@@ -1,8 +1,10 @@
 package com.example.demo.service.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -214,103 +217,182 @@ public class EmployeeServImpl implements IEmployeeService {
 	@Override
 	public List<Training> getAllTrainingsByEmployeeId(Long empid) {
 
-//		List<Training> trainList = emprepo.getAllTrainingsByEmployeeId(empid);
-//		return trainList;
+		// List<Training> trainList = emprepo.getAllTrainingsByEmployeeId(empid);
+		// return trainList;
 		return null;
 	}
 
+	/** Number of Excel rows processed in a single DB transaction. */
+	private static final int BATCH_SIZE = 500;
+
+	/**
+	 * Uploads employees from an Excel file in batches of {@value #BATCH_SIZE} rows.
+	 * <p>
+	 * Annotated with {@code @Async} so it runs in a dedicated background thread
+	 * ("uploadTaskExecutor" pool). The controller returns HTTP 202 Accepted
+	 * immediately while this method processes in the background.
+	 * </p>
+	 * <p>
+	 * Accepts {@code byte[]} (not InputStream) because the MultipartFile stream
+	 * is tied to the HTTP request and is closed once the request ends. Passing
+	 * raw bytes makes the data available to this background thread regardless of
+	 * request lifecycle.
+	 * </p>
+	 *
+	 * @param fileBytes raw bytes of the uploaded .xlsx file
+	 */
+	@Async("uploadTaskExecutor")
 	@Override
-	public void uploadEmployeeList(InputStream is) {
+	public void uploadEmployeeList(byte[] fileBytes) {
 
-		try (Workbook workbook = new XSSFWorkbook(is)) {
+		logger.info("[Thread: {}] uploadEmployeeList started – file size: {} bytes",
+				Thread.currentThread().getName(), fileBytes.length);
+
+		// Wrap bytes in a fresh InputStream – safe to use in this background thread.
+		try (Workbook workbook = new XSSFWorkbook(new ByteArrayInputStream(fileBytes))) {
+
 			Sheet sheet = workbook.getSheetAt(0);
+			int lastRow = sheet.getLastRowNum();
 
-			for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+			// Collect raw row data first (strings only – no DB calls yet).
+			List<String[]> rowData = new ArrayList<>(lastRow);
+			for (int i = 1; i <= lastRow; i++) {
 				Row row = sheet.getRow(i);
-
-				Employee emp = new Employee();
-
-				Optional<Employee> byEmp_code = emprepo.findByEmpCode(getCellValue(row.getCell(1)));
-				
-				System.err.println("Is employee present with Code "+getCellValue(row.getCell(1)));
-				
-				if (!byEmp_code.isPresent()) {
-
-					emp.setEmpName(getCellValue(row.getCell(0)));
-					emp.setEmpCode(getCellValue(row.getCell(1)));
-
-					Designation desig = null;
-					desig = desigrepo.findByDesigName(getCellValue(row.getCell(2)));
-
-					emp.setDesignation(desig);
-
-					String dept_name = getCellValue(row.getCell(3));
-					String comp_name = getCellValue(row.getCell(4));
-					Department dept = null;
-					Company comp = null;
-
-					if (!dept_name.equals("")) {
-
-						dept = deptrepo.getDepartmentByDeptNameAndCompanyName(dept_name.trim(), comp_name.trim());
-					}
-					if (!comp_name.equals("")) {
-						comp = compserv.getCompanyByName(comp_name);
-					}
-
-					emp.setDepartment(dept);
-
-					emp.setJoiningDate(getCellValue(row.getCell(5)));
-					emp.setContractorName(getCellValue(row.getCell(6)));
-
-					String categoryValue = getCellValue(row.getCell(7));
-					Category category = null;
-					if (!categoryValue.equals("")) {
-						category = categoryserv.getCategoryByCategoryName(categoryValue);
-					}
-
-					emp.setCategory(category);
-					emp.setStatus(1);
-
-					Employee uploadedEmployee = emprepo.save(emp);
-					if (uploadedEmployee != null) {
-						EmployeeHistory empHist = new EmployeeHistory();
-
-						empHist.setEmpName(uploadedEmployee.getEmpName());
-						empHist.setContractorName(uploadedEmployee.getContractorName());
-						if (category != null) {
-							empHist.setCategory(uploadedEmployee.getCategory().getCategory());
-						} else {
-							empHist.setCategory("");
-						}
-
-						if (desig != null) {
-							empHist.setDesigName(uploadedEmployee.getDesignation().getDesigName());
-						} else {
-							empHist.setDesigName("");
-						}
-						empHist.setEmployee(uploadedEmployee);
-						empHist.setJoiningDate(uploadedEmployee.getJoiningDate());
-						empHist.setEmpCode(uploadedEmployee.getEmpCode());
-
-						if (dept != null) {
-							empHist.setDeptName(uploadedEmployee.getDepartment().getDeptName());
-							empHist.setCompName(uploadedEmployee.getDepartment().getCompany().getCompName());
-						} else {
-							empHist.setDeptName("");
-							if (comp != null) {
-								empHist.setCompName(comp.getCompName());
-							} else {
-								empHist.setCompName("");
-							}
-						}
-						empHist.setStatus(uploadedEmployee.getStatus());
-						emphistserv.saveEmployeeHistory(empHist);
-					}
-				}
+				if (row == null) continue;
+				rowData.add(new String[] {
+						getCellValue(row.getCell(0)), // empName
+						getCellValue(row.getCell(1)), // empCode
+						getCellValue(row.getCell(2)), // designation
+						getCellValue(row.getCell(3)), // dept
+						getCellValue(row.getCell(4)), // company
+						getCellValue(row.getCell(5)), // joiningDate
+						getCellValue(row.getCell(6)), // contractorName
+						getCellValue(row.getCell(7))  // category
+				});
 			}
+
+			logger.info("uploadEmployeeList: {} data rows read from Excel", rowData.size());
+
+			// Process in fixed-size batches – each batch has its own transaction.
+			int totalSaved = 0;
+			int totalSkipped = 0;
+			for (int start = 0; start < rowData.size(); start += BATCH_SIZE) {
+				int end = Math.min(start + BATCH_SIZE, rowData.size());
+				List<String[]> batch = rowData.subList(start, end);
+				int[] counts = processBatch(batch);
+				totalSaved   += counts[0];
+				totalSkipped += counts[1];
+				logger.info("uploadEmployeeList: batch {}-{} done – saved={}, skipped={}",
+						start + 1, end, counts[0], counts[1]);
+			}
+
+			logger.info("[Thread: {}] uploadEmployeeList complete – totalSaved={}, totalSkipped={}",
+					Thread.currentThread().getName(), totalSaved, totalSkipped);
+
 		} catch (Exception e) {
+			logger.error("[Thread: {}] uploadEmployeeList FAILED: {}",
+					Thread.currentThread().getName(), e.getMessage(), e);
 			throw new RuntimeException("Fail to parse Excel file: " + e.getMessage(), e);
 		}
+	}
+
+	/**
+	 * Saves one batch of employees inside a single transaction.
+	 * Lookup results (designation, department, company, category) are cached
+	 * within the batch to avoid repeated round-trips for common values.
+	 *
+	 * @param batch list of String arrays, one per Excel row
+	 * @return int[]{saved, skipped}
+	 */
+	@Transactional
+	public int[] processBatch(List<String[]> batch) {
+
+		// Per-batch caches to avoid repeated DB lookups for the same values.
+		Map<String, Designation> desigCache    = new HashMap<>();
+		Map<String, Department>  deptCache     = new HashMap<>();
+		Map<String, Company>     compCache     = new HashMap<>();
+		Map<String, Category>    categoryCache = new HashMap<>();
+
+		int saved   = 0;
+		int skipped = 0;
+
+		for (String[] cols : batch) {
+			String empCode = cols[1].trim();
+			if (empCode.isEmpty()) {
+				skipped++;
+				continue;
+			}
+
+			// Skip duplicates without hitting the DB unnecessarily.
+			if (emprepo.findByEmpCode(empCode).isPresent()) {
+				skipped++;
+				continue;
+			}
+
+			Employee emp = new Employee();
+			emp.setEmpName(cols[0]);
+			emp.setEmpCode(empCode);
+			emp.setJoiningDate(cols[5]);
+			emp.setContractorName(cols[6]);
+			emp.setStatus(1);
+
+			// --- Designation (cached) ---
+			String desigName = cols[2].trim();
+			Designation desig = desigCache.computeIfAbsent(
+					desigName,
+					k -> k.isEmpty() ? null : desigrepo.findByDesigName(k));
+			emp.setDesignation(desig);
+
+			// --- Department + Company (cached) ---
+			String deptName = cols[3].trim();
+			String compName = cols[4].trim();
+
+			String deptKey = deptName + "||" + compName;
+			Department dept = deptCache.computeIfAbsent(
+					deptKey,
+					k -> (deptName.isEmpty()) ? null
+							: deptrepo.getDepartmentByDeptNameAndCompanyName(deptName, compName));
+			emp.setDepartment(dept);
+
+			Company comp = compCache.computeIfAbsent(
+					compName,
+					k -> k.isEmpty() ? null : compserv.getCompanyByName(k));
+
+			// --- Category (cached) ---
+			String categoryValue = cols[7].trim();
+			Category category = categoryCache.computeIfAbsent(
+					categoryValue,
+					k -> k.isEmpty() ? null : categoryserv.getCategoryByCategoryName(k));
+			emp.setCategory(category);
+
+			// Persist employee.
+			Employee uploadedEmployee = emprepo.save(emp);
+
+			// Build history record.
+			EmployeeHistory empHist = new EmployeeHistory();
+			empHist.setEmpName(uploadedEmployee.getEmpName());
+			empHist.setContractorName(uploadedEmployee.getContractorName());
+			empHist.setCategory(category != null ? uploadedEmployee.getCategory().getCategory() : "");
+			empHist.setDesigName(desig   != null ? uploadedEmployee.getDesignation().getDesigName() : "");
+			empHist.setEmployee(uploadedEmployee);
+			empHist.setJoiningDate(uploadedEmployee.getJoiningDate());
+			empHist.setEmpCode(uploadedEmployee.getEmpCode());
+			empHist.setStatus(uploadedEmployee.getStatus());
+			empHist.setLeaveDate("");
+
+			if (dept != null) {
+				empHist.setDeptName(uploadedEmployee.getDepartment().getDeptName());
+				empHist.setCompName(uploadedEmployee.getDepartment().getCompany().getCompName());
+			} else {
+				empHist.setDeptName("");
+				empHist.setCompName(comp != null ? comp.getCompName() : "");
+			}
+
+			emphistserv.saveEmployeeHistory(empHist);
+			saved++;
+		}
+
+		return new int[]{saved, skipped};
 	}
 
 	// Helper method to handle null/empty cells safely
@@ -318,21 +400,21 @@ public class EmployeeServImpl implements IEmployeeService {
 		if (cell == null)
 			return "";
 		switch (cell.getCellType()) {
-		case STRING:
-			return cell.getStringCellValue().trim();
-		case NUMERIC:
-			if (DateUtil.isCellDateFormatted(cell)) {
-				return cell.getDateCellValue().toString();
-			} else {
-				return String.valueOf((long) cell.getNumericCellValue());
-			}
-		case BOOLEAN:
-			return String.valueOf(cell.getBooleanCellValue());
-		case FORMULA:
-			return cell.getCellFormula();
-		case BLANK:
-		default:
-			return "";
+			case STRING:
+				return cell.getStringCellValue().trim();
+			case NUMERIC:
+				if (DateUtil.isCellDateFormatted(cell)) {
+					return cell.getDateCellValue().toString();
+				} else {
+					return String.valueOf((long) cell.getNumericCellValue());
+				}
+			case BOOLEAN:
+				return String.valueOf(cell.getBooleanCellValue());
+			case FORMULA:
+				return cell.getCellFormula();
+			case BLANK:
+			default:
+				return "";
 		}
 	}
 
@@ -451,10 +533,13 @@ public class EmployeeServImpl implements IEmployeeService {
 	}
 
 	public Page<Employee> searchEmployees(String search, Pageable pageable) {
-//        Department departmentByDeptName = deptrepo.getDepartmentByDeptName(search);
-//        System.err.println();
-//		return emprepo.findByEmpNameContainingIgnoreCaseOrEmpCodeOrJoiningDateOrContractorNameContainingIgnoreCaseOrDesignationOrDepartment(
-//                search, search,search,search,desigrepo.findByDesigName(search),departmentByDeptName, pageable);
+		// Department departmentByDeptName = deptrepo.getDepartmentByDeptName(search);
+		// System.err.println();
+		// return
+		// emprepo.findByEmpNameContainingIgnoreCaseOrEmpCodeOrJoiningDateOrContractorNameContainingIgnoreCaseOrDesignationOrDepartment(
+		// search,
+		// search,search,search,desigrepo.findByDesigName(search),departmentByDeptName,
+		// pageable);
 
 		Page<Employee> searchEmployees = emprepo.searchEmployees(search, pageable);
 		return searchEmployees;

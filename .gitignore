@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Secrets — never commit real credentials ───────────────────────────────
+# Copy .env.example → .env and fill in your real values locally.
+# .env is intentionally excluded from version control.
+.env
+.env.local
