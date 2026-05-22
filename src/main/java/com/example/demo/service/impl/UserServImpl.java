@@ -140,10 +140,27 @@ public class UserServImpl implements IUserService {
 	@Override
 	@Transactional
 	public void updateUserStatusById(Long id, int enabled) {
+		Users user =  this.getUserById(id);
 		int res = userrepo.updateUserStatusById(id, enabled);
-		if(res < 0 ) {
+		String st = ( enabled == 1 ) ? "Enabled" : "Disabled";
+		if(res > 0 ) {
+			Activity act = new Activity();
+
+			act.setActivity("User "+user.getUsername() +" is "+st);
+			act.setActivityDate(tday.format(LocalDateTime.now()));
+			act.setActivityTime(ttime.format(LocalDateTime.now()));
+			activityrepo.save(act);
+		}
+		else {
+			Activity act = new Activity();
+			 
+			act.setActivity("User "+user.getUsername() +" is "+st);
+			act.setActivityDate(tday.format(LocalDateTime.now()));
+			act.setActivityTime(ttime.format(LocalDateTime.now()));
+			activityrepo.save(act);
 			throw new ResourceNotModifiedException("User status is not updated");
 		}
+	
 	}
 
 }

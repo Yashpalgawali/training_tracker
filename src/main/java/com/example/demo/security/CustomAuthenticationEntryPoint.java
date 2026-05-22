@@ -2,6 +2,7 @@ package com.example.demo.security;
 
 import java.io.IOException;
 
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -21,12 +22,11 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 	        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 	        response.setContentType("application/json");
 
-	        response.getWriter().write("""
-	            {
-	              "message": "Invalid username or password"
-	            }
-	        """);
+	        String message = (authException instanceof DisabledException)
+	                ? "Your account has been disabled. Please contact the administrator."
+	                : "Invalid username or password";
 
+	        response.getWriter().write("{\"message\": \"" + message + "\"}");
 	        response.getWriter().flush();
 	    }
 }
