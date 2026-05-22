@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -80,5 +81,16 @@ public class UserController {
 	public ResponseEntity<Users> getUserById(@PathVariable Long id) {
 		var user = userserv.getUserById(id);
 		return ResponseEntity.status(HttpStatus.OK).body(user);
-	}  
+	}
+	
+	@PatchMapping("/{id}/status/{enabled}")
+	@Operation(summary = "Update User Status", description = "This endpoint UPDATES the Users status in the database")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The user status is updated Successfully "),
+			@ApiResponse(responseCode = "304", description = "The user status is NOT updated ") })
+	public ResponseEntity<ResponseDto> updateUserStatus(@PathVariable Long id,@PathVariable int enabled) {
+		userserv.updateUserStatusById(id, enabled);
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
+				"Users status is Updated Successfully"));
+	}
+	
 }

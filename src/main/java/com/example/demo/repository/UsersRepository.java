@@ -33,4 +33,8 @@ public interface UsersRepository extends JpaRepository<Users, Long> {
 	@Query("UPDATE Users u SET u.username=:username,u.password=:password,u.email=:email,u.enabled=:enabled,u.role=:role WHERE u.user_id=:id")
 	@Modifying
 	public int updateUser(Long id, String username,String password ,int enabled,String role,String email);
+	
+	@Query("UPDATE Users u SET u.enabled=:enabled WHERE u.user_id=:id")
+	@Modifying
+	public int updateUserStatusById(Long id, int enabled);
 }

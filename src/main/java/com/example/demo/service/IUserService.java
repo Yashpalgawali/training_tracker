@@ -17,4 +17,6 @@ public interface IUserService {
 	public void updateUser(Users user);
 	
 	public Users getUserById(Long id);
+	
+	public void updateUserStatusById(Long id , int enabled);
 }

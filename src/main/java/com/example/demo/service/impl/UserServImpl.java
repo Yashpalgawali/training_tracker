@@ -137,4 +137,13 @@ public class UserServImpl implements IUserService {
 		throw new ResourceNotFoundException("No user found for given ID "+id);
 	}
 
+	@Override
+	@Transactional
+	public void updateUserStatusById(Long id, int enabled) {
+		int res = userrepo.updateUserStatusById(id, enabled);
+		if(res < 0 ) {
+			throw new ResourceNotModifiedException("User status is not updated");
+		}
+	}
+
 }

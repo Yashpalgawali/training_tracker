@@ -258,7 +258,8 @@ public class EmployeeServImpl implements IEmployeeService {
 			List<String[]> rowData = new ArrayList<>(lastRow);
 			for (int i = 1; i <= lastRow; i++) {
 				Row row = sheet.getRow(i);
-				if (row == null) continue;
+				if (row == null)
+					continue;
 				rowData.add(new String[] {
 						getCellValue(row.getCell(0)), // empName
 						getCellValue(row.getCell(1)), // empCode
@@ -267,7 +268,7 @@ public class EmployeeServImpl implements IEmployeeService {
 						getCellValue(row.getCell(4)), // company
 						getCellValue(row.getCell(5)), // joiningDate
 						getCellValue(row.getCell(6)), // contractorName
-						getCellValue(row.getCell(7))  // category
+						getCellValue(row.getCell(7)) // category
 				});
 			}
 
@@ -280,7 +281,7 @@ public class EmployeeServImpl implements IEmployeeService {
 				int end = Math.min(start + BATCH_SIZE, rowData.size());
 				List<String[]> batch = rowData.subList(start, end);
 				int[] counts = processBatch(batch);
-				totalSaved   += counts[0];
+				totalSaved += counts[0];
 				totalSkipped += counts[1];
 				logger.info("uploadEmployeeList: batch {}-{} done – saved={}, skipped={}",
 						start + 1, end, counts[0], counts[1]);
@@ -308,12 +309,12 @@ public class EmployeeServImpl implements IEmployeeService {
 	public int[] processBatch(List<String[]> batch) {
 
 		// Per-batch caches to avoid repeated DB lookups for the same values.
-		Map<String, Designation> desigCache    = new HashMap<>();
-		Map<String, Department>  deptCache     = new HashMap<>();
-		Map<String, Company>     compCache     = new HashMap<>();
-		Map<String, Category>    categoryCache = new HashMap<>();
+		Map<String, Designation> desigCache = new HashMap<>();
+		Map<String, Department> deptCache = new HashMap<>();
+		Map<String, Company> compCache = new HashMap<>();
+		Map<String, Category> categoryCache = new HashMap<>();
 
-		int saved   = 0;
+		int saved = 0;
 		int skipped = 0;
 
 		for (String[] cols : batch) {
@@ -373,7 +374,7 @@ public class EmployeeServImpl implements IEmployeeService {
 			empHist.setEmpName(uploadedEmployee.getEmpName());
 			empHist.setContractorName(uploadedEmployee.getContractorName());
 			empHist.setCategory(category != null ? uploadedEmployee.getCategory().getCategory() : "");
-			empHist.setDesigName(desig   != null ? uploadedEmployee.getDesignation().getDesigName() : "");
+			empHist.setDesigName(desig != null ? uploadedEmployee.getDesignation().getDesigName() : "");
 			empHist.setEmployee(uploadedEmployee);
 			empHist.setJoiningDate(uploadedEmployee.getJoiningDate());
 			empHist.setEmpCode(uploadedEmployee.getEmpCode());
@@ -392,7 +393,7 @@ public class EmployeeServImpl implements IEmployeeService {
 			saved++;
 		}
 
-		return new int[]{saved, skipped};
+		return new int[] { saved, skipped };
 	}
 
 	// Helper method to handle null/empty cells safely
