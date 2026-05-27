@@ -15,7 +15,6 @@ import com.example.demo.repository.TrainingScheduleHistRepo;
 import com.example.demo.repository.TrainingScheduleRepository;
 import com.example.demo.service.ITrainingScheduleService;
 import com.example.demo.service.ITrainingService;
-import com.example.demo.service.IFrequencyService;
 
 import lombok.RequiredArgsConstructor;
 

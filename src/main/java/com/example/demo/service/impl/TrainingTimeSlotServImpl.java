@@ -10,15 +10,13 @@ import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.TrainingTimeSlotRepository;
 import com.example.demo.service.ITrainingTimeSlotService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service("traintimeslotserv")
+@RequiredArgsConstructor
 public class TrainingTimeSlotServImpl implements ITrainingTimeSlotService {
 
 	private final TrainingTimeSlotRepository traintimeslotrepo;
-
-	public TrainingTimeSlotServImpl(TrainingTimeSlotRepository traintimeslotrepo) {
-		super();
-		this.traintimeslotrepo = traintimeslotrepo;
-	}
 
 	@Override
 	public TrainingTimeSlot saveTrainingTimeSlot(TrainingTimeSlot timeSlot) {
@@ -34,7 +32,7 @@ public class TrainingTimeSlotServImpl implements ITrainingTimeSlotService {
 	public List<TrainingTimeSlot> getAllTimeSlots() {
 
 		List<TrainingTimeSlot> trainingTimeSlotList = traintimeslotrepo.findAll();
-		if(trainingTimeSlotList.isEmpty()) {
+		if (trainingTimeSlotList.isEmpty()) {
 			throw new ResourceNotFoundException("No Training Time Slots Found");
 		}
 		return trainingTimeSlotList;

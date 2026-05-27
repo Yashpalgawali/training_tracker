@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class TrainingController {
 
 	private final ITrainingService trainserv;
-	
+
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@PostMapping("/")
@@ -58,12 +58,12 @@ public class TrainingController {
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
 				"Training " + training.getTraining_name() + " is UPDATED successfully"));
 	}
-	
+
 	@GetMapping("/empid/{id}")
-	public List<Training> getAllTrainingsByEmpId(@PathVariable Long id){
-		
-		//List<Training> trainList = trainserv.getAllTrainingsByEmpId(id);
+	public List<Training> getAllTrainingsByEmpId(@PathVariable Long id) {
+
+		// List<Training> trainList = trainserv.getAllTrainingsByEmpId(id);
 		return null;
 	}
-	
+
 }

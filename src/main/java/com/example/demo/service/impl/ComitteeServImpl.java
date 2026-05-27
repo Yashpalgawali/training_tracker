@@ -40,7 +40,7 @@ public class ComitteeServImpl implements ICommitteeService {
 		committee.setCommitteeName(trimmedString);
 		
 		Committee savedCommittee = committeerepo.save(committee);
-//		logger.info("Saved committee is {} ",savedCommittee);
+
 		if(savedCommittee != null) {
 			Activity activity = Activity.builder().activity("Committee "+trimmedString+" is saved successfully").activityDate(dateFormatter.format(LocalDateTime.now()) ).activityTime(timeFormatter.format(LocalDateTime.now())).build();
 			activityrepo.save(activity);

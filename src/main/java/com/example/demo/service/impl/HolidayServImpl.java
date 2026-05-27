@@ -18,21 +18,21 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class HolidayServImpl implements IHolidayService {
 
-	private final HolidayRepository holidayrepo; 
-	
+	private final HolidayRepository holidayrepo;
+
 	@Override
 	public Holiday saveHoliday(Holiday holiday) {
 		Holiday savedHoliday = holidayrepo.save(holiday);
-		if(savedHoliday!=null) {
+		if (savedHoliday != null) {
 			return savedHoliday;
 		}
-		throw new GlobalException("Holiday "+holiday.getHoliday()+" is not saved");
+		throw new GlobalException("Holiday " + holiday.getHoliday() + " is not saved");
 	}
 
 	@Override
 	public List<Holiday> getAllHolidays() {
 		List<Holiday> holidayList = holidayrepo.findAll();
-		if(holidayList.size() > 0 ) {
+		if (holidayList.size() > 0) {
 			return holidayList;
 		}
 		throw new ResourceNotFoundException("No Holidays are found");
@@ -40,32 +40,32 @@ public class HolidayServImpl implements IHolidayService {
 
 	@Override
 	public Holiday getHoliday(String holidayDate) {
-		
-		 return holidayrepo.findByHolidayDate(holidayDate).orElse(null);
-		
+
+		return holidayrepo.findByHolidayDate(holidayDate).orElse(null);
+
 //		Optional<Holiday> result = holidayrepo.findByHolidayDate(holidayDate);
 //		if(result.isPresent()) {
 //			return result.get();
 //		}
-	
+
 //		return null;
 	}
 
 	@Override
 	@Transactional
 	public void updateHoliday(Holiday holiday) {
-		int result =holidayrepo.updateHoliday(holiday.getHoliday(), holiday.getHolidayDate(), holiday.getHolidayId());
-		if(result <= 0) {
-			throw new GlobalException("Holiday "+holiday.getHoliday()+" is not updated");
+		int result = holidayrepo.updateHoliday(holiday.getHoliday(), holiday.getHolidayDate(), holiday.getHolidayId());
+		if (result <= 0) {
+			throw new GlobalException("Holiday " + holiday.getHoliday() + " is not updated");
 		}
 	}
 
 	@Override
 	public Holiday getHoliday(Long id) {
 		Optional<Holiday> object = holidayrepo.findById(id);
-		if(!object.isEmpty())
+		if (!object.isEmpty())
 			return object.get();
-		throw new ResourceNotFoundException("No Holiday found for given Id "+id);
+		throw new ResourceNotFoundException("No Holiday found for given Id " + id);
 	}
 
 }

@@ -19,21 +19,16 @@ import com.example.demo.service.IOtpService;
 import com.example.demo.service.IUserService;
 
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("password")
+@RequiredArgsConstructor
 public class ChangePasswordController {
 
 	private final IUserService userserv;
 	private final IOtpService otpserv;
 	private final IEmailService emailserv;
-
-	public ChangePasswordController(IUserService userserv, IOtpService otpserv, IEmailService emailserv) {
-		super();
-		this.userserv = userserv;
-		this.otpserv = otpserv;
-		this.emailserv = emailserv;
-	}
 
 	@PutMapping("/change")
 	public ResponseEntity<ResponseDto> changePassword(@RequestBody Users user) {

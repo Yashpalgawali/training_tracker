@@ -22,21 +22,16 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("company") 
+@RequestMapping("company")
+@RequiredArgsConstructor
 @Tag(name = "Company Controller",description = "This controller handles endpoints to perform operations like Save Company,Find, Update the company")
 public class CompanyController {
 
 	private final ICompanyService compserv;
-
-	/**
-	 * @param compserv
-	 */
-	public CompanyController(ICompanyService compserv) {
-		super(); 
-		this.compserv = compserv;
-	}
+ 
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
 	@PostMapping("/") 

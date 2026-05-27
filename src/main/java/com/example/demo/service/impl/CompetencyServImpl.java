@@ -15,34 +15,36 @@ import com.example.demo.repository.ActivityRepository;
 import com.example.demo.repository.CompetencyRepository;
 import com.example.demo.service.ICompetencyService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service("competencyserv")
+@RequiredArgsConstructor
 public class CompetencyServImpl implements ICompetencyService {
 
 	private final CompetencyRepository competencyrepo;
 
 	private final ActivityRepository activityrepo;
 
-	public CompetencyServImpl(CompetencyRepository competencyrepo, ActivityRepository activityrepo) {
-		super();
-		this.competencyrepo = competencyrepo;
-		this.activityrepo = activityrepo;
-	}
-
 	// Define a custom format pattern
-		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-		DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-	 
+	DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+	DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
 	@Override
 	public Competency saveCompetency(Competency competency) {
 
 		var comp = competencyrepo.save(competency);
 		if (comp != null) {
-			Activity activity = Activity.builder().activity("Competency with score "+comp.getScore()+" is saved successfully").activityDate(dateFormatter.format(LocalDateTime.now()) ).activityTime(timeFormatter.format(LocalDateTime.now())).build();
+			Activity activity = Activity.builder()
+					.activity("Competency with score " + comp.getScore() + " is saved successfully")
+					.activityDate(dateFormatter.format(LocalDateTime.now()))
+					.activityTime(timeFormatter.format(LocalDateTime.now())).build();
 			activityrepo.save(activity);
 			return comp;
 		} else {
-			Activity activity = Activity.builder().activity("Competency with score "+comp.getScore()+" is not saved successfully").activityDate(dateFormatter.format(LocalDateTime.now()) ).activityTime(timeFormatter.format(LocalDateTime.now())).build();
+			Activity activity = Activity.builder()
+					.activity("Competency with score " + comp.getScore() + " is not saved successfully")
+					.activityDate(dateFormatter.format(LocalDateTime.now()))
+					.activityTime(timeFormatter.format(LocalDateTime.now())).build();
 			activityrepo.save(activity);
 			throw new GlobalException("Competency is not saved");
 		}
@@ -70,11 +72,17 @@ public class CompetencyServImpl implements ICompetencyService {
 	public int updateCompetency(Competency competency) {
 
 		int result = competencyrepo.updateCompetencyById(competency.getCompetency_id(), competency.getScore());
-		if(result>0) {
-			Activity activity = Activity.builder().activity("Competency with score "+competency.getScore()+" is updated successfully").activityDate(dateFormatter.format(LocalDateTime.now()) ).activityTime(timeFormatter.format(LocalDateTime.now())).build();
+		if (result > 0) {
+			Activity activity = Activity.builder()
+					.activity("Competency with score " + competency.getScore() + " is updated successfully")
+					.activityDate(dateFormatter.format(LocalDateTime.now()))
+					.activityTime(timeFormatter.format(LocalDateTime.now())).build();
 			activityrepo.save(activity);
-		}else {
-			Activity activity = Activity.builder().activity("Competency with score "+competency.getScore()+" is not Updated ").activityDate(dateFormatter.format(LocalDateTime.now()) ).activityTime(timeFormatter.format(LocalDateTime.now())).build();
+		} else {
+			Activity activity = Activity.builder()
+					.activity("Competency with score " + competency.getScore() + " is not Updated ")
+					.activityDate(dateFormatter.format(LocalDateTime.now()))
+					.activityTime(timeFormatter.format(LocalDateTime.now())).build();
 			activityrepo.save(activity);
 		}
 		return result;

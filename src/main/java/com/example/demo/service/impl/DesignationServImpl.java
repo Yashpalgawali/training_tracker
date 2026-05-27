@@ -15,18 +15,15 @@ import com.example.demo.repository.ActivityRepository;
 import com.example.demo.repository.DesignationRepository;
 import com.example.demo.service.IDesignationService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service("desigserv")
+@RequiredArgsConstructor
 public class DesignationServImpl implements IDesignationService {
 
 	private final DesignationRepository desigrepo;
 
 	private final ActivityRepository activityrepo;
-
-	public DesignationServImpl(DesignationRepository desigrepo, ActivityRepository activityrepo) {
-		super();
-		this.desigrepo = desigrepo;
-		this.activityrepo = activityrepo;
-	}
 
 	// Define a custom format pattern
 	DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");

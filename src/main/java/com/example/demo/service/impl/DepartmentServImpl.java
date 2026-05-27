@@ -16,18 +16,15 @@ import com.example.demo.repository.ActivityRepository;
 import com.example.demo.repository.DepartmentRepository;
 import com.example.demo.service.IDepartmentService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service("deptserv")
+@RequiredArgsConstructor
 public class DepartmentServImpl implements IDepartmentService {
 
 	private final DepartmentRepository deptrepo;
 
 	private final ActivityRepository activityrepo;
-
-	public DepartmentServImpl(DepartmentRepository deptrepo, ActivityRepository activityrepo) {
-		super();
-		this.deptrepo = deptrepo;
-		this.activityrepo = activityrepo;
-	}
 
 	// Define a custom format pattern
 	DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -38,11 +35,16 @@ public class DepartmentServImpl implements IDepartmentService {
 		var department = deptrepo.save(dept);
 
 		if (department != null) {
-			Activity activity = Activity.builder().activity("Department "+department.getDeptName()+" is saved successfully").activityDate(dateFormatter.format(LocalDateTime.now()) ).activityTime(timeFormatter.format(LocalDateTime.now())).build();
+			Activity activity = Activity.builder()
+					.activity("Department " + department.getDeptName() + " is saved successfully")
+					.activityDate(dateFormatter.format(LocalDateTime.now()))
+					.activityTime(timeFormatter.format(LocalDateTime.now())).build();
 			activityrepo.save(activity);
 			return department;
 		} else {
-			Activity activity = Activity.builder().activity("Department "+dept.getDeptName()+" is not saved ").activityDate(dateFormatter.format(LocalDateTime.now()) ).activityTime(timeFormatter.format(LocalDateTime.now())).build();
+			Activity activity = Activity.builder().activity("Department " + dept.getDeptName() + " is not saved ")
+					.activityDate(dateFormatter.format(LocalDateTime.now()))
+					.activityTime(timeFormatter.format(LocalDateTime.now())).build();
 			activityrepo.save(activity);
 			throw new GlobalException("Department " + dept.getDeptName() + " is not saved ");
 		}
@@ -69,11 +71,16 @@ public class DepartmentServImpl implements IDepartmentService {
 	public int updateDepartment(Department dept) {
 		int res = deptrepo.updateDepartment(dept.getDeptId(), dept.getDeptName(), dept.getCompany().getCompanyId());
 		if (res > 0) {
-			Activity activity = Activity.builder().activity("Department "+dept.getDeptName()+" is updated successfully").activityDate(dateFormatter.format(LocalDateTime.now()) ).activityTime(timeFormatter.format(LocalDateTime.now())).build();
+			Activity activity = Activity.builder()
+					.activity("Department " + dept.getDeptName() + " is updated successfully")
+					.activityDate(dateFormatter.format(LocalDateTime.now()))
+					.activityTime(timeFormatter.format(LocalDateTime.now())).build();
 			activityrepo.save(activity);
 			return res;
 		} else {
-			Activity activity = Activity.builder().activity("Department "+dept.getDeptName()+" is not updated ").activityDate(dateFormatter.format(LocalDateTime.now()) ).activityTime(timeFormatter.format(LocalDateTime.now())).build();
+			Activity activity = Activity.builder().activity("Department " + dept.getDeptName() + " is not updated ")
+					.activityDate(dateFormatter.format(LocalDateTime.now()))
+					.activityTime(timeFormatter.format(LocalDateTime.now())).build();
 			activityrepo.save(activity);
 			throw new ResourceNotModifiedException("Department " + dept.getDeptName() + " is not updated ");
 		}

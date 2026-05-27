@@ -22,22 +22,16 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("competency") 
+@RequestMapping("competency")
+@RequiredArgsConstructor
 @Tag(name = "Competency Controller",description = "This controller handles endpoints to perform operations like Save Competency , Find the competency")
 public class CompetencyController1 {
 
 	private final ICompetencyService competencyserv;
-
-	/**
-	 * @param competencyserv
-	 */
-	public CompetencyController1(ICompetencyService competencyserv) {
-		super(); 
-		this.competencyserv = competencyserv;
-	}
-	
+ 	
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
 	@PostMapping("/")

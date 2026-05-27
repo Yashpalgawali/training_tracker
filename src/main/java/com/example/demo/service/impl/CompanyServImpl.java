@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,18 +18,14 @@ import com.example.demo.repository.ActivityRepository;
 import com.example.demo.repository.CompanyRepository;
 import com.example.demo.service.ICompanyService;
 
-@Service("compserv")
+import lombok.RequiredArgsConstructor;
+
+@Service("compserv") @RequiredArgsConstructor
 public class CompanyServImpl implements ICompanyService {
 
 	private final CompanyRepository comprepo;
 	
 	private final ActivityRepository activityrepo;
-	
-	public CompanyServImpl(CompanyRepository comprepo, ActivityRepository activityrepo) {
-		super();
-		this.comprepo = comprepo;
-		this.activityrepo = activityrepo;
-	}
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	

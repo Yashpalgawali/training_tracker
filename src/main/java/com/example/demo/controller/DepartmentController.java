@@ -28,20 +28,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("department")
+@RequiredArgsConstructor
 public class DepartmentController {
 
 	private final IDepartmentService deptserv;
-
-	/**
-	 * @param deptserv
-	 */
-	public DepartmentController(IDepartmentService deptserv) {
-		super();
-		this.deptserv = deptserv;
-	}
 
 	@PostMapping("/")
 	@Operation(summary = "Save Department", description = "This endpoint is used to save Department into the database")
@@ -96,27 +90,27 @@ public class DepartmentController {
 				"Department " + department.getDeptName() + " is Updated successfully"));
 
 	}
-	
+
 	@GetMapping("/export/department/list")
 //	@Operation(description = "This end point will Export the All assigned assets to excel file ", summary ="Export All Assigned Assets to the Excel")
 //	@ApiResponse(description = "This will export assigned assets to the Employee ", responseCode = "200" )		
-	public ResponseEntity<InputStreamResource> exportDepartmentAndCompanyToExcel(HttpServletResponse response) throws IOException {
-		
+	public ResponseEntity<InputStreamResource> exportDepartmentAndCompanyToExcel(HttpServletResponse response)
+			throws IOException {
+
 		// Set headers
 		HttpHeaders headers = new HttpHeaders();
 		headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Department_List.xlsx");
 
-		List<DepartmentDto> deptList = deptserv.getAllDepartments().stream().map(dept -> {			 
-		
+		List<DepartmentDto> deptList = deptserv.getAllDepartments().stream().map(dept -> {
+
 			DepartmentDto dto = new DepartmentDto();
 			dto.setDept_name(dept.getDeptName());
-			dto.setComp_name(dept.getCompany().getCompName());			 
-			 
+			dto.setComp_name(dept.getCompany().getCompName());
+
 			return dto;
 
-		}).collect(Collectors.toList());		 
-		 
-		
+		}).collect(Collectors.toList());
+
 		ExportAllDepartments excelExporter = new ExportAllDepartments(deptList);
 		byte[] excelContent = excelExporter.export(response);
 

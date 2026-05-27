@@ -33,7 +33,10 @@ import com.example.demo.service.IEmployeeTrainingService;
 import com.example.demo.service.ITrainingService;
 import com.example.demo.service.ITrainingTimeSlotService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service("emptrainserv")
+@RequiredArgsConstructor
 public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 
 	private final EmployeeTrainingRepository emptrainrepo;
@@ -43,20 +46,7 @@ public class EmployeeTrainingServImpl implements IEmployeeTrainingService {
 	private final CompetencyRepository competencyrepo;
 	private final ITrainingTimeSlotService traintimeslotserv;
 	private final ActivityRepository activityrepo;
-
-	public EmployeeTrainingServImpl(EmployeeTrainingRepository emptrainrepo, ITrainingService trainserv,
-			IEmployeeTrainingHistoryService emptrainhistserv, EmployeeRepository emprepo,
-			CompetencyRepository competencyrepo, ITrainingTimeSlotService traintimeslotserv,
-			ActivityRepository activityrepo) {
-		super();
-		this.emptrainrepo = emptrainrepo;
-		this.trainserv = trainserv;
-		this.emptrainhistserv = emptrainhistserv;
-		this.emprepo = emprepo;
-		this.competencyrepo = competencyrepo;
-		this.traintimeslotserv = traintimeslotserv;
-		this.activityrepo = activityrepo;
-	}
+ 
 
 	private DateTimeFormatter dday = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 	private DateTimeFormatter ttime = DateTimeFormatter.ofPattern("HH:mm:ss");

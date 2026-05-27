@@ -12,16 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.entity.EmployeeHistory;
 import com.example.demo.service.IEmployeeHistoryService;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
-@RequestMapping("history")
+@RequestMapping("history") @RequiredArgsConstructor
 public class EmployeeHistoryController {
 
 	private final IEmployeeHistoryService emphistserv;
-
-	public EmployeeHistoryController(IEmployeeHistoryService emphistserv) {
-		super();
-		this.emphistserv = emphistserv;
-	}
 	
 	@GetMapping("/employee/{empid}")
 	public ResponseEntity<List<EmployeeHistory>> getEmployeeHistoryByEmployeeId(@PathVariable Long empid) {

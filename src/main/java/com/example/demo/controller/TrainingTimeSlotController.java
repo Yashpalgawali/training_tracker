@@ -22,21 +22,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("trainingtimeslot")
+@RequestMapping("trainingtimeslot") @RequiredArgsConstructor
 @Tag(name = "TrainingTimeSlot Controller",description = "This controller handles endpoints to perform operations like Save TrainingTimeSlot,Find, Update the trainingtimeslot")
 public class TrainingTimeSlotController {
 
 	private final ITrainingTimeSlotService traintimeslotserv;
 
-	/**
-	 * @param traintimeslotserv
-	 */
-	public TrainingTimeSlotController(ITrainingTimeSlotService traintimeslotserv) {
-		super(); 
-		this.traintimeslotserv = traintimeslotserv;
-	}
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
 	@PostMapping("/") 

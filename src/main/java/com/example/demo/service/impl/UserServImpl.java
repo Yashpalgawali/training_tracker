@@ -28,35 +28,32 @@ public class UserServImpl implements IUserService {
 	private final UsersRepository userrepo;
 
 	private final BCryptPasswordEncoder passEncoder;
-	
+
 	private final ActivityRepository activityrepo;
 
 	private DateTimeFormatter tday = DateTimeFormatter.ofPattern("dd-mm-yyyy");
 	private DateTimeFormatter ttime = DateTimeFormatter.ofPattern("HH:mm:ss");
-	
+
 	@Override
-	@Transactional	
+	@Transactional
 	public int updateUserPassword(Users user) {
 
 		String password = user.getPassword();
-		
+
 		String encryptedPass = passEncoder.encode(password);
-		
+
 		Long id = user.getUser_id();
-	
+
 		String email = user.getEmail();
-		int result =0;
-		if(id!=null)
-		{
+		int result = 0;
+		if (id != null) {
 			result = userrepo.updateUsersPassword(encryptedPass, id);
+		} else if (!email.equals("")) {
+			result = userrepo.updateUsersPasswordByEmail(encryptedPass, email);
+		} else {
 		}
-		else if(!email.equals(""))
-		{
-			result = userrepo.updateUsersPasswordByEmail(encryptedPass, email); 
-		}
-		else {		}
-		
-		if(result > 0 ) {
+
+		if (result > 0) {
 			return result;
 		}
 		throw new ResourceNotModifiedException("Password is not Updated");
@@ -70,97 +67,96 @@ public class UserServImpl implements IUserService {
 	@Override
 	public void createUser(Users user) {
 		Users foundUser = userrepo.getUserByEmailId(user.getEmail());
-		
-		if(foundUser!=null) {
-			throw new ResourceAlreadyExistsException("user","email",user.getEmail());
+
+		if (foundUser != null) {
+			throw new ResourceAlreadyExistsException("user", "email", user.getEmail());
 		}
 		String encryptedPass = passEncoder.encode(user.getPassword());
 		user.setPassword(encryptedPass);
 		Users savedUser = userrepo.save(user);
-		
+
 		Activity activity = new Activity();
-		activity.setActivity("User "+user.getUsername()+" is created successfully");
+		activity.setActivity("User " + user.getUsername() + " is created successfully");
 		activity.setActivityDate(tday.format(LocalDateTime.now()));
 		activity.setActivityTime(ttime.format(LocalDateTime.now()));
 		activityrepo.save(activity);
-		
-		if(savedUser == null) {
-			throw new GlobalException("The user "+user.getUsername()+" is not created");
+
+		if (savedUser == null) {
+			throw new GlobalException("The user " + user.getUsername() + " is not created");
 		}
 	}
 
 	@Override
 	public List<Users> getAllUsers() {
 		var userList = userrepo.findAll();
-		
-		if(userList.size() > 0) {			
+
+		if (userList.size() > 0) {
 			return userList;
-		}		
+		}
 		throw new ResourceNotFoundException("No user(s) found");
 	}
 
 	@Override
 	@Transactional
 	public void updateUser(Users user) {
-		Optional<Users> foundUser =  userrepo.findById(user.getUser_id());
-		if(!foundUser.isPresent()) {
-			throw new ResourceNotFoundException("No User found for given ID "+user.getUser_id());			
+		Optional<Users> foundUser = userrepo.findById(user.getUser_id());
+		if (!foundUser.isPresent()) {
+			throw new ResourceNotFoundException("No User found for given ID " + user.getUser_id());
 		}
-		
+
 		String encryptedPass = passEncoder.encode(user.getPassword());
 		user.setPassword(encryptedPass);
-		
-		int result =userrepo.updateUser(user.getUser_id(), user.getUsername(), encryptedPass, user.getEnabled(), user.getRole(), user.getEmail());
-		if(result >0 ) {
+
+		int result = userrepo.updateUser(user.getUser_id(), user.getUsername(), encryptedPass, user.getEnabled(),
+				user.getRole(), user.getEmail());
+		if (result > 0) {
 			Activity activity = new Activity();
-			activity.setActivity("User "+user.getUsername()+" is updated successfully");
-			activity.setActivityDate(tday.format(LocalDateTime.now()));
-			activity.setActivityTime(ttime.format(LocalDateTime.now()));
-			activityrepo.save(activity);			
-		}
-		else {
-			Activity activity = new Activity();
-			activity.setActivity("User "+user.getUsername()+" is not updated ");
+			activity.setActivity("User " + user.getUsername() + " is updated successfully");
 			activity.setActivityDate(tday.format(LocalDateTime.now()));
 			activity.setActivityTime(ttime.format(LocalDateTime.now()));
 			activityrepo.save(activity);
-			throw new ResourceNotModifiedException("User "+user.getUsername()+" is not modified");
+		} else {
+			Activity activity = new Activity();
+			activity.setActivity("User " + user.getUsername() + " is not updated ");
+			activity.setActivityDate(tday.format(LocalDateTime.now()));
+			activity.setActivityTime(ttime.format(LocalDateTime.now()));
+			activityrepo.save(activity);
+			throw new ResourceNotModifiedException("User " + user.getUsername() + " is not modified");
 		}
 	}
 
 	@Override
 	public Users getUserById(Long id) {
 		Optional<Users> foundUser = userrepo.findById(id);
-		if(foundUser.isPresent()) {
+		if (foundUser.isPresent()) {
 			return foundUser.get();
 		}
-		throw new ResourceNotFoundException("No user found for given ID "+id);
+		throw new ResourceNotFoundException("No user found for given ID " + id);
 	}
 
 	@Override
 	@Transactional
 	public void updateUserStatusById(Long id, int enabled) {
-		Users user =  this.getUserById(id);
+		Users user = this.getUserById(id);
 		int res = userrepo.updateUserStatusById(id, enabled);
-		String st = ( enabled == 1 ) ? "Enabled" : "Disabled";
-		if(res > 0 ) {
+		String st = (enabled == 1) ? "Enabled" : "Disabled";
+		if (res > 0) {
 			Activity act = new Activity();
 
-			act.setActivity("User "+user.getUsername() +" is "+st);
+			act.setActivity("User " + user.getUsername() + " is " + st);
 			act.setActivityDate(tday.format(LocalDateTime.now()));
 			act.setActivityTime(ttime.format(LocalDateTime.now()));
 			activityrepo.save(act);
-		}
-		else {
+		} else {
 			Activity act = new Activity();
-			 
-			act.setActivity("User "+user.getUsername() +" is "+st);
+
+			act.setActivity("User " + user.getUsername() + " is " + st);
 			act.setActivityDate(tday.format(LocalDateTime.now()));
 			act.setActivityTime(ttime.format(LocalDateTime.now()));
 			activityrepo.save(act);
 			throw new ResourceNotModifiedException("User status is not updated");
 		}
-	
+
 	}
 
 }

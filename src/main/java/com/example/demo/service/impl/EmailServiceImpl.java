@@ -11,18 +11,15 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.service.IEmailService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service("emailserv")
+@RequiredArgsConstructor
 public class EmailServiceImpl implements IEmailService {
 
 	private JavaMailSender mailsend;
 
 	private Environment env;
-
-	public EmailServiceImpl(JavaMailSender mailsend, Environment env) {
-		super();
-		this.mailsend = mailsend;
-		this.env = env;
-	}
 
 	DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 
@@ -31,8 +28,6 @@ public class EmailServiceImpl implements IEmailService {
 	@Override
 	public void sendSimpleEmail(String toemail, String body, String subject) {
 		String from = env.getProperty("spring.mail.username");
-
-		logger.info("Sending email to: {}, Subject: {}", toemail, subject);
 
 		SimpleMailMessage message = new SimpleMailMessage();
 

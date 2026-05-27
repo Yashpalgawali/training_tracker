@@ -13,26 +13,18 @@ import com.example.demo.repository.EmployeeRepository;
 import com.example.demo.repository.EmployeeTrainingHistoryRepository;
 import com.example.demo.repository.EmployeeTrainingRepository;
 import com.example.demo.repository.TrainingRepository;
-import com.example.demo.service.IEmployeeService;
 import com.example.demo.service.IEmployeeTrainingHistoryService;
-import com.example.demo.service.ITrainingService;
+
+import lombok.RequiredArgsConstructor;
 
 @Service("emptrainhistserv")
+@RequiredArgsConstructor
 public class EmployeeTrainingHistoryServImpl implements IEmployeeTrainingHistoryService {
 
 	private final EmployeeTrainingHistoryRepository emptrainhistrepo;
 	private final EmployeeTrainingRepository emptrainrepo;
 	private final EmployeeRepository emprepo;
 	private final TrainingRepository trainrepo;
-
-	public EmployeeTrainingHistoryServImpl(EmployeeTrainingHistoryRepository emptrainhistrepo,
-			EmployeeTrainingRepository emptrainrepo, EmployeeRepository emprepo, TrainingRepository trainrepo) {
-		super();
-		this.emptrainhistrepo = emptrainhistrepo;
-		this.emptrainrepo = emptrainrepo;
-		this.emprepo = emprepo;
-		this.trainrepo = trainrepo;
-	}
 
 	@Override
 	public EmployeeTrainingHistory saveEmployeeTrainingHistory(EmployeeTrainingHistory emptrainhist) {

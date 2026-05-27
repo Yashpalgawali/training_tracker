@@ -12,16 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.entity.EmployeeTrainingHistory;
 import com.example.demo.service.IEmployeeTrainingHistoryService;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
-@RequestMapping("employee-training-history")
+@RequestMapping("employee-training-history") @RequiredArgsConstructor
 public class EmployeeTrainingHistoryController {
 
 	private final IEmployeeTrainingHistoryService emptrainhistserv;
-
-	public EmployeeTrainingHistoryController(IEmployeeTrainingHistoryService emptrainhistserv) {
-		super();
-		this.emptrainhistserv = emptrainhistserv;
-	}
 
 	@GetMapping("/employee/{empid}/training/{tid}")
 	public ResponseEntity<List<EmployeeTrainingHistory>> getEmployeeTrainingHistoryByEmpAndTrainingId(

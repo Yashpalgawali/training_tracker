@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.ResponseDto;
-import com.example.demo.dto.TestingScheduleDto ;
+import com.example.demo.dto.TestingScheduleDto;
 import com.example.demo.entity.TestSchedule;
 import com.example.demo.service.ITestScheduleService;
 
@@ -33,14 +33,15 @@ public class TestingScheduleController {
 
 	private final ITestScheduleService testingscheduleserv;
 
-
 	@PostMapping("/")
 	@Operation(summary = "Save the Testing Schedule", description = "This endpoint saved the Testing Schedule in the Database")
-	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Testing Schedule is saved Successfully "),
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "The Testing Schedule is saved Successfully "),
 			@ApiResponse(responseCode = "404", description = "No Testing Schedule Scheduleare found") })
-	public ResponseEntity<ResponseDto> saveTestingSchedule(@RequestBody TestingScheduleDto  testingSchedule) {
+	public ResponseEntity<ResponseDto> saveTestingSchedule(@RequestBody TestingScheduleDto testingSchedule) {
 		testingscheduleserv.saveTestSchedule(testingSchedule);
-		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.CREATED.toString(), "Testing Scheduled dated on "+testingSchedule.getTestScheduleDate() ));
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.CREATED.toString(),
+				"Testing Scheduled dated on " + testingSchedule.getTestScheduleDate()));
 	}
 //	
 //	@GetMapping("/{id}")
@@ -51,39 +52,37 @@ public class TestingScheduleController {
 //		var testing = testingscheduleserv.getTestingById(id);
 //		return ResponseEntity.status(HttpStatus.OK).body(testing );
 //	}
-	
-	
+
 	@GetMapping("/year/{year}")
 	@Operation(summary = "Find the Test Schedule using Year", description = "This endpoint finds the Test Schedule from the database by using Year")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Test Schedule Schedule is found  "),
 			@ApiResponse(responseCode = "404", description = "No Test Schedule is found for the year") })
 	public ResponseEntity<List<TestSchedule>> getTestByYear(@PathVariable String year) {
 		var test = testingscheduleserv.getTestScheduleByYear(year);
-		return ResponseEntity.status(HttpStatus.OK).body(test );
+		return ResponseEntity.status(HttpStatus.OK).body(test);
 	}
-	
+
 	@PatchMapping("/year/{year}")
 	public ResponseEntity<ResponseDto> updateSignaturesByYear(@PathVariable String year,
 			@RequestBody Map<String, String> body) {
-		
+
 		testingscheduleserv.updateTestScheduleSignatureByYear(body, year);
 
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(new ResponseDto(HttpStatus.OK.toString(),
-						"The signature for year " + year
-								+ " is updated Successfully"));
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(),
+				"The signature for year " + year + " is updated Successfully"));
 	}
-	
+
 	@DeleteMapping("/{id}")
 	@Operation(summary = "Delete Testing Schedule", description = "This endpoint deletes the Testing Schedule from the database")
-	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Testing Schedule is deleted Successfully "),
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "The Testing Schedule is deleted Successfully "),
 			@ApiResponse(responseCode = "404", description = "No Testing Schedule is deleted ") })
 	public ResponseEntity<ResponseDto> deleteTestingScheduleById(@PathVariable Long id) {
 		testingscheduleserv.deleteTestScheduleById(id);
-		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.OK.toString(), "Testing schedule is deleted"));
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(new ResponseDto(HttpStatus.OK.toString(), "Testing schedule is deleted"));
 	}
-	
-	
+
 //	@PutMapping("/")
 //	@Operation(summary = "Update the Testing Schedule", description = "This endpoint updates the Testing Schedule Schedulein the database")
 //	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Testing Schedule updated Successfully "),

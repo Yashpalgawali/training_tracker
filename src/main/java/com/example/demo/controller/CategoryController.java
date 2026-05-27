@@ -22,19 +22,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("category")
+@RequiredArgsConstructor
 @Tag(name = "Category Controller", description = "This controller handles endpoints to perform operations like Save Category,Find, Update the category")
 public class CategoryController {
 
 	private final ICategoryService categoryserv;
-
-	public CategoryController(ICategoryService categoryserv) {
-		super();
-		this.categoryserv = categoryserv;
-
-	}
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
 

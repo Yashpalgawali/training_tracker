@@ -30,7 +30,6 @@ import com.example.demo.entity.Employee;
 import com.example.demo.entity.Training;
 import com.example.demo.export.ExportAllEmployees;
 import com.example.demo.export.ExportSampleToUploadEmployees;
-import com.example.demo.service.ICategoryService;
 import com.example.demo.service.IEmployeeService;
 import com.example.demo.service.IEmployeeTrainingService;
 
@@ -38,22 +37,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("employee")
+@RequestMapping("employee") @RequiredArgsConstructor
 public class EmployeeController {
 
 	private final IEmployeeService empserv;
 	private final IEmployeeTrainingService emptrainhistserv;
-
-	public EmployeeController(IEmployeeService empserv, IEmployeeTrainingService emptrainhistserv,
-			ICategoryService categoryserv) {
-		super();
-		this.empserv = empserv;
-		this.emptrainhistserv = emptrainhistserv;
-
-	}
-
+ 
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@PostMapping("/")
