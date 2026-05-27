@@ -15,6 +15,7 @@ import com.example.demo.exception.GlobalException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.exception.ResourceNotModifiedException;
 import com.example.demo.mapper.TestingScheduleMapper;
+import com.example.demo.repository.TestScheduleHistRepo;
 import com.example.demo.repository.TestingScheduleRepository;
 import com.example.demo.service.ITestScheduleService;
 import com.example.demo.service.ITestService;
