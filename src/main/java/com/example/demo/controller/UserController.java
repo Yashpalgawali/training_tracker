@@ -38,7 +38,7 @@ public class UserController {
 	@PostMapping("/")
 	@Operation(summary = "Create User", description = "This endpoint created the User object to the database")
 	@ApiResponses(value = { @ApiResponse(responseCode = "201", description = "The users is created Successfully "),
-			@ApiResponse(responseCode = "500", description = "The users is NOT created ") })
+			@ApiResponse(responseCode = "500", description = "The user is NOT created ") })
 	public ResponseEntity<ResponseDto> createUser(@RequestBody Users users) {
 		userserv.createUser(users);
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto(HttpStatus.CREATED.toString(),

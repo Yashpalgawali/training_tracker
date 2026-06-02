@@ -39,34 +39,34 @@ public class CommitteeScheduleServImpl implements ICommitteeScheduleService {
 	private final CommitteeScheduleRepository committeeshedulerepo;
 
 	private final CommitteeScheduleHistRepo committeeschedulehistrepo;
-	
+
 	private final ICommitteeService committeeserv;
 
 	private final IFrequencyService frequencyserv;
 
 	private final IEmailService emailserv;
-	
+
 	private final UsersRepository userrepo;
-	
+
 	@Override
 	public void saveCommitteeSchedule(CommitteeScheduleDto committee) {
 		var committeeObj = committeeserv.getCommitteeById(committee.getCommitteeId());
 		var frequencyObj = frequencyserv.getFrequencyById(committee.getFrequencyId());
-		
+
 		CommitteeSchedule mappedCommitteeSchedule = CommitteeScheduleMapper.MapToCommitteeSchedule(committee,
 				new CommitteeSchedule());
-		
+
 		String status = committee.getStatus();
 
-		if(status.equals("PLAN")) {
+		if (status.equals("PLAN")) {
 			mappedCommitteeSchedule.setPlan(status);
 			mappedCommitteeSchedule.setDone("");
 		}
-		if(status.equals("DONE")) {
+		if (status.equals("DONE")) {
 			mappedCommitteeSchedule.setDone(status);
 			mappedCommitteeSchedule.setPlan("");
 		}
-		
+
 		String year = committee.getCommitteeScheduleDate().substring(8, 10);
 		Integer in = committee.getMonthIndex().intValue();
 
@@ -116,7 +116,7 @@ public class CommitteeScheduleServImpl implements ICommitteeScheduleService {
 		Committee comm = committeeserv.getCommitteeById(committee.getCommitteeId());
 		mappedCommitteeSchedule.setCommittee(comm);
 		mappedCommitteeSchedule.setFrequency(frequencyObj);
-		
+
 		CommitteeSchedule savedEntity = committeeshedulerepo.save(mappedCommitteeSchedule);
 
 		if (savedEntity != null) {
@@ -130,8 +130,7 @@ public class CommitteeScheduleServImpl implements ICommitteeScheduleService {
 			histObj.setStatus(committee.getStatus());
 
 			committeeschedulehistrepo.save(histObj);
-		}	
-		
+		}
 
 		if (savedEntity == null) {
 			throw new GlobalException("Committee meeting is not scheduled");
@@ -142,25 +141,23 @@ public class CommitteeScheduleServImpl implements ICommitteeScheduleService {
 	@Transactional
 	public void updateCommitteeSchedule(CommitteeScheduleDto committee) {
 
-		
 		var committeeObj = committeeserv.getCommitteeById(committee.getCommitteeId());
 		var frequencyObj = frequencyserv.getFrequencyById(committee.getFrequencyId());
-		
+
 		CommitteeSchedule mappedCommitteeSchedule = CommitteeScheduleMapper.MapToCommitteeSchedule(committee,
 				new CommitteeSchedule());
-		
-		
+
 		String status = committee.getStatus();
 
-		if(status.equals("PLAN")) {
+		if (status.equals("PLAN")) {
 			mappedCommitteeSchedule.setPlan(status);
 			mappedCommitteeSchedule.setDone("");
 		}
-		if(status.equals("DONE")) {
+		if (status.equals("DONE")) {
 			mappedCommitteeSchedule.setDone(status);
 			mappedCommitteeSchedule.setPlan("");
 		}
-		
+
 		String year = committee.getCommitteeScheduleDate().substring(8, 10);
 		Integer in = committee.getMonthIndex().intValue();
 
@@ -211,11 +208,13 @@ public class CommitteeScheduleServImpl implements ICommitteeScheduleService {
 //		mappedCommitteeSchedule.setCommittee(comm);
 		mappedCommitteeSchedule.setFrequency(frequencyObj);
 
-		System.err.println("The committee object for updation Mapped Object "+mappedCommitteeSchedule.toString());
-		int savedEntity = committeeshedulerepo.updateCommitteeScheduleById( mappedCommitteeSchedule.getCommitteeScheduleId(), mappedCommitteeSchedule.getCommitteeScheduleDate(), mappedCommitteeSchedule.getPlan(), mappedCommitteeSchedule.getDone());
+		System.err.println("The committee object for updation Mapped Object " + mappedCommitteeSchedule.toString());
+		int savedEntity = committeeshedulerepo.updateCommitteeScheduleById(
+				mappedCommitteeSchedule.getCommitteeScheduleId(), mappedCommitteeSchedule.getCommitteeScheduleDate(),
+				mappedCommitteeSchedule.getPlan(), mappedCommitteeSchedule.getDone());
 
-		System.err.println("updated result "+savedEntity);
-		
+		System.err.println("updated result " + savedEntity);
+
 		if (savedEntity > 0) {
 			CommitteeScheduleHistory histObj = new CommitteeScheduleHistory();
 			histObj.setCommittee(committeeObj.getCommitteeName());
@@ -227,8 +226,7 @@ public class CommitteeScheduleServImpl implements ICommitteeScheduleService {
 			histObj.setStatus(committee.getStatus());
 
 			committeeschedulehistrepo.save(histObj);
-		}
-		else {
+		} else {
 			throw new GlobalException("Committee meeting schedule is not updated");
 		}
 	}
@@ -242,8 +240,8 @@ public class CommitteeScheduleServImpl implements ICommitteeScheduleService {
 
 	@Override
 	public List<CommitteeSchedule> getCommitteeScheduleByYear(String year) {
-		List<CommitteeSchedule>  scheduleList = committeeshedulerepo.findCommitteeScheduleByYear(year);
-		if(scheduleList.size() > 0 )
+		List<CommitteeSchedule> scheduleList = committeeshedulerepo.findCommitteeScheduleByYear(year);
+		if (scheduleList.size() > 0)
 			return scheduleList;
 		throw new ResourceNotFoundException("No Committee meetings was found for given year " + year);
 	}
@@ -255,34 +253,45 @@ public class CommitteeScheduleServImpl implements ICommitteeScheduleService {
 	}
 
 	@Override
+	@Transactional
 	public void updateCommitteeScheduleSignatureByYear(Map<String, String> body, String year) {
-		
-		getCommitteeScheduleByYear(year);
-		
 
 		String doneBy = body.get("doneBy");
 		String checkedBy = body.get("checkedBy");
 		String approvedBy = body.get("approvedBy");
-		
+
 		CommitteeSchedule commiteeSchedule = new CommitteeSchedule();
-		
+
 		commiteeSchedule.setApprovedBy(approvedBy);
 		commiteeSchedule.setCheckedBy(checkedBy);
 		commiteeSchedule.setDoneBy(doneBy);
-		
+
+		int res = committeeshedulerepo.updateCommitteeScheduleSignatureByYear(doneBy, checkedBy, approvedBy, year);
+
+		if (res > 0) {
+
+			CommitteeScheduleHistory comhistschedule = new CommitteeScheduleHistory();
+
+			comhistschedule.setApprovedBy(approvedBy);
+			comhistschedule.setApprovedBy(approvedBy);
+			comhistschedule.setDoneBy(doneBy);
+			committeeschedulehistrepo.save(comhistschedule);
+		} else {
+			throw new ResourceNotModifiedException("Committee Schedule Signature is not updated for year "+year);
+		}
 	}
 
 	@Override
 	public void deleteCommitteeScheduleById(Long committeeId) {
 
-		Optional<CommitteeSchedule> found = committeeshedulerepo.findById(committeeId);  
-		if(!found.isPresent()){
+		Optional<CommitteeSchedule> found = committeeshedulerepo.findById(committeeId);
+		if (!found.isPresent()) {
 			throw new ResourceNotFoundException("No committee schedule is found!!");
-		}		 
+		}
 
 		CommitteeSchedule committeeSchedule = found.get();
 		var frequencyObj = frequencyserv.getFrequencyById(committeeSchedule.getFrequency().getFrequencyId());
-		
+
 		CommitteeScheduleHistory histObj = new CommitteeScheduleHistory();
 		histObj.setCommittee(committeeSchedule.getCommittee().getCommitteeName());
 		histObj.setCommitteeScheduleDate(committeeSchedule.getCommitteeScheduleDate());
@@ -290,85 +299,75 @@ public class CommitteeScheduleServImpl implements ICommitteeScheduleService {
 		histObj.setCheckedBy(committeeSchedule.getCheckedBy());
 		histObj.setDoneBy(committeeSchedule.getDoneBy());
 		histObj.setFrequency(frequencyObj.getFrequency());
-		if(committeeSchedule.getPlan().equals("plan")) {
+		if (committeeSchedule.getPlan().equals("plan")) {
 			histObj.setStatus("plan");
 		}
-		
-		if(committeeSchedule.getDone().equals("done")) {
+
+		if (committeeSchedule.getDone().equals("done")) {
 			histObj.setStatus("done");
 		}
-		 
+
 		committeeschedulehistrepo.save(histObj);
-		
+
 		committeeshedulerepo.deleteById(committeeId);
 		CommitteeSchedule committeeById = getCommitteeById(committeeId);
-		 
-		if(committeeById == null) {
-				throw new ResourceNotModifiedException("Committee Schedule is not deleted");
+
+		if (committeeById == null) {
+			throw new ResourceNotModifiedException("Committee Schedule is not deleted");
 		}
 	}
-	 
 
 	@Override
 	public List<String> sendUpcomingMeetingReminders() {
-	    LocalDate today = LocalDate.now();
-	    LocalDate threeDaysAhead = today.plusDays(3);
+		LocalDate today = LocalDate.now();
+		LocalDate threeDaysAhead = today.plusDays(3);
 
-	    // Fetch all committee schedules for current year
-	    String year = ""+today.getYear();
-	    List<CommitteeSchedule> schedules = committeeshedulerepo.findCommitteeScheduleByYear(year);
- 
-	    // Filter meetings within the next 0–3 days
-	    List<CommitteeSchedule> upcoming = schedules.stream()
-	        .filter(s -> {
-	        	 LocalDate meetingDate = LocalDate.parse(
-	     	    	    s.getCommitteeScheduleDate(),
-	     	    	    DateTimeFormatter.ofPattern("dd-MM-yyyy")
-	     	    	);
-	            return !meetingDate.isBefore(today) && !meetingDate.isAfter(threeDaysAhead);
-	        })
-	        .collect(Collectors.toList());
+		// Fetch all committee schedules for current year
+		String year = "" + today.getYear();
+		List<CommitteeSchedule> schedules = committeeshedulerepo.findCommitteeScheduleByYear(year);
 
-	    if (upcoming.isEmpty()) {
-	        return Collections.emptyList();
-	    }
+		// Filter meetings within the next 0–3 days
+		List<CommitteeSchedule> upcoming = schedules.stream().filter(s -> {
+			LocalDate meetingDate = LocalDate.parse(s.getCommitteeScheduleDate(),
+					DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+			return !meetingDate.isBefore(today) && !meetingDate.isAfter(threeDaysAhead);
+		}).collect(Collectors.toList());
 
-	    // Build email body
-	    StringBuilder body = new StringBuilder();
-	    body.append("Dear Admin,\n\n");
-	    body.append("This is a reminder that the following committee meetings are scheduled in the next 3 days:\n\n");
+		if (upcoming.isEmpty()) {
+			return Collections.emptyList();
+		}
 
-	    for (CommitteeSchedule s : upcoming) {
+		// Build email body
+		StringBuilder body = new StringBuilder();
+		body.append("Dear Admin,\n\n");
+		body.append("This is a reminder that the following committee meetings are scheduled in the next 3 days:\n\n");
+
+		for (CommitteeSchedule s : upcoming) {
 //	        long daysLeft = ChronoUnit.DAYS.between(today, s.getCommitteeScheduleDate());
-	    	  LocalDate meetingDate = LocalDate.parse(s.getCommitteeScheduleDate(),  DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-	    	    long daysLeft = ChronoUnit.DAYS.between(today, meetingDate);
-	        String when = daysLeft == 0 ? "TODAY"
-	                    : daysLeft == 1 ? "Tomorrow"
-	                    : "In " + daysLeft + " days";
+			LocalDate meetingDate = LocalDate.parse(s.getCommitteeScheduleDate(),
+					DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+			long daysLeft = ChronoUnit.DAYS.between(today, meetingDate);
+			String when = daysLeft == 0 ? "TODAY" : daysLeft == 1 ? "Tomorrow" : "In " + daysLeft + " days";
 
-	        body.append("  • ").append(s.getCommittee().getCommitteeName())
-	            .append(" — ").append(s.getCommitteeScheduleDate())
-	            .append(" (").append(when).append(")\n");
-	    }
+			body.append("  • ").append(s.getCommittee().getCommitteeName()).append(" — ")
+					.append(s.getCommitteeScheduleDate()).append(" (").append(when).append(")\n");
+		}
 
-	    body.append("\nPlease ensure all arrangements are in place.\n\nRegards,\nTraining Tracker System");
+		body.append("\nPlease ensure all arrangements are in place.\n\nRegards,\nTraining Tracker System");
 
-	    // Fetch all admin users and send emails
-	    List<Users> admins = userrepo.findAll(); // or findByRole("ADMIN")
-	    List<String> sentTo = new ArrayList<>();
+		// Fetch all admin users and send emails
+		List<Users> admins = userrepo.findAll(); // or findByRole("ADMIN")
+		List<String> sentTo = new ArrayList<>();
 
-	    for (Users admin : admins) {
-	        if (admin.getEmail() != null && !admin.getEmail().isBlank()) {
-	            emailserv.sendSimpleEmail(
-	                admin.getEmail(),
-	                body.toString(),
-	                "⚠️ Committee Meeting Reminder — " + upcoming.size() + " meeting(s) upcoming"
-	            );
-	            sentTo.add(admin.getEmail());
-	        }
-	    }
+		for (Users admin : admins) {
+			if (admin.getEmail() != null && !admin.getEmail().isBlank()) {
+				emailserv.sendSimpleEmail(admin.getEmail(), body.toString(),
+						"⚠️ Committee Meeting Reminder — " + upcoming.size() + " meeting(s) upcoming");
+				sentTo.add(admin.getEmail());
+			}
+		}
 
-	    return sentTo;
+		return sentTo;
 	}
 
 }
