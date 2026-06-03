@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.example.demo.dto.CommitteeScheduleDto;
+import com.example.demo.entity.Committee;
 import com.example.demo.entity.CommitteeSchedule;
 
 public interface ICommitteeScheduleService {
@@ -23,4 +24,9 @@ public interface ICommitteeScheduleService {
 	public void deleteCommitteeScheduleById(Long committeeId);
 
 	public List<String> sendUpcomingMeetingReminders();
+		
+	public List<String> getCommitteeMeetingsDateByMonth(String month);
+	
+	public List<CommitteeSchedule> getAllCommitteeScheduleByCommittee(Committee committee );
+
 }

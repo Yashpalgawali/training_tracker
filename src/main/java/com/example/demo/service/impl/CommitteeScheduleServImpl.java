@@ -370,4 +370,15 @@ public class CommitteeScheduleServImpl implements ICommitteeScheduleService {
 		return sentTo;
 	}
 
+	@Override
+	public List<String> getCommitteeMeetingsDateByMonth(String month) {
+  
+		return null;
+	}
+
+	@Override
+	public List<CommitteeSchedule> getAllCommitteeScheduleByCommittee(Committee committee) {
+		return committeeshedulerepo.findByCommittee(committee);		
+	}
+
 }

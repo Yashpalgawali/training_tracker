@@ -19,10 +19,10 @@ public class ExportAllTrainings {
 
 	private XSSFWorkbook workbook;
 	private XSSFSheet sheet;
-	private List<EmployeeTrainingDto> EmployeeTrainingHistory;
+	private List<EmployeeTrainingDto> employeeTrainingHistory;
 	
 	public ExportAllTrainings(List<EmployeeTrainingDto> alist) {
-		this.EmployeeTrainingHistory = alist;
+		this.employeeTrainingHistory = alist;
 		workbook = new XSSFWorkbook();
 	}
 	
@@ -79,8 +79,8 @@ public class ExportAllTrainings {
 		font.setFontHeight(16);
 		int sr=1;
 		
-		if(EmployeeTrainingHistory.size() > 0 ) {
-		for(EmployeeTrainingDto training : EmployeeTrainingHistory)
+		if(employeeTrainingHistory.size() > 0 ) {
+		for(EmployeeTrainingDto training : employeeTrainingHistory)
 		{
 			Row row = sheet.createRow(rowCount++);
 			

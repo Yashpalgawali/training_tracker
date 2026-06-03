@@ -1,9 +1,14 @@
 package com.example.demo.controller;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,12 +23,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.dto.CommitteeScheduleDto;
 import com.example.demo.dto.ResponseDto;
 import com.example.demo.entity.CommitteeSchedule;
+import com.example.demo.export.ExportCommitteeScheduleByYear;
 import com.example.demo.service.ICommitteeScheduleService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -53,7 +60,7 @@ public class CommitteeScheduleController {
 	}
 //	
 //	@GetMapping("/{id}")
-//	@Operation(summary = "Find the Committee Schedule Scheduleusing ID", description = "This endpoint finds the Committee Schedule Schedulefrom the database by using its ID")
+//	@Operation(summary = "Find the Committee Schedule Using ID", description = "This endpoint finds the Committee Schedule Schedulefrom the database by using its ID")
 //	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Committee Schedule Scheduleis found Successfully "),
 //			@ApiResponse(responseCode = "404", description = "No Committee Schedule Scheduleis found") })
 //	public ResponseEntity<Committee Schedule> getCommitteeById(@PathVariable Long id) {
@@ -87,7 +94,7 @@ public class CommitteeScheduleController {
 	@Operation(summary = "Update the Committee Schedule", description = "This endpoint updates the Committee Schedule Schedulein the database")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Committee Schedule updated Successfully "),
 			@ApiResponse(responseCode = "404", description = "Committee Schedule is not updated") })
-	public ResponseEntity<ResponseDto> updateCommittee(@RequestBody CommitteeScheduleDto schedulecommittee) {
+	public ResponseEntity<ResponseDto> updateCommitteeSchedule(@RequestBody CommitteeScheduleDto schedulecommittee) {
 		committeescheduleserv.updateCommitteeSchedule(schedulecommittee);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.CREATED.toString(), "Committee Schedule is updated successfully"));
 	}
@@ -96,19 +103,40 @@ public class CommitteeScheduleController {
 	@Operation(summary = "Delete the Committee Schedule", description = "This endpoint delete the Committee Schedule from the database by using its ID")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Committee Schedule deleted Successfully "),
 			@ApiResponse(responseCode = "404", description = "Committee Schedule is not deleted") })
-	public ResponseEntity<ResponseDto> updateCommittee(@PathVariable Long id) {
+	public ResponseEntity<ResponseDto> deleteCommitteeSchedule(@PathVariable Long id) {
 		committeescheduleserv.deleteCommitteeScheduleById(id);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.CREATED.toString(), "Committee Schedule is Deleted successfully"));
 	}
 	
 	
 	@PostMapping("/notify")
-	@Operation(summary = "Update the Committee Schedule", description = "This endpoint updates the Committee Schedule Schedulein the database")
+	@Operation(summary = "Update the Committee Schedule", description = "This endpoint updates the Committee Schedule in the database")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Committee Schedule updated Successfully "),
 			@ApiResponse(responseCode = "404", description = "Committee Schedule is not updated") })
 	public ResponseEntity<List<String>> sendCommitteeScheduleNotificationEmail() {
 		
 		  List<String> result = committeescheduleserv.sendUpcomingMeetingReminders();
 		return ResponseEntity.status(HttpStatus.OK).body(result);
+	}
+	
+	@GetMapping("/download/{year}")
+	@Operation(summary = "Export the Committee Schedule using Year", description = "This endpoint exports the Committee Schedule the database by using Year")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Committee Schedule is found  "),
+			@ApiResponse(responseCode = "404", description = "No Committee Schedule is found for the year") })
+	public ResponseEntity<InputStreamResource> exportCommitteeSchedultByYear( HttpServletResponse response, @PathVariable String year ) throws IOException {
+		// Set headers
+				HttpHeaders headers = new HttpHeaders();
+				headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Committee_Schedule_List_"+year+".xlsx");
+
+				List<CommitteeSchedule> alist = committeescheduleserv.getCommitteeScheduleByYear(year);
+
+				ExportCommitteeScheduleByYear excelExporter = new ExportCommitteeScheduleByYear(alist);
+				byte[] excelContent = excelExporter.export(response);
+
+				// Return the file as a ResponseEntity
+				return ResponseEntity.ok().headers(headers)
+						.contentType(
+								MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+						.body(new InputStreamResource(new ByteArrayInputStream(excelContent)));
 	}
 }
