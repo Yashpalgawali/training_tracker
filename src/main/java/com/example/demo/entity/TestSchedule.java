@@ -36,7 +36,7 @@ public class TestSchedule {
 	String frequency;
 
 	String testScheduleDate;
-	
+
 	String plan;
 	String done;
 

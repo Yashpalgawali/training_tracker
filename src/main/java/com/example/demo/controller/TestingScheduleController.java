@@ -1,9 +1,14 @@
 package com.example.demo.controller;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,12 +22,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.dto.ResponseDto;
 import com.example.demo.dto.TestingScheduleDto;
 import com.example.demo.entity.TestSchedule;
+import com.example.demo.export.ExportAllTestingSchedules;
 import com.example.demo.service.ITestScheduleService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -83,12 +90,24 @@ public class TestingScheduleController {
 				.body(new ResponseDto(HttpStatus.OK.toString(), "Testing schedule is deleted"));
 	}
 
-//	@PutMapping("/")
-//	@Operation(summary = "Update the Testing Schedule", description = "This endpoint updates the Testing Schedule Schedulein the database")
-//	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Testing Schedule updated Successfully "),
-//			@ApiResponse(responseCode = "404", description = "Testing Schedule Scheduleis not updated") })
-//	public ResponseEntity<ResponseDto> updateTesting(@RequestBody Testing Schedule Scheduletesting) {
-//		testingscheduleserv.updateTesting(testing);
-//		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(HttpStatus.CREATED.toString(), "Testing Schedule Schedule"+testing.getTestingName()+" is updated successfully"));
-//	}
+	@GetMapping("/download/{year}")
+	@Operation(summary = "Export the Testing Schedule using Year", description = "This endpoint exports the Testing Schedule from the database by using Year")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "The Testing Schedule is found  "),
+			@ApiResponse(responseCode = "404", description = "No Testing Schedule is found for the year") })
+	public ResponseEntity<InputStreamResource> exportTestingScheduleByYear(HttpServletResponse response, @PathVariable String year ) throws IOException {
+		// Set headers
+				HttpHeaders headers = new HttpHeaders();
+				headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Testing_Schedule_List_"+year+".xlsx");
+
+				List<TestSchedule> alist = testingscheduleserv.getTestScheduleByYear(year); 
+
+				ExportAllTestingSchedules excelExporter = new ExportAllTestingSchedules(alist);
+				byte[] excelContent = excelExporter.export(response);
+
+				// Return the file as a ResponseEntity
+				return ResponseEntity.ok().headers(headers)
+						.contentType(
+								MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+						.body(new InputStreamResource(new ByteArrayInputStream(excelContent)));
+	}
 }
