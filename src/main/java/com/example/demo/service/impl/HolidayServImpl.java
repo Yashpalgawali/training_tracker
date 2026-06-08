@@ -62,10 +62,8 @@ public class HolidayServImpl implements IHolidayService {
 
 	@Override
 	public Holiday getHoliday(Long id) {
-		Optional<Holiday> object = holidayrepo.findById(id);
-		if (!object.isEmpty())
-			return object.get();
-		throw new ResourceNotFoundException("No Holiday found for given Id " + id);
+		return holidayrepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("No Holiday found for given Id " + id)) ;
+		
 	}
 
 }

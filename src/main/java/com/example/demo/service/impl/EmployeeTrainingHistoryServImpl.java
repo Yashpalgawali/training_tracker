@@ -60,10 +60,10 @@ public class EmployeeTrainingHistoryServImpl implements IEmployeeTrainingHistory
 		Employee employee = emprepo.findById(empid).orElse(null);
 
 		List<EmployeeTrainingHistory> trainHistList = emptrainhistrepo.findByEmployeeAndTraining(employee, train);
-		if(trainHistList.size() > 0 )
-		{
+		if (trainHistList.size() > 0) {
 			return trainHistList;
 		}
-		throw new ResourceNotFoundException("No Training history found for training "+train.getTraining_name()+" of employee "+employee.getEmpName());
+		throw new ResourceNotFoundException("No Training history found for training " + train.getTraining_name()
+				+ " of employee " + employee.getEmpName());
 	}
 }

@@ -43,17 +43,15 @@ public class CompanyServImpl implements ICompanyService {
 			return savedCompany;
 		}
 		else {
-			Activity activity = Activity.builder().activity("Company "+savedCompany.getCompName()+" is NOT saved ").activityDate(dateFormatter.format(LocalDateTime.now()) ).activityTime(timeFormatter.format(LocalDateTime.now())).build();
+			Activity activity = Activity.builder().activity("Company "+company.getCompName()+" is NOT saved ").activityDate(dateFormatter.format(LocalDateTime.now()) ).activityTime(timeFormatter.format(LocalDateTime.now())).build();
 			activityrepo.save(activity);
 			throw new GlobalException("Company "+company.getCompName()+" is not saved");
 		}
 	}
 
 	@Override
-//	@Cacheable(value = "companyCache", key = "'allCompanies'")
 	public List<Company> getAllCompanies() {
 		List<Company> compList = comprepo.findAll();
-		System.err.println("Calling from DB....");
 		if(compList.isEmpty()) {
 			throw new ResourceNotFoundException("No Companies found");
 		}
@@ -62,16 +60,12 @@ public class CompanyServImpl implements ICompanyService {
 	}
 
 	@Override
-	@Transactional
 	public Company getCompanyById(Long comp_id) {
-		Company companyObject = comprepo.findById(comp_id).orElseThrow(()-> new ResourceNotFoundException("No Company found for given id "+comp_id));
-	 	
-//		Company companyObject1 = comprepo.findById(comp_id).orElseThrow(()-> new ResourceNotFoundException("No Company found for given id "+comp_id));
-
-		return companyObject;
+		return comprepo.findById(comp_id).orElseThrow(()-> new ResourceNotFoundException("No Company found for given id "+comp_id));
 	}
 
 	@Override
+	@Transactional
 	public int updateCompany(Company company) {
 		
 		var result = comprepo.updateCompany(company.getCompanyId(), company.getCompName());

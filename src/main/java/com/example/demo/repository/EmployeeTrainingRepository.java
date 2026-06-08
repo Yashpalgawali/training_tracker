@@ -29,7 +29,6 @@ public interface EmployeeTrainingRepository extends JpaRepository<EmployeeTraini
 
 	@Query("UPDATE EmployeeTraining eth SET eth.completion_date=:completion_date WHERE eth.emp_train_id=:id")
 	@Modifying
-	@Transactional
 	public int updateCompletionTime(Long id, String completion_date);
 
 	@Query("SELECT eth FROM EmployeeTraining eth WHERE eth.emp_train_id=:emp_train_id")

@@ -17,9 +17,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class EmailServiceImpl implements IEmailService {
 
-	private JavaMailSender mailsend;
+	private final JavaMailSender mailsend;
 
-	private Environment env;
+	private final Environment env;
 
 	DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 

@@ -74,18 +74,6 @@ public class EmployeeTrainingController {
 
 		return ResponseEntity.status(HttpStatus.OK).body(trainingHistory);
 	}
-
-//	@PostMapping("/")
-//	public ResponseEntity<ResponseDto> saveEmployeeTraining(@RequestBody EmployeeTraining emptraining) {
-//
-//		System.err.println("Employee Training Object is " + emptraining.getEmployee());
-////		return null;
-//		EmployeeTraining savedEmployeeTraining = emptrainserv.saveEmployeeTraining(emptraining);
-//		return ResponseEntity.status(HttpStatus.CREATED)
-//				.body(new ResponseDto(HttpStatus.CREATED.toString(),
-//						"Training " + savedEmployeeTraining.getTraining().getTraining_name() + " is started of "
-//								+ emptraining.getEmployee().getEmpName()));
-//	}
 	
 	@PostMapping("/")
 	public ResponseEntity<ResponseDto> saveEmployeeTraining(@RequestBody TrainingAssignmentRequest emptraining) {
