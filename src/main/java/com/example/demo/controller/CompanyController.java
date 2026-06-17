@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.ResponseDto;
+import com.example.demo.dto.TrainingTrackerContactsInfoDto;
 import com.example.demo.entity.Company;
 import com.example.demo.service.ICompanyService;
 
@@ -32,6 +34,11 @@ public class CompanyController {
 
 	private final ICompanyService compserv;
  
+	private final TrainingTrackerContactsInfoDto trainingTrackerContactsInfoDto; 
+	
+	@Value("${build.version}")
+	private String buildVersion;
+	
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
 	@PostMapping("/") 
@@ -84,4 +91,20 @@ public class CompanyController {
 		return ResponseEntity.status(HttpStatus.OK)
 							 .body(new ResponseDto(HttpStatus.OK.toString(),"Company "+updatedCompany.getCompName()+" is Updated Successfully"));
 	}
+	
+	@GetMapping("/contact-info")	
+	public ResponseEntity<TrainingTrackerContactsInfoDto> getContactInfo() {
+		 
+		return ResponseEntity.status(HttpStatus.OK)
+							 .body(trainingTrackerContactsInfoDto);
+	}
+	
+	@GetMapping("/build-info")	
+	public ResponseEntity<String> getBuildInfo() {
+		 
+		return ResponseEntity.status(HttpStatus.OK)
+							 .body(buildVersion);
+	}
+	
+	
 }
