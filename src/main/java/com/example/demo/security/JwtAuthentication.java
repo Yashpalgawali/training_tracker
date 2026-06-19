@@ -40,7 +40,7 @@ public class JwtAuthentication {
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.httpBasic(basic->{});
 		http.authorizeHttpRequests(auth -> {
-		
+			auth.requestMatchers("/company/build-info","/company/contact-info","/actuator/**").permitAll();
 			auth.requestMatchers("/users/**","/authenticate","/error","/password/otp/*","/password/forgot","/password/email/*/otp/*").permitAll();
 			auth.anyRequest().authenticated();
 		});
