@@ -11,6 +11,6 @@ import com.example.demo.dto.TrainingTrackerContactsInfoDto;
 public class EmployeePerformanceTrackerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(EmployeePerformanceTrackerApplication.class, args);	 
+		SpringApplication.run(EmployeePerformanceTrackerApplication.class, args);
 	}
 }
