@@ -49,7 +49,17 @@
 			<groupId>org.springframework.retry</groupId>
 			<artifactId>spring-retry</artifactId>
 		</dependency>
+		<!-- Spring Cache -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
 
+		<!-- Caffeine Cache -->
+		<dependency>
+			<groupId>com.github.ben-manes.caffeine</groupId>
+			<artifactId>caffeine</artifactId>
+		</dependency>
 		<!-- Source:
 		https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-aop -->
 		<dependency>

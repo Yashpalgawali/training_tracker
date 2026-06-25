@@ -18,6 +18,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -118,13 +121,15 @@ public class EmployeeServImpl implements IEmployeeService {
 	}
 
 	@Override
-	public Employee getEmployeeByEmployeeId(Long empid) {
-
-		return emprepo.findById(empid)
-				.orElseThrow(() -> new ResourceNotFoundException("No Employee found for given ID " + empid));
+    @Cacheable(value = "employees", key = "#id")
+	public Employee getEmployeeByEmployeeId(Long id) {
+		 System.out.println("Fetching from DB...");
+		return emprepo.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("No Employee found for given ID " + id));
 	}
 
 	@Override
+	@CacheEvict(value="employees", key = "#emp.empId")
 	@Transactional
 	public int updateEmployee(Employee emp) {
 

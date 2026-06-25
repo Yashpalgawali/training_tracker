@@ -205,9 +205,9 @@ public class EmployeeController {
 		@ApiResponse(responseCode = "200" ,description = "The Employee is found"),
 		@ApiResponse(responseCode = "404" ,description = "The Employee is not found")
 	})
-	public ResponseEntity<Employee> getEmployeebyEmployeeId(@PathVariable("id") Long empid) {
+	public ResponseEntity<Employee> getEmployeebyEmployeeId(@PathVariable Long id) {
 
-		var emp = empserv.getEmployeeByEmployeeId(empid);
+		var emp = empserv.getEmployeeByEmployeeId(id);
 		return ResponseEntity.status(HttpStatus.OK).body(emp);
 	}
 
