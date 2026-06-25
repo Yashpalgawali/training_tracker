@@ -13,7 +13,7 @@
 	<artifactId>employee-performance-tracker</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<name>training-trackerrest</name>
+	<name>training-tracker</name>
 	<description>Demo project for Spring Boot</description>
 	<url />
 	<licenses>
