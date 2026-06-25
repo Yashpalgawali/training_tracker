@@ -121,7 +121,7 @@ public class EmployeeServImpl implements IEmployeeService {
 	}
 
 	@Override
-    @Cacheable(value = "employees", key = "#id")
+//    @Cacheable(value = "employees", key = "#id")
 	public Employee getEmployeeByEmployeeId(Long id) {
 		 System.out.println("Fetching from DB...");
 		return emprepo.findById(id)
@@ -129,7 +129,7 @@ public class EmployeeServImpl implements IEmployeeService {
 	}
 
 	@Override
-	@CacheEvict(value="employees", key = "#emp.empId")
+//	@CacheEvict(value="employees", key = "#emp.empId")
 	@Transactional
 	public int updateEmployee(Employee emp) {
 

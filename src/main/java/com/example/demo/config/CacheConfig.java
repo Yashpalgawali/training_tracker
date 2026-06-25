@@ -9,10 +9,10 @@ import org.springframework.context.annotation.Configuration;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 
-@Configuration
+//@Configuration
 public class CacheConfig {
 
-	@Bean
+//	@Bean
 	CacheManager cacheManager() {
 	
 		CaffeineCacheManager manager = new CaffeineCacheManager("employees");
