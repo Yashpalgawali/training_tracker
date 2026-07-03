@@ -1,5 +1,7 @@
 package com.example.demo.entity;
 
+import java.io.Serializable;
+
 import org.springframework.validation.annotation.Validated;
 
 import jakarta.persistence.Entity;
@@ -25,8 +27,13 @@ import lombok.experimental.FieldDefaults;
 @ToString
 @Validated
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class TrainingTimeSlot {
+public class TrainingTimeSlot implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1468578486530188326L;
+
 	@Id
 	@SequenceGenerator(name = "train_time_slot_seq", allocationSize = 1,initialValue = 1)
 	@GeneratedValue(generator = "train_time_slot_seq" ,strategy = GenerationType.AUTO )

@@ -1,0 +1,92 @@
+# Conversion to YAML from Properties formar report
+# Warnings:
+# - The yaml file had comments which are lost in the refactoring!
+server:
+  servlet:
+    context-path: /trainingtrackerrest
+  address: 0.0.0.0
+  port: 8282
+spring:
+  application:
+    name: trainingtracker
+  profiles:
+    active: prod
+  config:
+    import: optional:configserver:http://192.168.0.219:8071/aaaconfigservertrainingtracker/
+  cloud:
+    config:
+      fail-fast: false
+      retry:
+        initial-interval: 1000
+        max-interval: 5000
+        max-attempts: 20
+        multiplier: 1.5
+  mail:
+    port: 587
+    protocol: smtp
+    host: smtp.gmail.com
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3399/employeeperformancetracker?useSSL=false&serverTimezone=UTC&autoReconnect=true&failOverReadOnly=false&maxReconnects=10}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 10
+      idle-timeout: 300000
+      max-lifetime: 1800000
+      keepalive-time: 60000
+      connection-timeout: 30000
+      validation-timeout: 5000
+      connection-test-query: SELECT 1
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        connection:
+          isolation: 2
+        jdbc:
+          batch_size: 50
+        order_inserts: true
+        order_updates: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+  mvc:
+    pathmatch:
+      matching-strategy: ant-path-matcher
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  cache:
+    type: redis
+  data:
+    redis:
+      host: localhost
+      port: 6379
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+ci3:
+  api:
+    url: https://dummy-cpanel-ci3.example.com/api/employees
+    username: ${CI3_API_USERNAME:ci3_api_user}
+    password: ${CI3_API_PASSWORD:ci3_api_password}
+  sync:
+    cron: 0 0 0 * * *

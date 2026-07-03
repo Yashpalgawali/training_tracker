@@ -1,5 +1,7 @@
 package com.example.demo.entity;
 
+import java.io.Serializable;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,7 +17,12 @@ import lombok.experimental.FieldDefaults;
 
 @Entity @Table(name="tbl_frequency") @Getter @Setter @AllArgsConstructor @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Frequency {
+public class Frequency implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6601677227598145494L;
+
 	@Id
 	@SequenceGenerator(name="freq_seq",allocationSize = 1,initialValue = 1)
 	@GeneratedValue(generator = "freq_seq",strategy = GenerationType.SEQUENCE)

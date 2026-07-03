@@ -1,5 +1,7 @@
 package com.example.demo.entity;
 
+import java.io.Serializable;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,7 +22,12 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class TrainingScheduleHistory {
+public class TrainingScheduleHistory implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2300677963614607425L;
 
 	@Id
 	@SequenceGenerator(name="training_schedule_hist_seq",allocationSize = 1,initialValue = 1)

@@ -1,5 +1,7 @@
 package com.example.demo.entity;
 
+import java.io.Serializable;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,7 +17,12 @@ import lombok.experimental.FieldDefaults;
 
 @Entity @Table(name="tbl_testing") @Getter @Setter @AllArgsConstructor @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Test {
+public class Test implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5897574383442362673L;
 
 	@Id
 	@SequenceGenerator(name="test_seq",allocationSize = 1,initialValue = 1)

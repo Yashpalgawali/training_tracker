@@ -1,5 +1,7 @@
 package com.example.demo.entity;
 
+import java.io.Serializable;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,7 +26,12 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE) 
 @ToString
-public class CommitteeSchedule {
+public class CommitteeSchedule implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1139604338547327345L;
 
 	@Id
 	@SequenceGenerator(name="committee_schedule_seq",allocationSize = 1,initialValue = 1)

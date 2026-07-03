@@ -1,7 +1,6 @@
 package com.example.demo.entity;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.io.Serializable;
 
 import org.springframework.validation.annotation.Validated;
 
@@ -10,9 +9,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinColumns;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
@@ -34,7 +30,12 @@ import lombok.experimental.FieldDefaults;
 @ToString
 @Validated
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class EmployeeTraining {
+public class EmployeeTraining implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2296975480882363692L;
 
 	@Id
 	@SequenceGenerator(name = "emp_train_seq", allocationSize = 1,initialValue = 1)

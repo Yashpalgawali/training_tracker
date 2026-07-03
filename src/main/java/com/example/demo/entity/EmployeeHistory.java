@@ -1,5 +1,7 @@
 package com.example.demo.entity;
 
+import java.io.Serializable;
+
 import org.springframework.validation.annotation.Validated;
 
 import jakarta.persistence.Column;
@@ -28,7 +30,12 @@ import lombok.experimental.FieldDefaults;
 @ToString
 @Validated
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class EmployeeHistory {
+public class EmployeeHistory implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4392393703891144189L;
 
 	@Id
 	@SequenceGenerator(name = "emp_hist_seq",allocationSize = 1,initialValue = 1)

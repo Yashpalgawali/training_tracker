@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.springframework.validation.annotation.Validated;
@@ -31,7 +32,12 @@ import lombok.experimental.FieldDefaults;
 @Validated
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Employee {
+public class Employee implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8473235984807183403L;
 
 	@Id
 	@SequenceGenerator(name = "emp_seq", initialValue = 1, allocationSize = 1)

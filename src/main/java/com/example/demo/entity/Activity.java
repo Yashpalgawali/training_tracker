@@ -1,5 +1,7 @@
 package com.example.demo.entity;
 
+import java.io.Serializable;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,7 +17,12 @@ import lombok.ToString;
 
 @Table(name="tbl_activity")
 @Entity @Getter @Setter @ToString @AllArgsConstructor @NoArgsConstructor @Builder
-public class Activity {
+public class Activity implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5160518317596798551L;
 
 	@Id
 	@SequenceGenerator(name = "activity_seq",initialValue = 1,allocationSize = 1)
