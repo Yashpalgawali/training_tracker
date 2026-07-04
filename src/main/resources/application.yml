@@ -12,7 +12,7 @@ spring:
   profiles:
     active: prod
   config:
-    import: optional:configserver:http://192.168.0.219:8081/aaaconfigservertrainingtracker/
+    import: optional:configserver:http://192.168.0.219:8071/aaaconfigservertrainingtracker/
   cloud:
     config:
       fail-fast: false
