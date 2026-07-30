@@ -6,13 +6,15 @@ server:
     context-path: /trainingtrackerrest
   address: 0.0.0.0
   port: 8282
+
 spring:
   application:
-    name: trainingtracker
+    name: trainingtrackerrest
   profiles:
     active: prod
   config:
-    import: optional:configserver:http://192.168.0.219:8081/aaaconfigservertrainingtracker/
+#    import: optional:configserver:http://192.168.0.219:8081/aaaconfigservertrainingtracker/
+    import: optional:configserver:http://192.168.0.219:8071/aaaconfigservertrainingtracker/
   cloud:
     config:
       fail-fast: false
@@ -78,11 +80,15 @@ spring:
     redis:
       host: localhost
       port: 6379
+
 management:
   endpoints:
     web:
       exposure:
         include: '*'
+build:
+  version: 3.1
+
 ci3:
   api:
     url: https://dummy-cpanel-ci3.example.com/api/employees
