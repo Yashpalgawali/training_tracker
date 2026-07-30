@@ -45,7 +45,7 @@ public class ChangePasswordController {
 			int otp = otpserv.getOtp(vemail);
 			sess.setAttribute("vemail", vemail);
 			sess.setAttribute("otp", otp);
-			emailserv.sendSimpleEmail(vemail, "Respected Sir/Ma'am, \n\t Your OTP to change the password is " + otp,
+			emailserv.sendSimpleEmail(vemail, "Your OTP to change the password is " + otp,
 					"OTP for confirmation");
 			return new ResponseEntity<String>("" + otpserv.getOtp(vemail), HttpStatus.OK);
 		} else {
