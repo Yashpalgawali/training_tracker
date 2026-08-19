@@ -35,86 +35,92 @@ import jakarta.servlet.http.HttpServletResponse;
 public class JwtAuthentication {
 	@Autowired
 	private CustomAuthenticationEntryPoint authenticationEntryPoint;
-	
+
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.httpBasic(basic->{});
+		http.httpBasic(basic -> {
+		});
 		http.authorizeHttpRequests(auth -> {
-			auth.requestMatchers("/company/build-info","/company/contact-info","/actuator/**").permitAll();
-			auth.requestMatchers("/users/**","/authenticate","/error","/password/otp/*","/password/forgot","/password/email/*/otp/*").permitAll();
+			auth.requestMatchers("/company/build-info", "/company/contact-info", "/actuator/**").permitAll();
+			auth.requestMatchers("/users/**", "/authenticate", "/error", "/password/otp/*", "/password/forgot",
+					"/password/email/*/otp/*").permitAll();
 			auth.anyRequest().authenticated();
 		});
 
-		http.sessionManagement(session-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+		http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-	 	http.csrf(csrf-> csrf.disable());
-	 	http.cors(cors->{
-	 		cors.configurationSource(request->{
-	 			 CorsConfiguration config = new CorsConfiguration();
+		http.csrf(csrf -> csrf.disable());
+		http.cors(cors -> {
+			cors.configurationSource(request -> {
+				CorsConfiguration config = new CorsConfiguration();
 
 //	 			config.setAllowedOrigins(Arrays.asList("http://3.1.9.1")); // Your Angular app's URL
-	 			 config.setAllowedOrigins(Arrays.asList("http://192.168.0.219:3000","http://localhost:8080","http://localhost:7878","http://192.168.0.219:8080","http://192.17.0.219:3000","http://192.168.0.219:7878","http://localhost:8081","http://192.168.0.219:8081","http://localhost:3000")); // Your React app's URL
+				config.setAllowedOrigins(
+						Arrays.asList("http://192.168.0.219:3000", "http://localhost:8080", "http://localhost:7878",
+								"http://192.168.0.219:8080", "http://192.17.0.219:3000", "http://192.168.0.219:7878",
+								"http://localhost:8081", "http://192.168.0.219:8081", "http://localhost:3000")); // Your
+																													// React
+																													// app's
+																													// URL
 //	 			 config.setAllowedOrigins(Arrays.asList("*")); // Your Angular app's URL
-	             config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS","PATCH"));
+				config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
 //	             config.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
-	             config.setAllowedHeaders(Arrays.asList("*"));
-	             config.setAllowCredentials(true); // Allow cookies
-	             return config;
-	 		});   
-	 	});
-	 	http.logout(logout->{
+				config.setAllowedHeaders(Arrays.asList("*"));
+				config.setAllowCredentials(true); // Allow cookies
+				return config;
+			});
+		});
+		http.logout(logout -> {
 			logout.logoutUrl("/logouturl");
 			logout.invalidateHttpSession(true);
 			logout.clearAuthentication(true);
 			logout.deleteCookies("SESSION");
-			logout.logoutSuccessHandler((request, response , authentication)->{
-					response.setStatus(HttpServletResponse.SC_OK);
-					response.getWriter().write("{\"message\": \" Logged Out Successfully \" }");
-					response.getWriter().flush();
-				});
+			logout.logoutSuccessHandler((request, response, authentication) -> {
+				response.setStatus(HttpServletResponse.SC_OK);
+				response.getWriter().write("{\"message\": \" Logged Out Successfully \" }");
+				response.getWriter().flush();
 			});
-	 	
-	 	http.exceptionHandling(ex->ex.authenticationEntryPoint(authenticationEntryPoint));
-		http.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);	
+		});
+
+		http.exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint));
+		http.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
 
 		return http.build();
 	}
 
 	@Bean
 	AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-	    return config.getAuthenticationManager();
+		return config.getAuthenticationManager();
 	}
- 
 
 	@Bean
 	KeyPair keyPair() {
-	       KeyPairGenerator keypairgenerator = null;
+		KeyPairGenerator keypairgenerator = null;
 		try {
 			keypairgenerator = KeyPairGenerator.getInstance("RSA");
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
-	       keypairgenerator.initialize(2048);
-	       return keypairgenerator.generateKeyPair();
-	}
-
-	@Bean 
-	RSAKey rsaKey(KeyPair keyPair) {
-		return new RSAKey.Builder((RSAPublicKey) keyPair.getPublic()).privateKey(keyPair.getPrivate())
-			.keyID(UUID.randomUUID().toString())
-			.build();
+		keypairgenerator.initialize(2048);
+		return keypairgenerator.generateKeyPair();
 	}
 
 	@Bean
-	JWKSource<SecurityContext> jwkSource(RSAKey rsaKey){
-		var jwkset = new JWKSet(rsaKey); 
-		return (jwkSelector , context) -> jwkSelector.select(jwkset);
+	RSAKey rsaKey(KeyPair keyPair) {
+		return new RSAKey.Builder((RSAPublicKey) keyPair.getPublic()).privateKey(keyPair.getPrivate())
+				.keyID(UUID.randomUUID().toString()).build();
+	}
+
+	@Bean
+	JWKSource<SecurityContext> jwkSource(RSAKey rsaKey) {
+		var jwkset = new JWKSet(rsaKey);
+		return (jwkSelector, context) -> jwkSelector.select(jwkset);
 	}
 
 	@Bean
 	JwtDecoder jwtDecoder(RSAKey rsaKey) throws JOSEException {
 		return NimbusJwtDecoder.withPublicKey(rsaKey.toRSAPublicKey()).build();
-	} 
+	}
 
 	@Bean
 	JwtEncoder jwtEncoder(JWKSource<SecurityContext> jwkSource) {

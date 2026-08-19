@@ -15,54 +15,52 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
+@RequiredArgsConstructor
 public class JwtAuthenticationResource {
 
+	private final JwtEncoder jwtEncoder;
+	private final AuthenticationManager authenticationManager;
 
-	   private final JwtEncoder jwtEncoder;
-	    private final AuthenticationManager authenticationManager;
+//	public JwtAuthenticationResource(JwtEncoder jwtEncoder, AuthenticationManager authenticationManager) {
+//		this.jwtEncoder = jwtEncoder;
+//		this.authenticationManager = authenticationManager;
+//	}
 
-	    public JwtAuthenticationResource(JwtEncoder jwtEncoder, AuthenticationManager authenticationManager) {
-	        this.jwtEncoder = jwtEncoder;
-	        this.authenticationManager = authenticationManager;
-	    }
-	
 	private Logger logger = LoggerFactory.getLogger(getClass());
- 	
-	 @PostMapping("/authenticate")
-	    public JwtResponse authenticate(@RequestBody LoginRequest request) {
-		 logger.info("Username is {} and password is {} ",request.username(),request.password());
-	        // 1. Manually authenticate using AuthenticationManager
-	        Authentication authentication = authenticationManager.authenticate(
-	                new UsernamePasswordAuthenticationToken(request.username(), request.password()));
-	        // 2. Generate JWT
-	        return new JwtResponse(createToken(authentication));
-	      
-	    }
+
+	@PostMapping("/authenticate")
+	public JwtResponse authenticate(@RequestBody LoginRequest request) {
+		
+		// 1. Manually authenticate using AuthenticationManager
+		Authentication authentication = authenticationManager
+				.authenticate(new UsernamePasswordAuthenticationToken(request.username(), request.password()));
+		// 2. Generate JWT
+		return new JwtResponse(createToken(authentication));
+
+	}
 
 	private String createToken(Authentication auth) {
-		
+
 		CustomUserDetails user = (CustomUserDetails) auth.getPrincipal();
-		
-		var claims = JwtClaimsSet.builder().issuer("self")
-								.issuedAt(Instant.now())
-								.expiresAt(Instant.now().plusSeconds(60*60))
-								.subject(auth.getName()).claim("scope", createScope(auth))
-								.claim("userId", user.getUserId()) // 👈 Custom claim: adds user_id to the payload of the token.
-								.claim("username", user.getUsername()) // 👈 Custom claim: adds username to the payload of the token.
-								.claim("role", createScope(auth))
-								.build() ;
-								
+
+		var claims = JwtClaimsSet.builder().issuer("self").issuedAt(Instant.now())
+				.expiresAt(Instant.now().plusSeconds(60 * 60)).subject(auth.getName()).claim("scope", createScope(auth))
+				.claim("userId", user.getUserId()) // 👈 Custom claim: adds user_id to the payload of the token.
+				.claim("username", user.getUsername()) // 👈 Custom claim: adds username to the payload of the token.
+				.claim("role", createScope(auth)).build();
+
 		return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 	}
 
-
 	private String createScope(Authentication auth) {
-		// TODO Auto-generated method stub
-		String res = auth.getAuthorities().stream().map(a->a.getAuthority()).collect(Collectors.joining(" "));
-		return res;
-		
+
+		return auth.getAuthorities().stream().map(a -> a.getAuthority()).collect(Collectors.joining(" "));
 	}
 }
-record JwtResponse(String token) {}
-record LoginRequest(String username, String password) {}
+
+record JwtResponse(String token) {  }
+
+record LoginRequest(String username, String password) { }
