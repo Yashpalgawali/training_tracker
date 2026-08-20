@@ -78,7 +78,8 @@ spring:
     type: redis
   data:
     redis:
-      host: localhost
+#      host: localhost
+      host: 172.17.97.128
       port: 6379
 
 management:
