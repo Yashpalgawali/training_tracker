@@ -75,16 +75,16 @@ spring:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
-  cache:
-    type: redis  
-  data:
-    redis:
-      host: 172.x.y.z
-      port: 6379
+#  cache:
+#    type: redis  
+#  data:
+#    redis:
+#      host: 172.x.y.z
+#      port: 6379
+
 jwt:
   private-key-path: E:\trainingtracker-keys\private_key.pem
   public-key-path: E:\trainingtracker-keys\public_key.pem
-  
 
 management:
   endpoints:
