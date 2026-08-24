@@ -56,10 +56,8 @@ public class JwtAuthentication {
 
 //	 			config.setAllowedOrigins(Arrays.asList("http://3.1.9.1")); // Your Angular app's URL
 				config.setAllowedOrigins(
-						Arrays.asList("http://192.168.0.219:3000", "http://localhost:8080", "http://localhost:7878",
-								"http://192.168.0.219:8080", "http://192.17.0.219:3000", "http://192.168.0.219:7878",
-								"http://localhost:8081", "http://192.168.0.219:8081", "http://192.168.0.219","http://localhost",
-								"http://localhost:8082", "http://192.168.0.219:8082", "http://localhost:3000")); // Your
+						Arrays.asList("http://192.168.0.219:3000", "http://localhost:8080", "http://localhost:7878")
+								); // Your
 																													// React
 																													// app's
 																													// URL
@@ -94,23 +92,25 @@ public class JwtAuthentication {
 		return config.getAuthenticationManager();
 	}
 
-	@Bean
-	KeyPair keyPair() {
-		KeyPairGenerator keypairgenerator = null;
-		try {
-			keypairgenerator = KeyPairGenerator.getInstance("RSA");
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
-		keypairgenerator.initialize(2048);
-		return keypairgenerator.generateKeyPair();
-	}
-
-	@Bean
-	RSAKey rsaKey(KeyPair keyPair) {
-		return new RSAKey.Builder((RSAPublicKey) keyPair.getPublic()).privateKey(keyPair.getPrivate())
-				.keyID(UUID.randomUUID().toString()).build();
-	}
+//	The following KeyPair keyPair() and RSAKey rsaKey(KeyPair keyPair) are commented because these are used in the application which is
+//	without Load Balancing. As we are using Load balancing and to maintain the jwt across the tomcat servers following code is commented 
+//	@Bean
+//	KeyPair keyPair() {
+//		KeyPairGenerator keypairgenerator = null;
+//		try {
+//			keypairgenerator = KeyPairGenerator.getInstance("RSA");
+//		} catch (NoSuchAlgorithmException e) {
+//			e.printStackTrace();
+//		}
+//		keypairgenerator.initialize(2048);
+//		return keypairgenerator.generateKeyPair();
+//	}
+//
+//	@Bean
+//	RSAKey rsaKey(KeyPair keyPair) {
+//		return new RSAKey.Builder((RSAPublicKey) keyPair.getPublic()).privateKey(keyPair.getPrivate())
+//				.keyID(UUID.randomUUID().toString()).build();
+//	}
 
 	@Bean
 	JWKSource<SecurityContext> jwkSource(RSAKey rsaKey) {

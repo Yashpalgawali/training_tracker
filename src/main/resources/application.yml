@@ -6,6 +6,7 @@ server:
     context-path: /trainingtrackerrest
   address: 0.0.0.0
   port: 8282
+  forward-headers-strategy: framework #This is used for loadbalancing purpose
 
 spring:
   application:
@@ -75,12 +76,15 @@ spring:
       max-file-size: 100MB
       max-request-size: 100MB
   cache:
-    type: redis
+    type: redis  
   data:
     redis:
-#      host: localhost
-      host: 172.17.97.128
+      host: 172.x.y.z
       port: 6379
+jwt:
+  private-key-path: E:\trainingtracker-keys\private_key.pem
+  public-key-path: E:\trainingtracker-keys\public_key.pem
+  
 
 management:
   endpoints:

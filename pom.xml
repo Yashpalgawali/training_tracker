@@ -13,8 +13,8 @@
 	<groupId>com.example</groupId>
 	<artifactId>trainingtrackerrest</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-		<packaging>war</packaging>
-<!--	<packaging>jar</packaging>-->
+	<packaging>war</packaging>
+	<!--	<packaging>jar</packaging>-->
 	<name>training-tracker</name>
 	<description>Training Tracker REST Application</description>
 	<url />
@@ -58,11 +58,14 @@
 		</dependency>
 
 		<!-- Caffeine -->
+		<!--		<dependency>-->
+		<!--			<groupId>com.github.ben-manes.caffeine</groupId>-->
+		<!--			<artifactId>caffeine</artifactId>-->
+		<!--		</dependency>-->
 		<dependency>
-			<groupId>com.github.ben-manes.caffeine</groupId>
-			<artifactId>caffeine</artifactId>
+			<groupId>org.springframework.session</groupId>
+			<artifactId>spring-session-data-redis</artifactId>
 		</dependency>
-
 		<!-- Source:
 		https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-aop -->
 		<dependency>
@@ -93,7 +96,7 @@
 			<artifactId>mysql-connector-j</artifactId>
 			<scope>runtime</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
