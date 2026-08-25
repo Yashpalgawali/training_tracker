@@ -18,6 +18,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -71,7 +74,10 @@ public class EmployeeServImpl implements IEmployeeService {
 	private DateTimeFormatter ttime = DateTimeFormatter.ofPattern("HH:mm:ss");
 
 	@Override
-//	@CacheEvict(value = "employeeList", allEntries = true)
+	@CacheEvict(
+		    value = "employees",
+		    allEntries = true
+		)
 	public Employee saveEmployee(Employee emp) {
 
 		Optional<Employee> byEmpCode = emprepo.findByEmpCode(emp.getEmpCode().trim());
@@ -119,7 +125,7 @@ public class EmployeeServImpl implements IEmployeeService {
 	}
 
 	@Override
-//	@Cacheable(value = "employee", key = "#id")
+	@Cacheable(value = "employees", key = "#id")
 	public Employee getEmployeeByEmployeeId(Long id) {
 		 System.out.println("Fetching from DB...");
 		return emprepo.findById(id)
@@ -128,7 +134,7 @@ public class EmployeeServImpl implements IEmployeeService {
 
 	@Override
 	@Transactional
-//	@CacheEvict(value = "employee", key = "#emp.empId")
+	@CachePut(value = "employees", key = "#employee.empId")
 	public int updateEmployee(Employee emp) {
 
 		String leaveDate = "";
