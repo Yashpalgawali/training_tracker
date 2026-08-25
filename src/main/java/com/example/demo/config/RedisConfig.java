@@ -1,6 +1,8 @@
 package com.example.demo.config;
 
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -44,8 +46,38 @@ public class RedisConfig {
     RedisCacheManager cacheManager(
             RedisConnectionFactory redisConnectionFactory) {
 
-        return RedisCacheManager.builder(redisConnectionFactory)
-                .cacheDefaults(redisCacheConfiguration())
-                .build();
+    	    RedisCacheConfiguration defaultConfig =
+    	            RedisCacheConfiguration.defaultCacheConfig()
+    	                    .entryTtl(Duration.ofMinutes(30))
+    	                    .disableCachingNullValues();
+
+    	    RedisCacheConfiguration departmentConfig =
+    	            defaultConfig.entryTtl(Duration.ofHours(2));
+
+    	    RedisCacheConfiguration permissionConfig =
+    	            defaultConfig.entryTtl(Duration.ofMinutes(15));
+
+    	    Map<String, RedisCacheConfiguration> cacheConfigurations =
+    	            new HashMap<>();
+
+    	    cacheConfigurations.put(
+    	            "departments",
+    	            departmentConfig
+    	    );
+
+    	    cacheConfigurations.put(
+    	            "permissions",
+    	            permissionConfig
+    	    );
+
+    	    return RedisCacheManager.builder(redisConnectionFactory)
+    	            .cacheDefaults(defaultConfig)
+    	            .withInitialCacheConfigurations(cacheConfigurations)
+    	            .build();
+    	 
+//
+//        return RedisCacheManager.builder(redisConnectionFactory)
+//                .cacheDefaults(redisCacheConfiguration())
+//                .build();
     }
 }
