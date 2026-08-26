@@ -104,8 +104,13 @@ public class UserServImpl implements IUserService {
 			throw new ResourceNotFoundException("No User found for given ID " + user.getUser_id());
 		}
 
-		String encryptedPass = passEncoder.encode(user.getPassword());
-		user.setPassword(encryptedPass);
+		String encryptedPass = null; 
+		if(user.getPassword()=="" || user.getPassword()== null) {
+			encryptedPass = foundUser.get().getPassword();			
+		}
+		else {
+			encryptedPass = passEncoder.encode(user.getPassword());
+		}
 
 		int result = userrepo.updateUser(user.getUser_id(), user.getUsername(), encryptedPass, user.getEnabled(),
 				user.getRole(), user.getEmail());
