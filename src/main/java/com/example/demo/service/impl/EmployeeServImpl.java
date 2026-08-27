@@ -134,7 +134,7 @@ public class EmployeeServImpl implements IEmployeeService {
 
 	@Override
 	@Transactional
-	@CachePut(value = "employees", key = "#employee.empId")
+	@CachePut(value = "employees", key = "#emp.empId")
 	public int updateEmployee(Employee emp) {
 
 		String leaveDate = "";
