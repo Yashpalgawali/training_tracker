@@ -42,7 +42,7 @@ public class RedisConfig {
                 redisCacheConfiguration.entryTtl(Duration.ofHours(2));
 
         RedisCacheConfiguration employeeConfig =
-                redisCacheConfiguration.entryTtl(Duration.ofMinutes(15));
+                redisCacheConfiguration.entryTtl(Duration.ofHours(15));
 
         Map<String, RedisCacheConfiguration> cacheConfigurations = new HashMap<>();
         cacheConfigurations.put("regulationTypes", regulationTypeConfig);
