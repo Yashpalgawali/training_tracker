@@ -6,6 +6,9 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,10 +38,11 @@ public class ComitteeServImpl implements ICommitteeService {
 	DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
  
 	@Override
+	@CacheEvict(value="committies", allEntries = true )
 	public void saveCommittee(Committee committee)  {
 		String trimmedString = this.trimString(committee.getCommitteeName());
 		committee.setCommitteeName(trimmedString);
-		
+
 		Committee savedCommittee = committeerepo.save(committee);
 
 		if(savedCommittee != null) {
@@ -64,20 +68,26 @@ public class ComitteeServImpl implements ICommitteeService {
 	}
 
 	@Override
+	@Cacheable(value = "committies", key = "#id")	
 	public Committee getCommitteeById(Long id) {
+		System.err.println("Fetching From DB ..........");
 		Committee companyObject = committeerepo.findById(id).orElseThrow(()-> new ResourceNotFoundException("No Committee found for given id "+id));
 		return companyObject;
 	}
 
 	@Override
 	@Transactional
-	public void updateCommittee(Committee committee) {
+	@CachePut(value = "committies", key = "#committee.committeeId")	
+	public Committee updateCommittee(Committee committee) {
 		String trimmedString = this.trimString(committee.getCommitteeName());
 		committee.setCommitteeName(trimmedString);
-		var result = committeerepo.updateCommittee(committee.getCommitteeId(), committee.getCommitteeName());
-		if(result>0) {
+//		var result = committeerepo.updateCommittee(committee.getCommitteeId(), committee.getCommitteeName());
+		var updatedCommittee = committeerepo.save(committee);
+//		if(result>0) {
+		if(updatedCommittee!=null) {
 			Activity activity = Activity.builder().activity("Committee "+committee.getCommitteeName()+" is updated successfully").activityDate(dateFormatter.format(LocalDateTime.now()) ).activityTime(timeFormatter.format(LocalDateTime.now())).build();
 			activityrepo.save(activity);
+			return updatedCommittee;
 		}
 		else {
 			Activity activity = Activity.builder().activity("Committee "+committee.getCommitteeName()+" is not Updated ").activityDate(dateFormatter.format(LocalDateTime.now()) ).activityTime(timeFormatter.format(LocalDateTime.now())).build();

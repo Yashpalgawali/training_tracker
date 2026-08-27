@@ -14,5 +14,5 @@ public interface ICompanyService {
 	
 	public Company getCompanyByName(String comp_name);
 	
-	public int updateCompany(Company company);
+	public Company updateCompany(Company company);
 }

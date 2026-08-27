@@ -20,7 +20,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>  {
 
 	@Query("UPDATE Employee e SET e.empName=:empname,e.empCode=:empcode,e.joiningDate=:doj,e.department.deptId=:deptid,"
 			+ "e.contractorName=:contractor,e.category.category_id=:category_id,e.designation.desigId=:desigid,e.status=:status,e.leaveDate=:leaveDate  WHERE e.empId=:eid")
-	@Modifying
+	@Modifying(clearAutomatically = true,flushAutomatically = true)
 	public int updateEmployee(Long eid,String empname,String empcode,String contractor,Long category_id,String doj,Long deptid,Long desigid,int status,String leaveDate);
 
 	@Query("SELECT e FROM Employee e JOIN e.department JOIN e.designation WHERE e.empCode=:emp_code")

@@ -10,6 +10,6 @@ public interface ICategoryService {
 	public Category saveCategory(Category category);
 	public Category getCategoryById(Long id);
 	public List<Category> getAllCategories();
-	public int updateCategory(Category category);
+	public Category updateCategory(Category category);
 	public Category getCategoryByCategoryName(String category_name);
 }

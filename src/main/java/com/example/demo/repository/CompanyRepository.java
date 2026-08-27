@@ -10,13 +10,10 @@ import com.example.demo.entity.Company;
 @Repository("comprepo")
 public interface CompanyRepository extends JpaRepository<Company, Long> {
 
-	
-	@Query("UPDATE Company c SET c.compName=:compname WHERE c.companyId=:compid")	
-	@Modifying
-	public int updateCompany(Long compid,String compname);
-	
-//	@Query("SELECT c FROM Company c WHERE c.compName=:comp_name")
-//	Company findByComp_name(String comp_name);
+	@Query("UPDATE Company c SET c.compName=:compname WHERE c.companyId=:compid")
+	@Modifying(clearAutomatically = true, flushAutomatically = true)
+	public int updateCompany(Long compid, String compname);
+
 	Company findByCompName(String compName);
 
 }

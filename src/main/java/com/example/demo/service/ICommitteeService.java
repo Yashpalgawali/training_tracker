@@ -8,7 +8,7 @@ public interface ICommitteeService {
 	
 	public void saveCommittee(Committee committee);
 	
-	public void updateCommittee(Committee committee);
+	public Committee updateCommittee(Committee committee);
 	
 	public Committee getCommitteeById(Long id);
 	

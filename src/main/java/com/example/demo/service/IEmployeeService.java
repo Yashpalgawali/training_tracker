@@ -15,7 +15,8 @@ public interface IEmployeeService {
 	
 	public Employee getEmployeeByEmployeeCode(String empcode);	
 	
-	public int updateEmployee(Employee emp);
+//	public int updateEmployee(Employee emp);
+	public Employee updateEmployee(Employee emp);
 	
 	public List<Employee> getAllEmployees();
 	

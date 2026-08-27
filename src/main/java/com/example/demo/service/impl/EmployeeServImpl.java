@@ -74,10 +74,7 @@ public class EmployeeServImpl implements IEmployeeService {
 	private DateTimeFormatter ttime = DateTimeFormatter.ofPattern("HH:mm:ss");
 
 	@Override
-	@CacheEvict(
-		    value = "employees",
-		    allEntries = true
-		)
+	@CacheEvict(value = "employees", allEntries = true)
 	public Employee saveEmployee(Employee emp) {
 
 		Optional<Employee> byEmpCode = emprepo.findByEmpCode(emp.getEmpCode().trim());
@@ -127,7 +124,7 @@ public class EmployeeServImpl implements IEmployeeService {
 	@Override
 	@Cacheable(value = "employees", key = "#id")
 	public Employee getEmployeeByEmployeeId(Long id) {
-		 System.out.println("Fetching from DB...");
+		System.out.println("Fetching from DB...");
 		return emprepo.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("No Employee found for given ID " + id));
 	}
@@ -135,7 +132,7 @@ public class EmployeeServImpl implements IEmployeeService {
 	@Override
 	@Transactional
 	@CachePut(value = "employees", key = "#emp.empId")
-	public int updateEmployee(Employee emp) {
+	public Employee updateEmployee(Employee emp) {
 
 		String leaveDate = "";
 
@@ -143,9 +140,12 @@ public class EmployeeServImpl implements IEmployeeService {
 			leaveDate = dday.format(LocalDateTime.now());
 		}
 
+//		Employee updatedEmployee = emprepo.save(emp);
+
 		int result = emprepo.updateEmployee(emp.getEmpId(), emp.getEmpName(), emp.getEmpCode(), emp.getContractorName(),
 				emp.getCategory().getCategory_id(), emp.getJoiningDate(), emp.getDepartment().getDeptId(),
 				emp.getDesignation().getDesigId(), emp.getStatus(), leaveDate);
+//		if (updatedEmployee != null) {
 		if (result > 0) {
 			EmployeeHistory emphist = new EmployeeHistory();
 			emphist.setEmployee(emp);
@@ -187,7 +187,8 @@ public class EmployeeServImpl implements IEmployeeService {
 					.activityDate(dday.format(LocalDateTime.now())).activityTime(ttime.format(LocalDateTime.now()))
 					.build();
 			activityrepo.save(activity);
-			return result;
+			return emprepo.findById(emp.getEmpId())
+					.orElseThrow(() -> new ResourceNotFoundException("Employee not found: " + emp.getEmpId()));
 		}
 
 		else {
@@ -241,9 +242,9 @@ public class EmployeeServImpl implements IEmployeeService {
 	 * immediately while this method processes in the background.
 	 * </p>
 	 * <p>
-	 * Accepts {@code byte[]} (not InputStream) because the MultipartFile stream
-	 * is tied to the HTTP request and is closed once the request ends. Passing
-	 * raw bytes makes the data available to this background thread regardless of
+	 * Accepts {@code byte[]} (not InputStream) because the MultipartFile stream is
+	 * tied to the HTTP request and is closed once the request ends. Passing raw
+	 * bytes makes the data available to this background thread regardless of
 	 * request lifecycle.
 	 * </p>
 	 *
@@ -253,8 +254,8 @@ public class EmployeeServImpl implements IEmployeeService {
 	@Override
 	public void uploadEmployeeList(byte[] fileBytes) {
 
-		logger.info("[Thread: {}] uploadEmployeeList started – file size: {} bytes",
-				Thread.currentThread().getName(), fileBytes.length);
+		logger.info("[Thread: {}] uploadEmployeeList started – file size: {} bytes", Thread.currentThread().getName(),
+				fileBytes.length);
 
 		// Wrap bytes in a fresh InputStream – safe to use in this background thread.
 		try (Workbook workbook = new XSSFWorkbook(new ByteArrayInputStream(fileBytes))) {
@@ -268,8 +269,7 @@ public class EmployeeServImpl implements IEmployeeService {
 				Row row = sheet.getRow(i);
 				if (row == null)
 					continue;
-				rowData.add(new String[] {
-						getCellValue(row.getCell(0)), // empName
+				rowData.add(new String[] { getCellValue(row.getCell(0)), // empName
 						getCellValue(row.getCell(1)), // empCode
 						getCellValue(row.getCell(2)), // designation
 						getCellValue(row.getCell(3)), // dept
@@ -291,24 +291,24 @@ public class EmployeeServImpl implements IEmployeeService {
 				int[] counts = processBatch(batch);
 				totalSaved += counts[0];
 				totalSkipped += counts[1];
-				logger.info("uploadEmployeeList: batch {}-{} done – saved={}, skipped={}",
-						start + 1, end, counts[0], counts[1]);
+				logger.info("uploadEmployeeList: batch {}-{} done – saved={}, skipped={}", start + 1, end, counts[0],
+						counts[1]);
 			}
 
 			logger.info("[Thread: {}] uploadEmployeeList complete – totalSaved={}, totalSkipped={}",
 					Thread.currentThread().getName(), totalSaved, totalSkipped);
 
 		} catch (Exception e) {
-			logger.error("[Thread: {}] uploadEmployeeList FAILED: {}",
-					Thread.currentThread().getName(), e.getMessage(), e);
+			logger.error("[Thread: {}] uploadEmployeeList FAILED: {}", Thread.currentThread().getName(), e.getMessage(),
+					e);
 			throw new RuntimeException("Fail to parse Excel file: " + e.getMessage(), e);
 		}
 	}
 
 	/**
-	 * Saves one batch of employees inside a single transaction.
-	 * Lookup results (designation, department, company, category) are cached
-	 * within the batch to avoid repeated round-trips for common values.
+	 * Saves one batch of employees inside a single transaction. Lookup results
+	 * (designation, department, company, category) are cached within the batch to
+	 * avoid repeated round-trips for common values.
 	 *
 	 * @param batch list of String arrays, one per Excel row
 	 * @return int[]{saved, skipped}
@@ -347,8 +347,7 @@ public class EmployeeServImpl implements IEmployeeService {
 
 			// --- Designation (cached) ---
 			String desigName = cols[2].trim();
-			Designation desig = desigCache.computeIfAbsent(
-					desigName,
+			Designation desig = desigCache.computeIfAbsent(desigName,
 					k -> k.isEmpty() ? null : desigrepo.findByDesigName(k));
 			emp.setDesignation(desig);
 
@@ -357,20 +356,15 @@ public class EmployeeServImpl implements IEmployeeService {
 			String compName = cols[4].trim();
 
 			String deptKey = deptName + "||" + compName;
-			Department dept = deptCache.computeIfAbsent(
-					deptKey,
-					k -> (deptName.isEmpty()) ? null
-							: deptrepo.getDepartmentByDeptNameAndCompanyName(deptName, compName));
+			Department dept = deptCache.computeIfAbsent(deptKey, k -> (deptName.isEmpty()) ? null
+					: deptrepo.getDepartmentByDeptNameAndCompanyName(deptName, compName));
 			emp.setDepartment(dept);
 
-			Company comp = compCache.computeIfAbsent(
-					compName,
-					k -> k.isEmpty() ? null : compserv.getCompanyByName(k));
+			Company comp = compCache.computeIfAbsent(compName, k -> k.isEmpty() ? null : compserv.getCompanyByName(k));
 
 			// --- Category (cached) ---
 			String categoryValue = cols[7].trim();
-			Category category = categoryCache.computeIfAbsent(
-					categoryValue,
+			Category category = categoryCache.computeIfAbsent(categoryValue,
 					k -> k.isEmpty() ? null : categoryserv.getCategoryByCategoryName(k));
 			emp.setCategory(category);
 
@@ -409,21 +403,21 @@ public class EmployeeServImpl implements IEmployeeService {
 		if (cell == null)
 			return "";
 		switch (cell.getCellType()) {
-			case STRING:
-				return cell.getStringCellValue().trim();
-			case NUMERIC:
-				if (DateUtil.isCellDateFormatted(cell)) {
-					return cell.getDateCellValue().toString();
-				} else {
-					return String.valueOf((long) cell.getNumericCellValue());
-				}
-			case BOOLEAN:
-				return String.valueOf(cell.getBooleanCellValue());
-			case FORMULA:
-				return cell.getCellFormula();
-			case BLANK:
-			default:
-				return "";
+		case STRING:
+			return cell.getStringCellValue().trim();
+		case NUMERIC:
+			if (DateUtil.isCellDateFormatted(cell)) {
+				return cell.getDateCellValue().toString();
+			} else {
+				return String.valueOf((long) cell.getNumericCellValue());
+			}
+		case BOOLEAN:
+			return String.valueOf(cell.getBooleanCellValue());
+		case FORMULA:
+			return cell.getCellFormula();
+		case BLANK:
+		default:
+			return "";
 		}
 	}
 
