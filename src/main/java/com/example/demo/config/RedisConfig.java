@@ -20,22 +20,13 @@ public class RedisConfig {
 
     @Bean
     RedisCacheConfiguration redisCacheConfiguration() {
-
         return RedisCacheConfiguration.defaultCacheConfig()
-
-                // Cache expiration
                 .entryTtl(Duration.ofMinutes(30))
-
-                // Do not cache null values
                 .disableCachingNullValues()
-
-                // Key serializer
                 .serializeKeysWith(
                         RedisSerializationContext.SerializationPair
                                 .fromSerializer(new StringRedisSerializer())
                 )
-
-                // JSON value serializer
                 .serializeValuesWith(
                         RedisSerializationContext.SerializationPair
                                 .fromSerializer(new GenericJackson2JsonRedisSerializer())
@@ -44,40 +35,22 @@ public class RedisConfig {
 
     @Bean
     RedisCacheManager cacheManager(
-            RedisConnectionFactory redisConnectionFactory) {
+            RedisConnectionFactory redisConnectionFactory,
+            RedisCacheConfiguration redisCacheConfiguration) {
 
-    	    RedisCacheConfiguration defaultConfig =
-    	            RedisCacheConfiguration.defaultCacheConfig()
-    	                    .entryTtl(Duration.ofMinutes(30))
-    	                    .disableCachingNullValues();
+        RedisCacheConfiguration regulationTypeConfig =
+                redisCacheConfiguration.entryTtl(Duration.ofHours(2));
 
-    	    RedisCacheConfiguration departmentConfig =
-    	            defaultConfig.entryTtl(Duration.ofHours(2));
+        RedisCacheConfiguration employeeConfig =
+                redisCacheConfiguration.entryTtl(Duration.ofMinutes(15));
 
-    	    RedisCacheConfiguration permissionConfig =
-    	            defaultConfig.entryTtl(Duration.ofMinutes(15));
+        Map<String, RedisCacheConfiguration> cacheConfigurations = new HashMap<>();
+        cacheConfigurations.put("regulationTypes", regulationTypeConfig);
+        cacheConfigurations.put("employees", employeeConfig);
 
-    	    Map<String, RedisCacheConfiguration> cacheConfigurations =
-    	            new HashMap<>();
-
-    	    cacheConfigurations.put(
-    	            "departments",
-    	            departmentConfig
-    	    );
-
-    	    cacheConfigurations.put(
-    	            "permissions",
-    	            permissionConfig
-    	    );
-
-    	    return RedisCacheManager.builder(redisConnectionFactory)
-    	            .cacheDefaults(defaultConfig)
-    	            .withInitialCacheConfigurations(cacheConfigurations)
-    	            .build();
-    	 
-//
-//        return RedisCacheManager.builder(redisConnectionFactory)
-//                .cacheDefaults(redisCacheConfiguration())
-//                .build();
+        return RedisCacheManager.builder(redisConnectionFactory)
+                .cacheDefaults(redisCacheConfiguration)
+                .withInitialCacheConfigurations(cacheConfigurations)
+                .build();
     }
 }
