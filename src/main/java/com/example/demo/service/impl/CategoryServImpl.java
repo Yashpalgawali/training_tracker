@@ -62,7 +62,7 @@ public class CategoryServImpl implements ICategoryService {
 			throw new ResourceNotModifiedException("Category " + category.getCategory() + " is not updated");
 		}
 	}
-
+   
 	@Override
 	public Category getCategoryByCategoryName(String category_name) {
 
