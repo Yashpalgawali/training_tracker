@@ -3,6 +3,7 @@ package com.example.demo.service.impl;
 import java.util.List;
 
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,7 +54,7 @@ public class CategoryServImpl implements ICategoryService {
 
 	@Override
 	@Transactional
-	@CacheEvict(value = "categories", key = "#category.category_id")
+	@CachePut(value = "categories", key = "#category.category_id")
 	public Category updateCategory(Category category) {
 		var result = categoryrepo.save(category);
 		if (result != null) {

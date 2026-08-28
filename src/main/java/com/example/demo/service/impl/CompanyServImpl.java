@@ -68,8 +68,7 @@ public class CompanyServImpl implements ICompanyService {
 	@Cacheable(value = "companies", key = "#id")
 	public Company getCompanyById(Long id) {
 		System.err.println("Fetched From DB....");
-	
-		
+
 		return comprepo.findById(id).orElseThrow(()-> new ResourceNotFoundException("No Company found for given id "+id));
 	}
 
