@@ -93,7 +93,7 @@ public class JwtAuthentication {
 	AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
 		return config.getAuthenticationManager();
 	}
-
+  
 //	The following KeyPair keyPair() and RSAKey rsaKey(KeyPair keyPair) are commented because these are used in the application which is
 //	without Load Balancing. As we are using Load balancing and to maintain the jwt across the tomcat servers following code is commented 
 //	@Bean
