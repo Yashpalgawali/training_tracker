@@ -57,7 +57,7 @@ public class JwtAuthentication {
 //	 			config.setAllowedOrigins(Arrays.asList("http://3.1.9.1")); // Your Angular app's URL
 				config.setAllowedOrigins(
 						Arrays.asList("http://192.168.0.219:3000","http://192.168.0.219:8989", "http://localhost:8080", "http://localhost:7878")
-								); // Your
+								); 																					// Your
 																													// React
 																													// app's
 																													// URL
