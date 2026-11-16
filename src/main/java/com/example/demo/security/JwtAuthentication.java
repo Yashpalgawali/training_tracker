@@ -60,11 +60,11 @@ public class JwtAuthentication {
 				config.setAllowedOrigins(
 						Arrays.asList("http://192.168.0.219:3000","http://192.168.0.219:8081","http://192.168.0.219:8082", "http://localhost:8081", 
 									   "http://localhost:8082", "http://localhost:7878", "http://192.168.10.48:8081", "http://192.168.10.48:8082",
-									   "http://172.20.96.1:8081", "http://172.20.96.1:8082")
-								); 																					// Your
-																													// React
-																													// app's
-																													// URL
+									   "http://192.168.0.95:8081","http://172.20.96.1:8081", "http://172.20.96.1:8082")
+								); 	// Your
+									// React
+									// app's
+									// URL
 
 				config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
 
