@@ -1,11 +1,6 @@
 package com.example.demo.security;
 
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +16,6 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
 import org.springframework.web.cors.CorsConfiguration;
 
 import com.nimbusds.jose.JOSEException;
@@ -60,7 +54,8 @@ public class JwtAuthentication {
 				config.setAllowedOrigins(
 						Arrays.asList("http://192.168.0.219:3000","http://192.168.0.219:8081","http://192.168.0.219:8082", "http://localhost:8081", 
 									   "http://localhost:8082", "http://localhost:7878", "http://192.168.10.48:8081", "http://192.168.10.48:8082",
-									   "http://192.168.0.95:8081","http://172.20.96.1:8081", "http://172.20.96.1:8082")
+									   "http://192.168.0.95:8081","http://172.20.96.1:8081", "http://172.20.96.1:8082","http://192.168.0.95:8282",
+									   "http://localhost:8282","http://192.168.0.95:3000")
 								); 	// Your
 									// React
 									// app's

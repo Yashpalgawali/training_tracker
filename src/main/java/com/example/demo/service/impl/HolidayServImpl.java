@@ -22,6 +22,7 @@ public class HolidayServImpl implements IHolidayService {
 
 	@Override
 	public Holiday saveHoliday(Holiday holiday) {
+		
 		Holiday savedHoliday = holidayrepo.save(holiday);
 		if (savedHoliday != null) {
 			return savedHoliday;
@@ -40,9 +41,7 @@ public class HolidayServImpl implements IHolidayService {
 
 	@Override
 	public Holiday getHoliday(String holidayDate) {
-
 		return holidayrepo.findByHolidayDate(holidayDate).orElse(null);
-
 //		Optional<Holiday> result = holidayrepo.findByHolidayDate(holidayDate);
 //		if(result.isPresent()) {
 //			return result.get();
@@ -62,8 +61,7 @@ public class HolidayServImpl implements IHolidayService {
 
 	@Override
 	public Holiday getHoliday(Long id) {
-		return holidayrepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("No Holiday found for given Id " + id)) ;
-		
+		return holidayrepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("No Holiday found for given Id " + id));		
 	}
 
 }
